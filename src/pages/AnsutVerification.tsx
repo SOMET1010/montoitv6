@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import CertificationProgress from '../components/CertificationProgress';
 import VerificationBadge from '../components/VerificationBadge';
 import AnsutBadge from '../components/AnsutBadge';
+import SmilelessVerification from '../components/SmilelessVerification';
 
 interface VerificationData {
   id: string;
@@ -49,6 +50,7 @@ export default function AnsutVerification() {
 
   const [showWebcam, setShowWebcam] = useState(false);
   const [selfieCapture, setSelfieCapture] = useState<string | null>(null);
+  const [useSmileless, setUseSmileless] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -369,6 +371,23 @@ export default function AnsutVerification() {
     } finally {
       setVerifyingFace(false);
     }
+  };
+
+  const handleSmilelessVerified = async (result: any) => {
+    setSuccess(`✅ Vérification faciale réussie avec Smileless! Score: ${(result.matching_score * 100).toFixed(0)}%`);
+
+    await supabase
+      .from('user_verifications')
+      .update({
+        face_verification_status: 'verifie',
+      })
+      .eq('user_id', user?.id);
+
+    await loadVerificationData();
+  };
+
+  const handleSmilelessFailed = (errorMsg: string) => {
+    setError(`❌ Vérification Smileless échouée: ${errorMsg}`);
   };
 
   if (!user) {
@@ -702,86 +721,108 @@ export default function AnsutVerification() {
                     </div>
 
                     {verification?.face_verification_status !== 'verifie' && (
-                      <div className="space-y-4">
-                        <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
-                          <p className="text-sm text-cyan-800">
-                            Nous allons comparer votre selfie avec la photo de votre CNI pour confirmer votre identité.
-                          </p>
-                        </div>
-
-                        {!selfieCapture && !showWebcam && (
-                          <button
-                            onClick={startWebcam}
-                            className="w-full btn-primary py-3 flex items-center justify-center space-x-2"
-                          >
-                            <Camera className="w-5 h-5" />
-                            <span>Activer la caméra</span>
-                          </button>
+                      <div className="space-y-6">
+                        {useSmileless && oneciPreview && (
+                          <SmilelessVerification
+                            userId={user?.id || ''}
+                            cniPhotoUrl={oneciPreview}
+                            onVerified={handleSmilelessVerified}
+                            onFailed={handleSmilelessFailed}
+                          />
                         )}
 
-                        {showWebcam && (
+                        {!useSmileless && (
                           <div className="space-y-4">
-                            <div className="relative rounded-xl overflow-hidden bg-black">
-                              <video
-                                ref={videoRef}
-                                autoPlay
-                                playsInline
-                                className="w-full"
-                              />
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-64 h-80 border-4 border-white rounded-full opacity-50"></div>
-                              </div>
+                            <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
+                              <p className="text-sm text-cyan-800">
+                                Nous allons comparer votre selfie avec la photo de votre CNI pour confirmer votre identité.
+                              </p>
                             </div>
-                            <div className="flex space-x-3">
+
+                            {!selfieCapture && !showWebcam && (
                               <button
-                                onClick={captureSelfie}
-                                className="flex-1 btn-primary py-3 flex items-center justify-center space-x-2"
+                                onClick={startWebcam}
+                                className="w-full btn-primary py-3 flex items-center justify-center space-x-2"
                               >
                                 <Camera className="w-5 h-5" />
-                                <span>Capturer</span>
+                                <span>Activer la caméra</span>
                               </button>
-                              <button
-                                onClick={stopWebcam}
-                                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-bold"
-                              >
-                                Annuler
-                              </button>
-                            </div>
+                            )}
+
+                            {showWebcam && (
+                              <div className="space-y-4">
+                                <div className="relative rounded-xl overflow-hidden bg-black">
+                                  <video
+                                    ref={videoRef}
+                                    autoPlay
+                                    playsInline
+                                    className="w-full"
+                                  />
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-64 h-80 border-4 border-white rounded-full opacity-50"></div>
+                                  </div>
+                                </div>
+                                <div className="flex space-x-3">
+                                  <button
+                                    onClick={captureSelfie}
+                                    className="flex-1 btn-primary py-3 flex items-center justify-center space-x-2"
+                                  >
+                                    <Camera className="w-5 h-5" />
+                                    <span>Capturer</span>
+                                  </button>
+                                  <button
+                                    onClick={stopWebcam}
+                                    className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 font-bold"
+                                  >
+                                    Annuler
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {selfieCapture && (
+                              <div className="space-y-4">
+                                <div className="relative">
+                                  <img src={selfieCapture} alt="Selfie" className="w-full rounded-xl" />
+                                  <button
+                                    onClick={() => setSelfieCapture(null)}
+                                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                                  >
+                                    <X className="w-5 h-5" />
+                                  </button>
+                                </div>
+                                <button
+                                  onClick={verifyFace}
+                                  disabled={verifyingFace}
+                                  className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                                >
+                                  {verifyingFace ? (
+                                    <>
+                                      <Loader className="w-5 h-5 animate-spin" />
+                                      <span>Vérification en cours...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Shield className="w-5 h-5" />
+                                      <span>Vérifier mon visage</span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                            )}
+
+                            <canvas ref={canvasRef} className="hidden" />
                           </div>
                         )}
 
-                        {selfieCapture && (
-                          <div className="space-y-4">
-                            <div className="relative">
-                              <img src={selfieCapture} alt="Selfie" className="w-full rounded-xl" />
-                              <button
-                                onClick={() => setSelfieCapture(null)}
-                                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
-                              >
-                                <X className="w-5 h-5" />
-                              </button>
-                            </div>
-                            <button
-                              onClick={verifyFace}
-                              disabled={verifyingFace}
-                              className="w-full btn-primary py-3 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                            >
-                              {verifyingFace ? (
-                                <>
-                                  <Loader className="w-5 h-5 animate-spin" />
-                                  <span>Vérification en cours...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Shield className="w-5 h-5" />
-                                  <span>Vérifier mon visage</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        )}
-
-                        <canvas ref={canvasRef} className="hidden" />
+                        <div className="text-center pt-4 border-t border-gray-200">
+                          <button
+                            onClick={() => setUseSmileless(!useSmileless)}
+                            className="text-sm text-gray-600 hover:text-orange-600 underline"
+                          >
+                            {useSmileless ? 'Utiliser la méthode traditionnelle' : 'Utiliser Smileless (Gratuit)'}
+                          </button>
+                        </div>
                       </div>
                     )}
 

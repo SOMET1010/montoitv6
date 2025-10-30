@@ -258,6 +258,71 @@ export default function AdminServiceMonitoring() {
                 </div>
               </div>
 
+              {/* Facial Verification Cost Savings Section */}
+              {stats.filter(s => s.service_name === 'face_recognition').length > 0 && (
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-6 mb-8 border-2 border-green-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                      <Activity className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-gray-900">Reconnaissance Faciale - Économies</h2>
+                      <p className="text-sm text-gray-600">Comparaison des coûts entre les providers</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {stats.filter(s => s.service_name === 'face_recognition').map((faceStats) => {
+                      const costPerVerification = faceStats.provider === 'smileless' ? 0 :
+                                                  faceStats.provider === 'azure' ? 0.75 : 0.90;
+                      const totalCost = (faceStats.success_count + faceStats.failure_count) * costPerVerification;
+                      const costSavedVsAzure = (faceStats.success_count + faceStats.failure_count) * 0.75;
+
+                      return (
+                        <div key={faceStats.provider} className="bg-white rounded-lg p-4 shadow">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="font-semibold text-gray-900 capitalize">{faceStats.provider}</span>
+                            {faceStats.provider === 'smileless' && (
+                              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded">
+                                GRATUIT
+                              </span>
+                            )}
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Vérifications:</span>
+                              <span className="font-semibold">{faceStats.success_count + faceStats.failure_count}</span>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Taux de réussite:</span>
+                              <span className={`font-semibold ${faceStats.success_rate >= 95 ? 'text-green-600' : 'text-yellow-600'}`}>
+                                {faceStats.success_rate.toFixed(1)}%
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-sm border-t pt-2">
+                              <span className="text-gray-600">Coût total:</span>
+                              <span className="font-bold text-lg">
+                                {faceStats.provider === 'smileless' ? (
+                                  <span className="text-green-600">0 FCFA</span>
+                                ) : (
+                                  <span className="text-gray-900">{totalCost.toFixed(2)} FCFA</span>
+                                )}
+                              </span>
+                            </div>
+                            {faceStats.provider === 'smileless' && costSavedVsAzure > 0 && (
+                              <div className="bg-green-50 rounded p-2 text-center">
+                                <p className="text-xs text-green-700">Économie vs Azure:</p>
+                                <p className="font-bold text-green-600">{costSavedVsAzure.toFixed(2)} FCFA</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
                   <h2 className="text-xl font-bold text-gray-900">
