@@ -369,12 +369,14 @@ export default function Home() {
               </div>
             }>
               <MapboxMap
-                properties={properties.map(p => ({
-                  id: p.id,
-                  title: p.title,
-                  monthly_rent: p.monthly_rent,
-                  longitude: p.longitude,
-                  latitude: p.latitude,
+                properties={properties
+                  .filter(p => p.longitude && p.latitude)
+                  .map(p => ({
+                    id: p.id,
+                    title: p.title,
+                    monthly_rent: p.monthly_rent,
+                    longitude: p.longitude!,
+                    latitude: p.latitude!,
                   status: p.status,
                   images: p.images as string[],
                   city: p.city,
