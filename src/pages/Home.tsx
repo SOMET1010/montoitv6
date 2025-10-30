@@ -1,11 +1,10 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, MapPin, Shield, FileSignature, Smartphone, TrendingUp, Building2, Sparkles, Home as HomeIcon, Users, Map } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 import QuickSearch from '../components/QuickSearch';
 import { FormatService } from '../services/format/formatService';
-
-const MapboxMap = lazy(() => import('../components/MapboxMap'));
+import MapWrapper from '../components/MapWrapper';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -360,15 +359,7 @@ export default function Home() {
           </div>
 
           <div className="card-scrapbook overflow-hidden">
-            <Suspense fallback={
-              <div className="h-[500px] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <div className="text-center">
-                  <Map className="h-16 w-16 text-terracotta-400 mx-auto mb-4 animate-pulse" />
-                  <p className="text-gray-600">Chargement de la carte...</p>
-                </div>
-              </div>
-            }>
-              <MapboxMap
+              <MapWrapper
                 properties={properties
                   .filter(p => p.longitude && p.latitude)
                   .map(p => ({
@@ -389,7 +380,6 @@ export default function Home() {
                   window.location.href = `/propriete/${property.id}`;
                 }}
               />
-            </Suspense>
           </div>
 
           <div className="mt-8 text-center">

@@ -182,7 +182,23 @@ Utilise des emojis de manière modérée pour rendre la conversation plus engage
       return "Les contrats de location sur la plateforme:\n- Sont conformes à la loi ivoirienne\n- Incluent signature électronique\n- Sont stockés de manière sécurisée\n- Peuvent être téléchargés en PDF\n\nAllez dans 'Mes contrats' pour voir vos baux actifs et archivés.";
     }
 
-    return "Je suis SUTA, votre assistant Mon Toit ! Je peux vous aider avec la recherche de propriétés, les contrats, les paiements, les visites et bien plus. Comment puis-je vous aider aujourd'hui ?";
+    if (lowerMessage.includes('bonjour') || lowerMessage.includes('salut') || lowerMessage.includes('hello')) {
+      return "Bonjour ! 👋 Je suis SUTA, votre assistant personnel sur Mon Toit. Je suis là pour vous aider à trouver le logement idéal ou gérer vos propriétés. Que recherchez-vous aujourd'hui ?";
+    }
+
+    if (lowerMessage.includes('merci') || lowerMessage.includes('thanks')) {
+      return "Avec plaisir ! 😊 N'hésitez pas si vous avez d'autres questions. Je suis toujours là pour vous aider sur Mon Toit !";
+    }
+
+    if (lowerMessage.includes('prix') || lowerMessage.includes('loyer') || lowerMessage.includes('fcfa')) {
+      return "Les prix varient selon le quartier et le type de bien:\n\n📍 Cocody: 150K-500K FCFA/mois\n📍 Plateau: 200K-600K FCFA/mois\n📍 Yopougon: 80K-250K FCFA/mois\n📍 Marcory: 100K-300K FCFA/mois\n\nUtilisez les filtres de recherche pour trouver dans votre budget !";
+    }
+
+    if (lowerMessage.includes('quartier') || lowerMessage.includes('zone') || lowerMessage.includes('abidjan')) {
+      return "Les quartiers populaires d'Abidjan:\n\n🏙️ Cocody: Résidentiel haut standing\n💼 Plateau: Centre d'affaires\n🏘️ Yopougon: Accessible, bien desservi\n🌊 Marcory: Proche du lagon\n🏢 Treichville: Dynamique, central\n\nQuel quartier vous intéresse ?";
+    }
+
+    return "Je peux vous aider avec:\n\n🏠 Recherche de logements\n📝 Questions sur les contrats\n💰 Paiements Mobile Money\n🗓️ Planification de visites\n⭐ Score locataire\n🔧 Demandes de maintenance\n\nQue souhaitez-vous savoir ?";
   }
 
   async archiveConversation(conversationId: string): Promise<boolean> {
