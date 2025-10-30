@@ -2,6 +2,7 @@ import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calenda
 import { useAuth } from '../contexts/AuthContext';
 import { useMessageNotifications } from '../hooks/useMessageNotifications';
 import CertificationReminder from './CertificationReminder';
+import LanguageSelector from './LanguageSelector';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -282,6 +283,9 @@ export default function Header() {
                   <span className="text-sm font-bold text-gray-800">
                     {profile?.full_name || 'Utilisateur'}
                   </span>
+                </div>
+                <div className="hidden md:block">
+                  <LanguageSelector />
                 </div>
                 <button
                   onClick={() => signOut()}

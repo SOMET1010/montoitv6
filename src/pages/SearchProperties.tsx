@@ -1,7 +1,9 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
+import { recommendationService } from '../services/ai/recommendationService';
+import { useAuth } from '../contexts/AuthContext';
 
 const MapboxMap = lazy(() => import('../components/MapboxMap'));
 
@@ -10,10 +12,13 @@ type PropertyType = Database['public']['Tables']['properties']['Row']['property_
 
 export default function SearchProperties() {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [recommendedProperties, setRecommendedProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [highlightedPropertyId, setHighlightedPropertyId] = useState<string | undefined>();
   const [viewMode, setViewMode] = useState<'list' | 'map' | 'split'>('split');
+  const { user } = useAuth();
 
   const [searchCity, setSearchCity] = useState('');
   const [propertyType, setPropertyType] = useState<PropertyType | ''>('');
@@ -32,7 +37,24 @@ export default function SearchProperties() {
     if (city) setSearchCity(city);
 
     loadProperties();
-  }, []);
+    if (user) {
+      loadRecommendations();
+    }
+  }, [user]);
+
+  const loadRecommendations = async () => {
+    if (!user) return;
+
+    setLoadingRecommendations(true);
+    try {
+      const recommended = await recommendationService.getPersonalizedRecommendations(user.id, 6);
+      setRecommendedProperties(recommended);
+    } catch (error) {
+      console.error('Error loading recommendations:', error);
+    } finally {
+      setLoadingRecommendations(false);
+    }
+  };
 
   const loadProperties = async () => {
     setLoading(true);
@@ -264,6 +286,98 @@ export default function SearchProperties() {
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {user && recommendedProperties.length > 0 && (
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-3xl font-bold text-gray-900 flex items-center space-x-3">
+                <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-2xl p-3 shadow-glow">
+                  <Star className="h-6 w-6 text-white" />
+                </div>
+                <span>Recommandé pour vous</span>
+              </h2>
+              <span className="text-sm text-gray-500 font-medium">Propulsé par IA</span>
+            </div>
+
+            {loadingRecommendations ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="glass-card rounded-2xl overflow-hidden animate-pulse">
+                    <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300"></div>
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-gray-200 rounded-lg w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded-lg w-1/2"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recommendedProperties.map((property) => (
+                  <a
+                    key={property.id}
+                    href={`/propriete/${property.id}`}
+                    onClick={() => {
+                      recommendationService.trackRecommendationClick(user.id, property.id);
+                    }}
+                    className="glass-card rounded-2xl overflow-hidden hover:shadow-glow transition-all duration-300 group relative"
+                  >
+                    <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg z-10 flex items-center space-x-1">
+                      <Star className="h-3 w-3 fill-current" />
+                      <span>Recommandé</span>
+                    </div>
+
+                    <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                      {property.main_image ? (
+                        <img
+                          src={property.main_image}
+                          alt={property.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <Building2 className="h-16 w-16" />
+                        </div>
+                      )}
+                      <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-xs font-bold text-gray-800 capitalize">
+                        {property.property_type}
+                      </div>
+                    </div>
+
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-terracotta-600 transition-colors line-clamp-2">
+                        {property.title}
+                      </h3>
+
+                      <p className="text-gray-600 flex items-center space-x-2 text-sm mb-3">
+                        <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
+                        <span className="line-clamp-1">{property.city}</span>
+                      </p>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3 text-sm text-gray-600">
+                          <div className="flex items-center space-x-1">
+                            <Bed className="h-4 w-4" />
+                            <span>{property.bedrooms}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Bath className="h-4 w-4" />
+                            <span>{property.bathrooms}</span>
+                          </div>
+                        </div>
+                        <div className="text-terracotta-600 font-bold text-lg">
+                          {property.monthly_rent.toLocaleString()} FCFA
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-6 pt-6 border-t-2 border-gray-200"></div>
+          </div>
+        )}
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
           <div>
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
