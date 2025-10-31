@@ -258,6 +258,10 @@ export default function Header() {
                           <Users className="h-4 w-4 inline mr-2" />
                           Gestion Utilisateurs
                         </a>
+                        <a href="/admin/gestion-roles" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <Shield className="h-4 w-4 inline mr-2" />
+                          Attribuer des Rôles
+                        </a>
                         <a href="/admin/trust-agents" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
                           <UserCheck className="h-4 w-4 inline mr-2" />
                           Agents de Confiance
@@ -491,6 +495,10 @@ export default function Header() {
                   <a href="/admin/utilisateurs" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
                     <Users className="h-4 w-4 inline mr-2" />
                     Utilisateurs
+                  </a>
+                  <a href="/admin/gestion-roles" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <Shield className="h-4 w-4 inline mr-2" />
+                    Attribuer Rôles
                   </a>
                   <a href="/admin/api-keys" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
                     <Key className="h-4 w-4 inline mr-2" />
