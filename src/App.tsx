@@ -56,6 +56,11 @@ import VerificationSettings from './pages/VerificationSettings';
 import RequestCEV from './pages/RequestCEV';
 import CEVRequestDetail from './pages/CEVRequestDetail';
 import AdminCEVManagement from './pages/AdminCEVManagement';
+import TrustAgentDashboard from './pages/TrustAgentDashboard';
+import TrustAgentModeration from './pages/TrustAgentModeration';
+import TrustAgentMediation from './pages/TrustAgentMediation';
+import TrustAgentAnalytics from './pages/TrustAgentAnalytics';
+import AdminTrustAgents from './pages/AdminTrustAgents';
 
 function App() {
   const path = window.location.pathname;
@@ -423,6 +428,78 @@ function App() {
 
     if (path === '/admin/gestion-roles') {
       return <AdminUserRoles />;
+    }
+
+    if (path === '/admin/trust-agents') {
+      return (
+        <>
+          <Header />
+          <main>
+            <AdminTrustAgents />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path === '/trust-agent/dashboard') {
+      return (
+        <>
+          <Header />
+          <main>
+            <TrustAgentDashboard />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path === '/trust-agent/moderation') {
+      return (
+        <>
+          <Header />
+          <main>
+            <TrustAgentModeration />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path === '/trust-agent/mediation') {
+      return (
+        <>
+          <Header />
+          <main>
+            <TrustAgentMediation />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path === '/trust-agent/analytics') {
+      return (
+        <>
+          <Header />
+          <main>
+            <TrustAgentAnalytics />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path === '/ansut-verification') {
+      return (
+        <>
+          <Header />
+          <main>
+            <AnsutVerification />
+          </main>
+          <Footer />
+        </>
+      );
     }
 
     if (path === '/auth/callback') {

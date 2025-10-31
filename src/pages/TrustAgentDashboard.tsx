@@ -355,7 +355,7 @@ function RequestCard({ request, onView }: { request: any; onView: () => void }) 
         <div className="text-right">
           {isUrgent() && (
             <span className="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold mb-2">
-              🔴 Urgent (> 48h)
+              🔴 Urgent (&gt; 48h)
             </span>
           )}
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">

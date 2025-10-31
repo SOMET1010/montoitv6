@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Shield, MessageSquare, Clock, CheckCircle, AlertTriangle, Send, ArrowUpCircle } from 'lucide-react';
 import { disputeService } from '../services/trustValidationService';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function TrustAgentMediation() {
-  const navigate = useNavigate();
   const { profile } = useAuth();
   const [disputes, setDisputes] = useState<any[]>([]);
   const [selectedDispute, setSelectedDispute] = useState<any | null>(null);
