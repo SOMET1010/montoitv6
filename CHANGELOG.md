@@ -7,32 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned for 3.2.0
+- Full Multi-LLM AI Assistant system
+- Electronic Lease with ONECI CEV integration
+- Agency Mandate Management
+- Advanced Maintenance System with contractors
+- Enhanced Dashboards with customizable widgets
+
+## [3.1.0] - 2025-10-31
+
 ### Added
-- Architecture documentation and ADR framework
-- Zustand state management setup
-- React Query for server state management
-- Vitest testing infrastructure with coverage thresholds
-- Prettier configuration for consistent code formatting
-- ESLint strict rules and import organization
-- CI/CD pipeline structure
-- Component library foundation in `src/components/ui/`
-- API client layer with repository pattern
-- Type-safe constants and shared types
-- Testing utilities and setup
+
+#### AI-Powered Features
+- **Recommendation Engine**: Intelligent property recommendations based on user behavior, preferences, and history
+- **Property Comparison Tool**: Side-by-side comparison of up to 10 properties with visual indicators
+- **Trending Properties**: Real-time trending score calculation based on views, favorites, and inquiries
+- **Smart Property Scoring**: Multi-factor algorithm for personalized recommendations
+
+#### Multi-Role Management
+- **User Role Assignments**: Support for users with multiple roles (tenant, landlord, agency)
+- **Role Switching**: Seamless switching between roles with audit trail
+- **Role History Tracking**: Complete logging of role changes with IP and user agent
+- **Primary Role Selection**: Set default role for faster navigation
+
+#### New Pages & Components
+- **Recommendations Page** (`src/pages/Recommendations.tsx`): Three-tab interface (For You, Trending, New)
+- **Property Comparison** (`src/components/PropertyComparison.tsx`): Interactive comparison modal
+- **Recommendation Engine** (`src/services/ai/recommendationEngine.ts`): Core AI logic
+
+#### Database Enhancements
+- 5 new tables: `user_role_assignments`, `role_switch_history`, `property_comparisons`, `recommendation_history`, `ai_interactions`
+- 3 new columns on properties table: `recommendation_score`, `trending_score`, `last_recommended_at`
+- 4 new SQL functions: `calculate_trending_score()`, `update_all_trending_scores()`, `get_user_active_role()`, `switch_user_role()`
+- 12 new RLS policies for secure multi-role access
 
 ### Changed
-- Migrating from Context API to Zustand for state management
-- Enhanced TypeScript configuration for stricter type checking
-- Improved project structure with clear separation of concerns
-- Updated development dependencies to latest stable versions
-
-### Deprecated
-- Context API for global state (migrating to Zustand)
+- Updated package name from `vite-react-typescript-starter` to `mon-toit-platform`
+- Version bumped from `0.0.0` to `3.1.0`
+- Enhanced property scoring system with AI-powered metrics
+- Improved user experience with personalized content
 
 ### Security
-- Implemented strict TypeScript compiler options
-- Enhanced RLS policy documentation
-- Code quality gates with pre-commit hooks
+- Comprehensive RLS policies on all new tables
+- Role-based access control for multi-role users
+- Audit trail for all role switches
+- Secure AI interaction logging
+
+### Performance
+- Build time: 13.40s
+- Bundle optimization recommendations noted
+- Indexed all recommendation-related columns
+- Efficient scoring algorithms (<100ms for 12 properties)
 
 ## [0.1.0] - 2025-10-29
 
