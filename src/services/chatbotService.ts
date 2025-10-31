@@ -37,11 +37,13 @@ class ChatbotService {
       return existingConversations[0];
     }
 
+    const title = this.generateConversationTitle();
+
     const { data: newConversation, error: createError } = await supabase
       .from('chatbot_conversations')
       .insert({
         user_id: userId,
-        title: 'Nouvelle conversation',
+        title,
         status: 'active',
       })
       .select()
@@ -53,6 +55,41 @@ class ChatbotService {
     }
 
     return newConversation;
+  }
+
+  private generateConversationTitle(): string {
+    const titles = [
+      '💬 Assistance SUTA',
+      '🏠 Recherche de logement',
+      '🛡️ Protection et Sécurité',
+      '💰 Questions Paiement',
+      '📝 Aide sur les contrats',
+      '⭐ Amélioration du score',
+      '🗓️ Planification de visite',
+      '🔧 Problème Maintenance',
+    ];
+    const date = new Date().toLocaleDateString('fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const randomTitle = titles[Math.floor(Math.random() * titles.length)];
+    return `${randomTitle} - ${date}`;
+  }
+
+  async updateConversationTitle(conversationId: string, title: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('chatbot_conversations')
+      .update({ title })
+      .eq('id', conversationId);
+
+    if (error) {
+      console.error('Error updating conversation title:', error);
+      return false;
+    }
+
+    return true;
   }
 
   async getConversationMessages(conversationId: string): Promise<ChatMessage[]> {
