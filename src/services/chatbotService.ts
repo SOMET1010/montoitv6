@@ -1,5 +1,4 @@
 import { supabase } from '../lib/supabase';
-import { LLMOrchestrator } from './ai/llmOrchestrator';
 
 export interface ChatMessage {
   id: string;
@@ -190,16 +189,34 @@ Si tu ne connais pas une réponse, dis-le honnêtement et propose de contacter l
         { role: 'user', content: userMessage },
       ];
 
-      const response = await LLMOrchestrator.execute({
-        messages,
-        userId: userId || undefined,
-        operation: 'chatbot',
-        requiresExpertise: 'general',
+      const functionUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chatbot`;
+
+      const response = await fetch(functionUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          messages,
+          userId,
+          temperature: 0.8,
+          maxTokens: 1000,
+        }),
       });
 
-      return response.content;
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Edge function error:', errorData);
+        throw new Error(errorData.error || 'Failed to get AI response');
+      }
+
+      const data = await response.json();
+      console.log('✅ AI Response received successfully from edge function');
+      return data.content;
     } catch (error) {
-      console.error('Error getting AI response:', error);
+      console.error('❌ Error getting AI response:', error);
+      console.log('🔄 Using intelligent fallback system');
 
       return this.getFallbackResponse(userMessage);
     }

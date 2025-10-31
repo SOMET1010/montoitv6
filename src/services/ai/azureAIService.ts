@@ -14,7 +14,8 @@ interface AIUsageLog {
 export class AzureAIService {
   private static getEnvVar(key: string): string {
     const value = import.meta.env[key];
-    if (!value) {
+    if (!value || value === '' || value === 'undefined') {
+      console.warn(`Missing or empty environment variable: ${key}`);
       throw new Error(`Missing environment variable: ${key}`);
     }
     return value;
