@@ -1,8 +1,9 @@
-import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X } from 'lucide-react';
+import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X, Shield, Database, Activity, Cog, TestTube, Zap, UserCheck, CheckCircle, FileCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useMessageNotifications } from '../hooks/useMessageNotifications';
 import CertificationReminder from './CertificationReminder';
 import LanguageSelector from './LanguageSelector';
+import RoleSwitcher from './RoleSwitcher';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -17,6 +18,7 @@ export default function Header() {
   const [showMaintenanceMenu, setShowMaintenanceMenu] = useState(false);
   const [showAgencyMenu, setShowAgencyMenu] = useState(false);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
+  const [showTrustAgentMenu, setShowTrustAgentMenu] = useState(false);
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -232,30 +234,111 @@ export default function Header() {
                   <span>Profil</span>
                 </a>
 
-                {profile?.user_type === 'admin_ansut' && (
+                {(profile?.user_type === 'admin_ansut' || profile?.role?.includes('admin')) && (
                   <div className="relative" onMouseLeave={() => setShowAdminMenu(false)}>
                     <button
                       onMouseEnter={() => setShowAdminMenu(true)}
                       onClick={() => setShowAdminMenu(!showAdminMenu)}
                       className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-blue-200"
                     >
-                      <Key className="h-5 w-5" />
+                      <Shield className="h-5 w-5" />
                       <span>Admin</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAdminMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-gray-100 py-2 z-50">
-                        <a href="/admin/tableau-de-bord" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
+                      <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border-2 border-blue-100 py-2 z-50 max-h-96 overflow-y-auto">
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-xs font-bold text-gray-500 uppercase">Administration</p>
+                        </div>
+                        <a href="/admin/tableau-de-bord" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
                           <BarChart className="h-4 w-4 inline mr-2" />
-                          Dashboard
+                          Dashboard Principal
                         </a>
-                        <a href="/admin/utilisateurs" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
+                        <a href="/admin/utilisateurs" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
                           <Users className="h-4 w-4 inline mr-2" />
-                          Utilisateurs
+                          Gestion Utilisateurs
                         </a>
-                        <a href="/admin/api-keys" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
+                        <a href="/admin/trust-agents" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <UserCheck className="h-4 w-4 inline mr-2" />
+                          Agents de Confiance
+                        </a>
+
+                        <div className="px-4 py-2 border-b border-t border-gray-100 mt-2">
+                          <p className="text-xs font-bold text-gray-500 uppercase">Services & API</p>
+                        </div>
+                        <a href="/admin/api-keys" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
                           <Key className="h-4 w-4 inline mr-2" />
-                          API Keys
+                          Clés API
+                        </a>
+                        <a href="/admin/service-providers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <Database className="h-4 w-4 inline mr-2" />
+                          Fournisseurs Services
+                        </a>
+                        <a href="/admin/service-monitoring" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <Activity className="h-4 w-4 inline mr-2" />
+                          Monitoring Services
+                        </a>
+                        <a href="/admin/service-configuration" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <Cog className="h-4 w-4 inline mr-2" />
+                          Configuration
+                        </a>
+
+                        <div className="px-4 py-2 border-b border-t border-gray-100 mt-2">
+                          <p className="text-xs font-bold text-gray-500 uppercase">Vérifications</p>
+                        </div>
+                        <a href="/admin/cev-management" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <FileCheck className="h-4 w-4 inline mr-2" />
+                          CEV/ONECI
+                        </a>
+                        <a href="/ansut-verification" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <CheckCircle className="h-4 w-4 inline mr-2" />
+                          ANSUT Certifications
+                        </a>
+
+                        <div className="px-4 py-2 border-b border-t border-gray-100 mt-2">
+                          <p className="text-xs font-bold text-gray-500 uppercase">Outils de Test</p>
+                        </div>
+                        <a href="/admin/demo-rapide" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <Zap className="h-4 w-4 inline mr-2" />
+                          Démo Rapide
+                        </a>
+                        <a href="/admin/test-data-generator" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
+                          <TestTube className="h-4 w-4 inline mr-2" />
+                          Générateur de Données
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {profile?.role?.includes('trust_agent') && (
+                  <div className="relative" onMouseLeave={() => setShowTrustAgentMenu(false)}>
+                    <button
+                      onMouseEnter={() => setShowTrustAgentMenu(true)}
+                      onClick={() => setShowTrustAgentMenu(!showTrustAgentMenu)}
+                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-green-200"
+                    >
+                      <UserCheck className="h-5 w-5" />
+                      <span>Trust Agent</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </button>
+                    {showTrustAgentMenu && (
+                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-green-100 py-2 z-50">
+                        <a href="/trust-agent/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <BarChart className="h-4 w-4 inline mr-2" />
+                          Dashboard Agent
+                        </a>
+                        <a href="/trust-agent/moderation" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <Shield className="h-4 w-4 inline mr-2" />
+                          Modération
+                        </a>
+                        <a href="/trust-agent/mediation" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <Users className="h-4 w-4 inline mr-2" />
+                          Médiation
+                        </a>
+                        <a href="/trust-agent/analytics" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <Activity className="h-4 w-4 inline mr-2" />
+                          Analytiques
                         </a>
                       </div>
                     )}
@@ -268,6 +351,9 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {user ? (
               <>
+                <div className="hidden lg:block">
+                  <RoleSwitcher />
+                </div>
                 <div className="hidden md:flex items-center space-x-3 bg-gradient-to-r from-amber-50 to-coral-50 px-4 py-2 rounded-2xl">
                   {profile?.avatar_url ? (
                     <img
@@ -322,6 +408,9 @@ export default function Header() {
 
         {showMobileMenu && user && (
           <div className="md:hidden border-t border-gray-200 py-4 px-4 bg-white">
+            <div className="mb-4">
+              <RoleSwitcher />
+            </div>
             <div className="space-y-2">
               <a href="/" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
                 <Home className="h-4 w-4 inline mr-2" />
@@ -390,15 +479,54 @@ export default function Header() {
                 </>
               )}
 
-              {profile?.user_type === 'admin_ansut' && (
+              {(profile?.user_type === 'admin_ansut' || profile?.role?.includes('admin')) && (
                 <>
+                  <div className="py-2 px-4 border-b border-gray-200">
+                    <p className="text-xs font-bold text-blue-600 uppercase">Administration</p>
+                  </div>
                   <a href="/admin/tableau-de-bord" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
                     <BarChart className="h-4 w-4 inline mr-2" />
-                    Admin Dashboard
+                    Dashboard
                   </a>
                   <a href="/admin/utilisateurs" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
                     <Users className="h-4 w-4 inline mr-2" />
                     Utilisateurs
+                  </a>
+                  <a href="/admin/api-keys" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <Key className="h-4 w-4 inline mr-2" />
+                    Clés API
+                  </a>
+                  <a href="/admin/service-monitoring" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <Activity className="h-4 w-4 inline mr-2" />
+                    Monitoring
+                  </a>
+                  <a href="/admin/demo-rapide" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <Zap className="h-4 w-4 inline mr-2" />
+                    Démo Rapide
+                  </a>
+                  <a href="/admin/cev-management" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <FileCheck className="h-4 w-4 inline mr-2" />
+                    CEV/ONECI
+                  </a>
+                </>
+              )}
+
+              {profile?.role?.includes('trust_agent') && (
+                <>
+                  <div className="py-2 px-4 border-b border-t border-gray-200 mt-2">
+                    <p className="text-xs font-bold text-green-600 uppercase">Trust Agent</p>
+                  </div>
+                  <a href="/trust-agent/dashboard" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <BarChart className="h-4 w-4 inline mr-2" />
+                    Dashboard Agent
+                  </a>
+                  <a href="/trust-agent/moderation" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <Shield className="h-4 w-4 inline mr-2" />
+                    Modération
+                  </a>
+                  <a href="/trust-agent/mediation" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
+                    <Users className="h-4 w-4 inline mr-2" />
+                    Médiation
                   </a>
                 </>
               )}
