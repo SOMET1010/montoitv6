@@ -4,8 +4,21 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-blue)](https://react.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-green)](https://supabase.com/)
+[![Version](https://img.shields.io/badge/Version-3.3.0-brightgreen)](CHANGELOG.md)
 
 Plateforme moderne de gestion locative en Côte d'Ivoire avec certification ANSUT, signature électronique, et paiement mobile money.
+
+## 🎉 Architecture Refactoring Complete (v3.3.0)
+
+**Phase 1 Complete!** The codebase has been fully refactored with:
+- ✅ React Router v6 with lazy loading
+- ✅ Repository pattern for all database operations
+- ✅ React Query hooks for optimal data fetching
+- ✅ Zustand state management
+- ✅ Protected routes with role-based access
+- ✅ Code splitting and performance optimization
+
+See [ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md](ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md) for details.
 
 ## ✨ Fonctionnalités
 
@@ -67,11 +80,18 @@ L'application sera accessible sur `http://localhost:5173`
 
 ## 📚 Documentation
 
+### Architecture & Refactoring (NEW)
+- **[NEW ARCHITECTURE QUICK START](NEW_ARCHITECTURE_QUICK_START.md)** ⭐ Start here!
+- **[Refactoring Phase 1 Complete](ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md)** - Comprehensive refactoring summary
+
+### Development Guides
 - **[Guide de Configuration](docs/guides/SETUP.md)** - Instructions complètes pour configurer l'environnement
 - **[Architecture](docs/ARCHITECTURE.md)** - Vue d'ensemble de l'architecture système
 - **[Base de Données](docs/DATABASE.md)** - Documentation du schéma et des RLS
 - **[Standards de Code](docs/guides/CODING_STANDARDS.md)** - Conventions et bonnes pratiques
 - **[Migration TypeScript](docs/guides/TYPESCRIPT_MIGRATION.md)** - Guide de migration vers strict mode
+
+### Reference
 - **[ADR Index](docs/adr/README.md)** - Décisions architecturales
 - **[Changelog](CHANGELOG.md)** - Historique des versions
 
@@ -79,11 +99,12 @@ L'application sera accessible sur `http://localhost:5173`
 
 ### Frontend
 - **React 18.3** - Bibliothèque UI avec hooks
-- **TypeScript 5.5** - Typage statique
+- **TypeScript 5.5** - Typage statique en mode strict
+- **React Router 6** - Routing avec code splitting
 - **Vite 5.4** - Build tool et dev server
 - **Tailwind CSS 3.4** - Framework CSS utilitaire
-- **Zustand 4.5** - State management
-- **React Query 5.x** - Server state management
+- **Zustand 4.5** - Client state management
+- **React Query 5.x** - Server state management avec caching
 - **Lucide React** - Icônes
 
 ### Backend
@@ -111,11 +132,19 @@ L'application sera accessible sur `http://localhost:5173`
 mon-toit/
 ├── src/
 │   ├── api/              # Client API et repositories
+│   │   └── repositories/ # Repository pattern (7 repos)
 │   ├── components/       # Composants React
-│   │   └── ui/          # Composants UI réutilisables
+│   │   ├── ui/          # Composants UI réutilisables
+│   │   ├── Layout.tsx   # Layout principal
+│   │   └── ProtectedRoute.tsx # Route protection
 │   ├── constants/        # Constantes de l'application
 │   ├── hooks/           # Hooks React personnalisés
-│   ├── pages/           # Composants de pages
+│   │   ├── useProperties.ts # React Query hooks
+│   │   ├── useLeases.ts
+│   │   └── useMessages.ts
+│   ├── pages/           # Composants de pages (lazy loaded)
+│   ├── routes/          # Configuration routes
+│   │   └── index.tsx    # Toutes les routes
 │   ├── services/        # Logique métier
 │   ├── stores/          # Stores Zustand
 │   ├── types/           # Types TypeScript
@@ -237,10 +266,14 @@ Voir [ARCHITECTURE_IMPLEMENTATION_SUMMARY.md](ARCHITECTURE_IMPLEMENTATION_SUMMAR
 
 ## 📈 Métriques
 
-- **Couverture de tests**: Cible 70%
-- **Build time**: ~5 secondes
-- **Bundle size**: 609 KB (141 KB gzippé)
+- **Couverture de tests**: Cible 70% (Phase 2)
+- **Build time**: 14 secondes
+- **Bundle size**: 485 KB → 143 KB gzippé (main)
+- **Code splitting**: 110+ chunks (6-31 KB each)
 - **TypeScript**: Strict mode activé
+- **Repositories**: 7 (all database tables covered)
+- **Custom hooks**: 6 React Query hooks
+- **Routes**: 80+ with lazy loading
 - **Lighthouse score**: Cible >90
 
 ## 🌍 Déploiement
