@@ -1,4 +1,5 @@
 import { azureAIService } from './azureAIService';
+import { LLMOrchestrator } from './llmOrchestrator';
 
 interface PropertyData {
   property_type: string;
@@ -38,18 +39,14 @@ Utilise un ton ${style === 'professional' ? 'professionnel et élégant' : style
         },
       ];
 
-      const description = await azureAIService.callAzureOpenAI(
+      const response = await LLMOrchestrator.execute({
         messages,
-        userId,
-        'generate_description',
-        {
-          temperature: 0.9,
-          maxTokens: 600,
-          useCache: false,
-        }
-      );
+        userId: userId || undefined,
+        operation: 'generate_description',
+        requiresExpertise: 'general',
+      });
 
-      return description;
+      return response.content;
     } catch (error) {
       console.error('Error generating description:', error);
       return this.getFallbackDescription(propertyData);
@@ -164,18 +161,14 @@ Instructions:
         },
       ];
 
-      const improvedDescription = await azureAIService.callAzureOpenAI(
+      const response = await LLMOrchestrator.execute({
         messages,
-        userId,
-        'improve_description',
-        {
-          temperature: 0.8,
-          maxTokens: 600,
-          useCache: false,
-        }
-      );
+        userId: userId || undefined,
+        operation: 'improve_description',
+        requiresExpertise: 'general',
+      });
 
-      return improvedDescription;
+      return response.content;
     } catch (error) {
       console.error('Error improving description:', error);
       return currentDescription;
@@ -220,18 +213,14 @@ Garde le même ton et la même structure.`,
         },
       ];
 
-      const translation = await azureAIService.callAzureOpenAI(
+      const response = await LLMOrchestrator.execute({
         messages,
-        userId,
-        'translate_description',
-        {
-          temperature: 0.3,
-          maxTokens: 600,
-          useCache: true,
-        }
-      );
+        userId: userId || undefined,
+        operation: 'translate_description',
+        preferredModel: 'gpt-35-turbo',
+      });
 
-      return translation;
+      return response.content;
     } catch (error) {
       console.error('Error translating description:', error);
       return description;

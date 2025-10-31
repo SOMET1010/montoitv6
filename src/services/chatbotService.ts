@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { azureAIService } from './ai/azureAIService';
+import { LLMOrchestrator } from './ai/llmOrchestrator';
 
 export interface ChatMessage {
   id: string;
@@ -190,18 +190,14 @@ Si tu ne connais pas une réponse, dis-le honnêtement et propose de contacter l
         { role: 'user', content: userMessage },
       ];
 
-      const response = await azureAIService.callAzureOpenAI(
+      const response = await LLMOrchestrator.execute({
         messages,
-        userId,
-        'chatbot',
-        {
-          temperature: 0.8,
-          maxTokens: 800,
-          useCache: true,
-        }
-      );
+        userId: userId || undefined,
+        operation: 'chatbot',
+        requiresExpertise: 'general',
+      });
 
-      return response;
+      return response.content;
     } catch (error) {
       console.error('Error getting AI response:', error);
 
