@@ -51,6 +51,9 @@ import AuthCallback from './pages/AuthCallback';
 import ContractDetailEnhanced from './pages/ContractDetailEnhanced';
 import ProfileSelection from './pages/ProfileSelection';
 import VerificationSettings from './pages/VerificationSettings';
+import RequestCEV from './pages/RequestCEV';
+import CEVRequestDetail from './pages/CEVRequestDetail';
+import AdminCEVManagement from './pages/AdminCEVManagement';
 
 function App() {
   const path = window.location.pathname;
@@ -438,6 +441,34 @@ function App() {
           <Footer />
         </>
       );
+    }
+
+    if (path === '/request-cev' || path.startsWith('/request-cev?')) {
+      return (
+        <>
+          <Header />
+          <main>
+            <RequestCEV />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path.startsWith('/cev-request/')) {
+      return (
+        <>
+          <Header />
+          <main>
+            <CEVRequestDetail />
+          </main>
+          <Footer />
+        </>
+      );
+    }
+
+    if (path === '/admin/cev-management' || path.startsWith('/admin/cev/')) {
+      return <AdminCEVManagement />;
     }
 
     return (
