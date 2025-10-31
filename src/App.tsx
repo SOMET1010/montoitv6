@@ -34,6 +34,7 @@ import AdminServiceProviders from './pages/AdminServiceProviders';
 import AdminServiceMonitoring from './pages/AdminServiceMonitoring';
 import AdminServiceConfiguration from './pages/AdminServiceConfiguration';
 import AdminTestDataGenerator from './pages/AdminTestDataGenerator';
+import AdminQuickDemo from './pages/AdminQuickDemo';
 import TenantScore from './pages/TenantScore';
 import ContractsList from './pages/ContractsList';
 import AgencyDashboard from './pages/AgencyDashboard';
@@ -413,6 +414,10 @@ function App() {
 
     if (path === '/admin/test-data-generator') {
       return <AdminTestDataGenerator />;
+    }
+
+    if (path === '/admin/demo-rapide') {
+      return <AdminQuickDemo />;
     }
 
     if (path === '/auth/callback') {

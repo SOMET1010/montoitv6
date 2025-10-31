@@ -1,5 +1,6 @@
 import { supabase } from '../../lib/supabase';
 import { AzureAIService } from './azureAIService';
+import { getPropertyImages, getNeighborhoodImage } from '../../constants/ivoirianImages';
 
 interface IvoirianName {
   first_name: string;
@@ -56,6 +57,9 @@ interface TestProperty {
   amenities: string[];
   nearby_places: string[];
   photos_description: string[];
+  photos_urls?: string[];
+  main_image_url?: string;
+  neighborhood_image_url?: string;
 }
 
 interface TestDocument {
@@ -262,6 +266,11 @@ Inclus des détails réalistes pour Abidjan avec vocabulaire ivoirien.`;
     );
 
     const property: TestProperty = JSON.parse(response);
+
+    // Ajouter les URLs d'images ivoiriennes réelles
+    property.photos_urls = getPropertyImages(quartier, propertyType, 5);
+    property.main_image_url = property.photos_urls[0];
+    property.neighborhood_image_url = getNeighborhoodImage(quartier);
 
     await supabase.rpc('save_generated_test_data', {
       p_template_id: template.id,
