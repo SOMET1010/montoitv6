@@ -108,6 +108,7 @@ export const routes: RouteObject[] = [
       },
       { path: 'recherche', element: <SearchProperties /> },
       { path: 'propriete/:id', element: <PropertyDetail /> },
+      { path: 'properties/:id', element: <PropertyDetail /> },
       {
         path: 'favoris',
         element: (

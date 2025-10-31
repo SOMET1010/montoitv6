@@ -270,6 +270,67 @@ export default function SearchProperties() {
                   <option value="5">5+ chambres</option>
                 </select>
               </div>
+
+              <div className="glass-card rounded-2xl p-4">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Salles de bain min.
+                </label>
+                <select
+                  value={bathrooms}
+                  onChange={(e) => setBathrooms(e.target.value)}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                >
+                  <option value="">Indifférent</option>
+                  <option value="1">1+ salles de bain</option>
+                  <option value="2">2+ salles de bain</option>
+                  <option value="3">3+ salles de bain</option>
+                </select>
+              </div>
+
+              <div className="glass-card rounded-2xl p-4">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Meublé
+                </label>
+                <select
+                  value={isFurnished === null ? '' : isFurnished ? 'yes' : 'no'}
+                  onChange={(e) => setIsFurnished(e.target.value === '' ? null : e.target.value === 'yes')}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                >
+                  <option value="">Indifférent</option>
+                  <option value="yes">Meublé</option>
+                  <option value="no">Non meublé</option>
+                </select>
+              </div>
+
+              <div className="glass-card rounded-2xl p-4">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Parking
+                </label>
+                <select
+                  value={hasParking === null ? '' : hasParking ? 'yes' : 'no'}
+                  onChange={(e) => setHasParking(e.target.value === '' ? null : e.target.value === 'yes')}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                >
+                  <option value="">Indifférent</option>
+                  <option value="yes">Avec parking</option>
+                  <option value="no">Sans parking</option>
+                </select>
+              </div>
+
+              <div className="glass-card rounded-2xl p-4">
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Climatisation
+                </label>
+                <select
+                  value={hasAC === null ? '' : hasAC ? 'yes' : 'no'}
+                  onChange={(e) => setHasAC(e.target.value === '' ? null : e.target.value === 'yes')}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                >
+                  <option value="">Indifférent</option>
+                  <option value="yes">Avec climatisation</option>
+                  <option value="no">Sans climatisation</option>
+                </select>
+              </div>
             </div>
 
             <div className="mt-6 flex justify-end">
@@ -278,7 +339,7 @@ export default function SearchProperties() {
                 className="btn-primary px-8 py-3 flex items-center space-x-2"
               >
                 <Sparkles className="h-5 w-5" />
-                <span>Appliquer les filtres</span>
+                <span>Appliquer les filtres ({activeFiltersCount})</span>
               </button>
             </div>
           </div>
@@ -385,6 +446,23 @@ export default function SearchProperties() {
             </h1>
             {searchCity && (
               <p className="text-gray-600 text-lg">à <span className="font-bold text-terracotta-600">{searchCity}</span></p>
+            )}
+            {properties.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                  {properties.filter(p => p.status === 'disponible').length} disponibles
+                </span>
+                {propertyType && (
+                  <span className="text-xs bg-terracotta-100 text-terracotta-800 px-3 py-1 rounded-full font-semibold">
+                    Type: {propertyType}
+                  </span>
+                )}
+                {maxPrice && (
+                  <span className="text-xs bg-coral-100 text-coral-800 px-3 py-1 rounded-full font-semibold">
+                    Max: {parseFloat(maxPrice).toLocaleString()} FCFA
+                  </span>
+                )}
+              </div>
             )}
           </div>
 

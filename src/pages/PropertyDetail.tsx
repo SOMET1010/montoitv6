@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, ArrowLeft, Send, Heart } from 'lucide-react';
+import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, ArrowLeft, Send, Heart, X, ChevronLeft, ChevronRight, Maximize2, Shield, CheckCircle, MessageCircle, Clock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { Database } from '../lib/database.types';
@@ -20,6 +20,8 @@ export default function PropertyDetail() {
   const [error, setError] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
+  const [showFullscreenGallery, setShowFullscreenGallery] = useState(false);
+  const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0);
 
   useEffect(() => {
     const propertyId = window.location.pathname.split('/').pop();
@@ -216,7 +218,7 @@ export default function PropertyDetail() {
             <div className="card-scrapbook overflow-hidden mb-6 animate-slide-down">
               {images.length > 0 ? (
                 <>
-                  <div className="relative h-96 bg-gray-200">
+                  <div className="relative h-96 bg-gray-200 group cursor-pointer" onClick={() => { setShowFullscreenGallery(true); setFullscreenImageIndex(selectedImage); }}>
                     <img
                       src={images[selectedImage]}
                       alt={property.title}
@@ -225,10 +227,17 @@ export default function PropertyDetail() {
                     <div className="absolute top-4 right-4 bg-gradient-to-r from-terracotta-500 to-coral-500 text-white px-6 py-3 rounded-2xl text-lg font-bold shadow-glow-lg animate-glow">
                       {property.monthly_rent.toLocaleString()} FCFA/mois
                     </div>
+                    <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-xl flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Maximize2 className="h-4 w-4" />
+                      <span className="text-sm font-medium">Voir en plein écran</span>
+                    </div>
+                    <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-sm font-medium">
+                      {selectedImage + 1} / {images.length}
+                    </div>
                   </div>
                   {images.length > 1 && (
-                    <div className="grid grid-cols-4 gap-2 p-4">
-                      {images.slice(0, 4).map((img, index) => (
+                    <div className="grid grid-cols-5 gap-2 p-4">
+                      {images.slice(0, 10).map((img, index) => (
                         <button
                           key={index}
                           onClick={() => setSelectedImage(index)}
@@ -239,6 +248,14 @@ export default function PropertyDetail() {
                           <img src={img} alt={`Image ${index + 1}`} className="w-full h-full object-cover" />
                         </button>
                       ))}
+                      {images.length > 10 && (
+                        <button
+                          onClick={() => { setShowFullscreenGallery(true); setFullscreenImageIndex(0); }}
+                          className="relative h-20 rounded-lg overflow-hidden bg-gradient-to-br from-terracotta-500 to-coral-500 flex items-center justify-center text-white font-bold hover:scale-105 transition-transform"
+                        >
+                          +{images.length - 10}
+                        </button>
+                      )}
                     </div>
                   )}
                 </>
@@ -356,6 +373,48 @@ export default function PropertyDetail() {
                       <span className="font-semibold text-gray-900">{property.charges_amount.toLocaleString()} FCFA</span>
                     </div>
                   )}
+                  <div className="pt-3 border-t border-gray-200">
+                    <div className="flex justify-between text-lg font-bold">
+                      <span className="text-gray-900">Total estimé (1er mois)</span>
+                      <span className="text-terracotta-600">
+                        {(property.monthly_rent + (property.deposit_amount || 0) + (property.charges_amount || 0)).toLocaleString()} FCFA
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t pt-6 mt-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Garanties et Sécurité</h2>
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3 bg-olive-50 px-4 py-3 rounded-lg">
+                    <Shield className="h-5 w-5 text-olive-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">Vérification ANSUT</p>
+                      <p className="text-xs text-gray-600">Identité vérifiée via ONECI</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3 bg-cyan-50 px-4 py-3 rounded-lg">
+                    <CheckCircle className="h-5 w-5 text-cyan-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">Signature électronique</p>
+                      <p className="text-xs text-gray-600">Contrat sécurisé via CryptoNeo</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3 bg-coral-50 px-4 py-3 rounded-lg">
+                    <MessageCircle className="h-5 w-5 text-coral-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">Paiement Mobile Money</p>
+                      <p className="text-xs text-gray-600">Orange, MTN, Moov acceptés</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3 bg-amber-50 px-4 py-3 rounded-lg">
+                    <Clock className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-gray-900 text-sm">Publié le</p>
+                      <p className="text-xs text-gray-600">{new Date(property.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -380,8 +439,12 @@ export default function PropertyDetail() {
                     </div>
                   </div>
                   {owner.is_verified && (
-                    <div className="flex items-center space-x-2 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg mb-4">
-                      <span className="font-medium">✓ Compte vérifié ANSUT</span>
+                    <div className="bg-gradient-to-r from-olive-50 to-green-50 border-2 border-olive-200 px-4 py-3 rounded-xl mb-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Shield className="h-5 w-5 text-olive-600" />
+                        <span className="font-bold text-olive-900">Compte vérifié ANSUT</span>
+                      </div>
+                      <p className="text-xs text-gray-600 ml-7">Identité certifiée par ONECI</p>
                     </div>
                   )}
                 </div>
@@ -391,24 +454,33 @@ export default function PropertyDetail() {
                 <div className="space-y-3">
                   <button
                     onClick={handleApply}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium flex items-center justify-center space-x-2"
+                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <Calendar className="h-5 w-5" />
-                    <span>Postuler</span>
+                    <span>Postuler maintenant</span>
                   </button>
                   <a
                     href={`/visiter/${property.id}`}
-                    className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition font-medium flex items-center justify-center space-x-2"
+                    className="w-full bg-gradient-to-r from-orange-500 to-coral-500 text-white py-3 rounded-xl hover:from-orange-600 hover:to-coral-600 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <Calendar className="h-5 w-5" />
                     <span>Planifier une visite</span>
                   </a>
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(`Bonjour, je suis intéressé par la propriété: ${property.title} - ${property.monthly_rent.toLocaleString()} FCFA/mois. Lien: ${window.location.href}`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    <span>WhatsApp</span>
+                  </a>
                   <button
                     onClick={() => setShowContactForm(!showContactForm)}
-                    className="w-full bg-white border-2 border-blue-600 text-blue-600 py-3 rounded-lg hover:bg-blue-50 transition font-medium flex items-center justify-center space-x-2"
+                    className="w-full bg-white border-2 border-terracotta-500 text-terracotta-600 py-3 rounded-xl hover:bg-terracotta-50 transition-all font-bold flex items-center justify-center space-x-2 transform hover:scale-105"
                   >
                     <Send className="h-5 w-5" />
-                    <span>Contacter</span>
+                    <span>Envoyer un message</span>
                   </button>
 
                   {showContactForm && (
@@ -458,6 +530,78 @@ export default function PropertyDetail() {
           </div>
         </div>
       </div>
+
+      {user?.id !== property.owner_id && (
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-gray-200 p-4 z-40 shadow-2xl">
+          <div className="flex gap-2">
+            <button
+              onClick={handleApply}
+              className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <Calendar className="h-5 w-5" />
+              <span>Postuler</span>
+            </button>
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`Bonjour, je suis intéressé par la propriété: ${property.title} - ${property.monthly_rent.toLocaleString()} FCFA/mois. Lien: ${window.location.href}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl font-bold flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <MessageCircle className="h-5 w-5" />
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      )}
+
+      {showFullscreenGallery && (
+        <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-fade-in">
+          <button
+            onClick={() => setShowFullscreenGallery(false)}
+            className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          <button
+            onClick={() => setFullscreenImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
+            className="absolute left-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50"
+          >
+            <ChevronLeft className="h-8 w-8" />
+          </button>
+
+          <button
+            onClick={() => setFullscreenImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
+            className="absolute right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50"
+          >
+            <ChevronRight className="h-8 w-8" />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/50 px-4 py-2 rounded-lg">
+            {fullscreenImageIndex + 1} / {images.length}
+          </div>
+
+          <img
+            src={images[fullscreenImageIndex]}
+            alt={`${property.title} - Image ${fullscreenImageIndex + 1}`}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+          />
+
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex gap-2 overflow-x-auto max-w-[90vw] px-4">
+            {images.map((img, index) => (
+              <button
+                key={index}
+                onClick={() => setFullscreenImageIndex(index)}
+                className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all ${
+                  fullscreenImageIndex === index ? 'ring-4 ring-terracotta-500' : 'opacity-50 hover:opacity-100'
+                }`}
+              >
+                <img src={img} alt={`Thumbnail ${index + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

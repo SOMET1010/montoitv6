@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Map, AlertCircle } from 'lucide-react';
+import { Map, AlertCircle, MapPin } from 'lucide-react';
 
 const MapboxMap = lazy(() => import('./MapboxMap'));
 
@@ -68,11 +68,30 @@ export default function MapWrapper(props: MapWrapperProps) {
       fallback={
         <div
           style={{ height: props.height || '500px' }}
-          className="bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg"
+          className="relative bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden animate-pulse flex items-center justify-center"
         >
-          <div className="text-center">
-            <Map className="h-16 w-16 text-terracotta-400 mx-auto mb-4 animate-pulse" />
-            <p className="text-gray-600 font-medium">Chargement de la carte...</p>
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-terracotta-300 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-cyan-300 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-olive-300 rounded-full blur-3xl"></div>
+          </div>
+          <div className="relative z-10 text-center space-y-4">
+            <div className="w-20 h-20 bg-gradient-to-br from-terracotta-400 to-coral-400 rounded-2xl flex items-center justify-center mx-auto animate-bounce-subtle shadow-lg">
+              <Map className="h-10 w-10 text-white" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-gray-700 font-bold text-lg">Chargement de la carte...</p>
+              <p className="text-gray-600 text-sm">Préparation de vos propriétés</p>
+            </div>
+            <div className="flex items-center justify-center space-x-2">
+              <MapPin className="h-4 w-4 text-terracotta-500 animate-pulse" />
+              <MapPin className="h-4 w-4 text-cyan-500 animate-pulse" style={{ animationDelay: '0.2s' }} />
+              <MapPin className="h-4 w-4 text-olive-500 animate-pulse" style={{ animationDelay: '0.4s' }} />
+            </div>
+          </div>
+          <div className="absolute top-4 right-4 space-y-2">
+            <div className="w-10 h-10 bg-white/80 rounded-lg"></div>
+            <div className="w-10 h-10 bg-white/80 rounded-lg"></div>
           </div>
         </div>
       }

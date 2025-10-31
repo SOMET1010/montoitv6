@@ -10,6 +10,7 @@ type Property = Database['public']['Tables']['properties']['Row'];
 
 export default function Home() {
   const [properties, setProperties] = useState<Property[]>([]);
+  const [totalProperties, setTotalProperties] = useState(0);
   const [loading, setLoading] = useState(true);
   const [searchCity, setSearchCity] = useState('');
   const [scrollY, setScrollY] = useState(0);
@@ -65,6 +66,13 @@ export default function Home() {
 
       if (error) throw error;
       setProperties(data || []);
+
+      const { count } = await supabase
+        .from('properties')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'disponible');
+
+      setTotalProperties(count || 0);
     } catch (error) {
       console.error('Error loading properties:', error);
     } finally {
@@ -260,7 +268,7 @@ export default function Home() {
               href="/recherche"
               className="mt-4 md:mt-0 btn-secondary flex items-center space-x-2"
             >
-              <span>Voir tout</span>
+              <span>Voir les {totalProperties} propriétés</span>
               <TrendingUp className="h-5 w-5" />
             </a>
           </div>
