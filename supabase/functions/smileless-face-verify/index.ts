@@ -7,8 +7,8 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const SMILELESS_API_BASE = "https://neoface.aineo.ai/api";
-const SMILELESS_TOKEN = Deno.env.get("SMILELESS_TOKEN") || "CLIENT-M1B9ZMSZ2FCK";
+const SMILELESS_API_BASE = "https://neoface.aineo.ai/api/v2";
+const SMILELESS_TOKEN = Deno.env.get("SMILELESS_TOKEN") || "7JpTxE9Io6ZFIZN96bS8UZkkCbsC0h8kY4hXEVmVoYOZdPoC1TNOhWHyudUuOSQp";
 
 interface UploadDocumentRequest {
   action: 'upload_document';
