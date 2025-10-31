@@ -1,7 +1,8 @@
 # 📋 BACKLOG - MON TOIT PLATFORM
 
-**Version:** 3.5
-**Date:** 29 Octobre 2025
+**Version:** 3.6
+**Date:** 31 Octobre 2025
+**Dernière mise à jour:** EPICs 14-17 définis
 **Client:** SOMET PATRICK
 **Méthodologie:** Agile Scrum
 **Durée Sprint:** 2 semaines
