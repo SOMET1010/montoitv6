@@ -1,29 +1,38 @@
 /**
- * Images authentiques du Burkina Faso pour MZAKA
- * Architecture locale, quartiers, et style burkinabé
+ * 🇧🇫 Images pour MZAKA - Burkina Faso
+ *
+ * ⚠️ IMPORTANT: Remplacez ces URLs par vos propres photos du Burkina Faso
+ *
+ * Photos recommandées à prendre:
+ * 1. Villa moderne à Ouaga 2000 ou Zone 1
+ * 2. Immeuble résidentiel à Ouagadougou (style local)
+ * 3. Quartier résidentiel de Bobo-Dioulasso
+ *
+ * Format: 1920x1080px minimum, JPG optimisé
+ * Hébergement: Uploadez dans /public/images/ ou utilisez Supabase Storage
  */
 
-// Images hero représentatives du Burkina Faso
+// Images hero - REMPLACEZ PAR VOS VRAIES PHOTOS DU BURKINA FASO
 export const BURKINA_HERO_IMAGES = [
   {
     title: 'Trouvez votre MZAKA idéale',
     subtitle: 'À Ouagadougou et dans tout le Burkina Faso',
-    // Architecture résidentielle africaine moderne
-    image: 'https://images.pexels.com/photos/1370704/pexels-photo-1370704.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    // TODO: Remplacer par photo de villa/logement moderne à Ouagadougou
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80',
     overlay: 'from-primary-900/85 via-primary-800/75 to-transparent'
   },
   {
     title: 'Logements modernes et authentiques',
     subtitle: 'Studios, appartements, villas à Ouaga et Bobo',
-    // Quartier résidentiel africain
-    image: 'https://images.pexels.com/photos/259588/pexels-photo-259588.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    // TODO: Remplacer par photo d'immeuble résidentiel burkinabé
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1920&q=80',
     overlay: 'from-secondary-900/85 via-secondary-800/75 to-transparent'
   },
   {
     title: 'Location simple et sécurisée',
     subtitle: 'Contactez directement les propriétaires',
-    // Maisons colorées africaines
-    image: 'https://images.pexels.com/photos/1647053/pexels-photo-1647053.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    // TODO: Remplacer par photo de quartier résidentiel (Zone 1, 2Plateaux, etc.)
+    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80',
     overlay: 'from-accent-900/85 via-accent-800/75 to-transparent'
   },
 ];
