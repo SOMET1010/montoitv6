@@ -1,6 +1,6 @@
 /**
- * Application-wide constants
- * Keep this file organized by category
+ * MZAKA Platform - Application Constants
+ * Burkina Faso Real Estate Marketplace
  */
 
 // API & Environment
@@ -17,38 +17,19 @@ export const ROUTES = {
   PROPERTIES: {
     SEARCH: '/recherche',
     DETAIL: '/propriete/:id',
-    ADD: '/dashboard/ajouter-propriete',
+    ADD: '/publier',
   },
   DASHBOARD: {
-    OWNER: '/dashboard/proprietaire',
-    TENANT: '/dashboard/locataire',
+    OWNER: '/tableau-de-bord/proprietaire',
+    TENANT: '/tableau-de-bord/locataire',
   },
   PROFILE: '/profil',
   MESSAGES: '/messages',
-  CONTRACTS: {
-    LIST: '/mes-contrats',
-    DETAIL: '/contrat/:id',
-    CREATE: '/creer-contrat/:propertyId/:tenantId',
-    SIGN: '/signer-bail/:id',
-  },
-  PAYMENTS: {
-    MAKE: '/effectuer-paiement',
-    HISTORY: '/mes-paiements',
-  },
-  VERIFICATION: {
-    REQUEST: '/verification',
-    ANSUT: '/certification-ansut',
-    CERTIFICATES: '/mes-certificats',
-  },
   VISITS: {
     SCHEDULE: '/visiter/:id',
     MY_VISITS: '/mes-visites',
   },
   FAVORITES: '/favoris',
-  SEARCHES: '/recherches-sauvegardees',
-  ADMIN: {
-    API_KEYS: '/admin/api-keys',
-  },
 } as const;
 
 // Property Types
@@ -56,88 +37,69 @@ export const PROPERTY_TYPES = [
   { value: 'apartment', label: 'Appartement' },
   { value: 'house', label: 'Maison' },
   { value: 'studio', label: 'Studio' },
-  { value: 'villa', label: 'Villa' },
-  { value: 'duplex', label: 'Duplex' },
-  { value: 'office', label: 'Bureau' },
+  { value: 'land', label: 'Terrain' },
   { value: 'commercial', label: 'Local Commercial' },
+  { value: 'other', label: 'Autre' },
 ] as const;
 
-// Cities
+// Cities (Burkina Faso)
 export const CITIES = [
-  'Abidjan',
-  'Yamoussoukro',
-  'Bouaké',
-  'Daloa',
-  'San-Pédro',
-  'Korhogo',
-  'Man',
-  'Gagnoa',
-  'Divo',
-  'Abengourou',
+  'Ouagadougou',
+  'Bobo-Dioulasso',
+  'Koudougou',
+  'Ouahigouya',
+  'Banfora',
+  'Dédougou',
+  'Kaya',
+  'Tenkodogo',
+  'Fada N\'Gourma',
+  'Houndé',
+  'Réo',
+  'Gaoua',
 ] as const;
 
-// Abidjan Communes
-export const ABIDJAN_COMMUNES = [
-  'Abobo',
-  'Adjamé',
-  'Attécoubé',
-  'Cocody',
-  'Koumassi',
-  'Marcory',
-  'Plateau',
-  'Port-Bouët',
-  'Treichville',
-  'Yopougon',
-  'Bingerville',
-  'Songon',
-  'Anyama',
+// Ouagadougou Neighborhoods
+export const OUAGADOUGOU_NEIGHBORHOODS = [
+  'Zone 1',
+  'Zone 2',
+  'Zone 3',
+  'Zone 4',
+  'Gounghin',
+  'Cissin',
+  'Tanghin',
+  'Somgandé',
+  'Dapoya',
+  'Paspanga',
+  'Ouaga 2000',
+  'Kossodo',
 ] as const;
 
 // User Types
 export const USER_TYPES = [
   { value: 'tenant', label: 'Locataire' },
   { value: 'owner', label: 'Propriétaire' },
-  { value: 'agency', label: 'Agence' },
+  { value: 'both', label: 'Les deux' },
 ] as const;
 
-// Payment Methods
+// Payment Methods (Burkina Faso)
 export const PAYMENT_METHODS = [
-  { value: 'orange_money', label: 'Orange Money', prefixes: ['07', '227'] },
-  { value: 'mtn_money', label: 'MTN Money', prefixes: ['05', '054', '055', '056'] },
-  { value: 'moov_money', label: 'Moov Money', prefixes: ['01'] },
-  { value: 'wave', label: 'Wave', prefixes: [] },
+  { value: 'orange_money', label: 'Orange Money', prefixes: ['07', '77'] },
+  { value: 'moov_money', label: 'Moov Africa', prefixes: ['01', '71'] },
+  { value: 'coris_money', label: 'Coris Money', prefixes: [] },
+  { value: 'cash', label: 'Espèces', prefixes: [] },
 ] as const;
-
-// Lease Durations (in months)
-export const LEASE_DURATIONS = [6, 12, 24, 36] as const;
 
 // File Upload Limits
 export const FILE_UPLOAD = {
   MAX_SIZE: 5 * 1024 * 1024, // 5MB
-  MAX_IMAGES: 10,
+  MAX_IMAGES: 8,
   ACCEPTED_IMAGE_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
-  ACCEPTED_DOCUMENT_TYPES: ['application/pdf', 'image/jpeg', 'image/png'],
 } as const;
 
 // Pagination
 export const PAGINATION = {
   DEFAULT_PAGE_SIZE: 12,
-  PAGE_SIZE_OPTIONS: [12, 24, 48, 96],
-} as const;
-
-// Verification Status
-export const VERIFICATION_STATUS = {
-  PENDING: 'pending',
-  VERIFIED: 'verified',
-  REJECTED: 'rejected',
-} as const;
-
-// Score Thresholds
-export const SCORE_THRESHOLDS = {
-  EXCELLENT: 80,
-  GOOD: 60,
-  FAIR: 40,
-  POOR: 0,
+  PAGE_SIZE_OPTIONS: [12, 24, 48],
 } as const;
 
 // Notification Duration (ms)
@@ -152,15 +114,12 @@ export const DATE_FORMATS = {
   DISPLAY: 'DD/MM/YYYY',
   DISPLAY_WITH_TIME: 'DD/MM/YYYY HH:mm',
   ISO: 'YYYY-MM-DD',
-  DATABASE: 'YYYY-MM-DD HH:mm:ss',
 } as const;
 
 // Regex Patterns
 export const REGEX_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  PHONE_CI: /^[0-9]{10}$/,
-  CNI: /^[0-9]{12}$/,
-  CNAM: /^[0-9]{10}$/,
+  PHONE_BF: /^[0-9]{8}$/,
   PASSWORD: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/,
 } as const;
 
@@ -169,8 +128,6 @@ export const ERROR_MESSAGES = {
   REQUIRED_FIELD: 'Ce champ est obligatoire',
   INVALID_EMAIL: 'Adresse email invalide',
   INVALID_PHONE: 'Numéro de téléphone invalide',
-  INVALID_CNI: 'Numéro CNI invalide (12 chiffres)',
-  INVALID_CNAM: 'Numéro CNAM invalide (10 chiffres)',
   PASSWORD_TOO_SHORT: 'Le mot de passe doit contenir au moins 8 caractères',
   PASSWORD_MISMATCH: 'Les mots de passe ne correspondent pas',
   FILE_TOO_LARGE: 'Le fichier est trop volumineux (max 5MB)',
@@ -183,20 +140,20 @@ export const ERROR_MESSAGES = {
 export const SUCCESS_MESSAGES = {
   LOGIN_SUCCESS: 'Connexion réussie',
   SIGNUP_SUCCESS: 'Inscription réussie',
-  PROFILE_UPDATED: 'Profil mis à jour avec succès',
-  PROPERTY_CREATED: 'Propriété créée avec succès',
-  PROPERTY_UPDATED: 'Propriété mise à jour avec succès',
+  PROFILE_UPDATED: 'Profil mis à jour',
+  PROPERTY_CREATED: 'Propriété publiée avec succès',
+  PROPERTY_UPDATED: 'Propriété mise à jour',
   MESSAGE_SENT: 'Message envoyé',
-  PAYMENT_SUCCESS: 'Paiement effectué avec succès',
-  VERIFICATION_SUBMITTED: 'Demande de vérification envoyée',
+  VISIT_REQUESTED: 'Demande de visite envoyée',
+  FAVORITE_ADDED: 'Ajouté aux favoris',
+  FAVORITE_REMOVED: 'Retiré des favoris',
 } as const;
 
 // Local Storage Keys
 export const STORAGE_KEYS = {
-  AUTH_TOKEN: 'auth-token',
-  USER_PREFERENCES: 'user-preferences',
-  SEARCH_HISTORY: 'search-history',
-  THEME: 'theme',
+  AUTH_TOKEN: 'mzaka-auth-token',
+  USER_PREFERENCES: 'mzaka-preferences',
+  SEARCH_HISTORY: 'mzaka-search-history',
 } as const;
 
 // API Rate Limits

@@ -1,59 +1,55 @@
-# Mon Toit - Plateforme de Location Immobilière
+# MZAKA - Marketplace Immobilière au Burkina Faso
 
-[![CI](https://github.com/your-org/mon-toit/workflows/CI/badge.svg)](https://github.com/your-org/mon-toit/actions)
+[![Version](https://img.shields.io/badge/Version-1.0.0-blue)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-blue)](https://react.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-green)](https://supabase.com/)
-[![Version](https://img.shields.io/badge/Version-3.3.0-brightgreen)](CHANGELOG.md)
 
-Plateforme moderne de gestion locative en Côte d'Ivoire avec certification ANSUT, signature électronique, et paiement mobile money.
+Marketplace immobilière simplifiée pour le Burkina Faso. Trouvez ou louez des logements à Ouagadougou, Bobo-Dioulasso et partout au pays.
 
-## 🎉 Architecture Refactoring Complete (v3.3.0)
+## Nom du Projet
 
-**Phase 1 Complete!** The codebase has been fully refactored with:
-- ✅ React Router v6 with lazy loading
-- ✅ Repository pattern for all database operations
-- ✅ React Query hooks for optimal data fetching
-- ✅ Zustand state management
-- ✅ Protected routes with role-based access
-- ✅ Code splitting and performance optimization
+**MZAKA** signifie "maison" en langue Mooré, la langue principale du Burkina Faso.
 
-See [ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md](ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md) for details.
+## Fonctionnalités Actuelles
 
-## ✨ Fonctionnalités
+### Core Marketplace
+- Publication et recherche de propriétés
+- Filtres de recherche (ville, type, prix, chambres)
+- Détails des propriétés avec galerie photos
+- Système de favoris
+- Compteur de vues
 
-### Actuellement Disponibles
+### Communication
+- Messagerie en temps réel entre locataires et propriétaires
+- Demandes de visite
+- Gestion des visites (accepter/refuser/compléter)
 
-- ✅ **Authentification sécurisée** - Inscription et connexion via Supabase Auth
-- ✅ **Gestion de propriétés** - Publication, recherche, et consultation d'annonces
-- ✅ **Messagerie en temps réel** - Communication entre locataires et propriétaires
-- ✅ **Planification de visites** - Demande et gestion des visites
-- ✅ **Candidatures locatives** - Soumission et évaluation des dossiers
-- ✅ **Système de scoring** - Évaluation de la fiabilité des locataires
-- ✅ **Favoris et alertes** - Sauvegarde de propriétés et alertes de prix
+### Utilisateurs
+- Authentification Supabase (email/password)
+- Profils utilisateurs (locataire, propriétaire, ou les deux)
+- Dashboards personnalisés
 
-### En Développement (Epic 2)
+## Stack Technique
 
-- 🚧 **Vérification ANSUT** - Vérification d'identité ONECI, CNAM, Smile ID
-- 🚧 **Signature électronique** - Intégration CryptoNeo pour signature légale
-- 🚧 **Contrats numériques** - Génération et gestion de baux électroniques
-- 🚧 **Certification** - Système de certification ANSUT complet
+### Frontend
+- **React 18.3** - Framework UI
+- **TypeScript 5.5** - Typage statique
+- **Vite 5.4** - Build tool ultra-rapide
+- **Tailwind CSS 3.4** - Styling moderne
+- **React Router 6** - Routing
+- **Lucide React** - Icônes
 
-### Planifiées (Epics 3-12)
+### Backend
+- **Supabase** - Backend as a Service
+  - PostgreSQL avec Row Level Security (RLS)
+  - Authentication
+  - Storage pour images
+  - Realtime subscriptions
 
-- 📅 Paiement Mobile Money (Orange, MTN, Moov, Wave)
-- 📅 Notifications multi-canaux (Email, SMS, Push)
-- 📅 Carte interactive avancée (Mapbox)
-- 📅 Dashboards et statistiques
-- 📅 Gestion d'agences immobilières
-- 📅 Système d'avis et réputation
-- 📅 Maintenance et support
-- 📅 Administration plateforme
-
-## 🚀 Démarrage Rapide
+## Démarrage Rapide
 
 ### Prérequis
-
 - Node.js >= 20.x
 - npm >= 10.x
 - Compte Supabase
@@ -61,261 +57,203 @@ See [ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md](ARCHITECTURAL_REFACTORING_PHA
 ### Installation
 
 ```bash
-# Cloner le dépôt
-git clone <repository-url>
-cd mon-toit
-
-# Installer les dépendances
+# 1. Installer les dépendances
 npm install
 
-# Configurer les variables d'environnement
+# 2. Configurer les variables d'environnement
 cp .env.example .env
-# Éditer .env avec vos credentials Supabase
 
-# Lancer le serveur de développement
+# 3. Éditer .env avec vos credentials Supabase
+# VITE_SUPABASE_URL=your_supabase_url
+# VITE_SUPABASE_ANON_KEY=your_anon_key
+
+# 4. Lancer le serveur de développement
 npm run dev
 ```
 
 L'application sera accessible sur `http://localhost:5173`
 
-## 📚 Documentation
+## Structure de la Base de Données
 
-### Architecture & Refactoring (NEW)
-- **[NEW ARCHITECTURE QUICK START](NEW_ARCHITECTURE_QUICK_START.md)** ⭐ Start here!
-- **[Refactoring Phase 1 Complete](ARCHITECTURAL_REFACTORING_PHASE1_COMPLETE.md)** - Comprehensive refactoring summary
+### Tables Principales
 
-### Development Guides
-- **[Guide de Configuration](docs/guides/SETUP.md)** - Instructions complètes pour configurer l'environnement
-- **[Architecture](docs/ARCHITECTURE.md)** - Vue d'ensemble de l'architecture système
-- **[Base de Données](docs/DATABASE.md)** - Documentation du schéma et des RLS
-- **[Standards de Code](docs/guides/CODING_STANDARDS.md)** - Conventions et bonnes pratiques
-- **[Migration TypeScript](docs/guides/TYPESCRIPT_MIGRATION.md)** - Guide de migration vers strict mode
+#### profiles
+- Profils utilisateurs
+- Champs: id, email, full_name, phone, user_type, avatar_url, city, bio
 
-### Reference
-- **[ADR Index](docs/adr/README.md)** - Décisions architecturales
-- **[Changelog](CHANGELOG.md)** - Historique des versions
+#### properties
+- Propriétés immobilières
+- Champs: title, description, property_type, city, neighborhood, address, price, bedrooms, bathrooms, area, is_furnished, pets_allowed, status, images, view_count
 
-## 🛠️ Stack Technique
+#### messages
+- Messages entre utilisateurs
+- Champs: property_id, sender_id, receiver_id, content, is_read
 
-### Frontend
-- **React 18.3** - Bibliothèque UI avec hooks
-- **TypeScript 5.5** - Typage statique en mode strict
-- **React Router 6** - Routing avec code splitting
-- **Vite 5.4** - Build tool et dev server
-- **Tailwind CSS 3.4** - Framework CSS utilitaire
-- **Zustand 4.5** - Client state management
-- **React Query 5.x** - Server state management avec caching
-- **Lucide React** - Icônes
+#### visits
+- Demandes de visite
+- Champs: property_id, tenant_id, owner_id, requested_date, status, notes
 
-### Backend
-- **Supabase** - Backend as a Service
-  - PostgreSQL avec Row Level Security
-  - Authentication
-  - Storage
-  - Edge Functions (Deno)
-  - Realtime subscriptions
+#### favorites
+- Propriétés favorites
+- Champs: user_id, property_id
 
-### Testing & Qualité
-- **Vitest** - Framework de tests
-- **Testing Library** - Tests de composants
-- **ESLint** - Linting
-- **Prettier** - Formatage de code
-- **Husky** - Git hooks
+### Sécurité
+- RLS activé sur toutes les tables
+- Policies restrictives par défaut
+- Authentification requise pour la plupart des actions
+- Lecture publique des propriétés disponibles
 
-### CI/CD
-- **GitHub Actions** - Automatisation
-- **Netlify** - Déploiement (prévu)
-
-## 📁 Structure du Projet
-
-```
-mon-toit/
-├── src/
-│   ├── api/              # Client API et repositories
-│   │   └── repositories/ # Repository pattern (7 repos)
-│   ├── components/       # Composants React
-│   │   ├── ui/          # Composants UI réutilisables
-│   │   ├── Layout.tsx   # Layout principal
-│   │   └── ProtectedRoute.tsx # Route protection
-│   ├── constants/        # Constantes de l'application
-│   ├── hooks/           # Hooks React personnalisés
-│   │   ├── useProperties.ts # React Query hooks
-│   │   ├── useLeases.ts
-│   │   └── useMessages.ts
-│   ├── pages/           # Composants de pages (lazy loaded)
-│   ├── routes/          # Configuration routes
-│   │   └── index.tsx    # Toutes les routes
-│   ├── services/        # Logique métier
-│   ├── stores/          # Stores Zustand
-│   ├── types/           # Types TypeScript
-│   └── utils/           # Fonctions utilitaires
-├── supabase/
-│   ├── functions/       # Edge Functions
-│   └── migrations/      # Migrations de base de données
-├── docs/                # Documentation
-└── [config files]       # Fichiers de configuration
-```
-
-## 🧪 Tests
+## Scripts Disponibles
 
 ```bash
-# Lancer les tests en mode watch
-npm run test
+# Développement
+npm run dev           # Lancer le serveur de développement
 
-# Interface graphique des tests
-npm run test:ui
+# Build
+npm run build         # Créer le build de production
+npm run preview       # Prévisualiser le build
 
-# Rapport de couverture
-npm run test:coverage
+# Qualité du code
+npm run lint          # Vérifier le code
+npm run lint:fix      # Corriger automatiquement
+npm run format        # Formater le code
+npm run typecheck     # Vérifier les types TypeScript
+
+# Tests
+npm run test          # Lancer les tests
+npm run test:ui       # Interface graphique des tests
+npm run test:coverage # Rapport de couverture
 ```
 
-## 🔍 Qualité du Code
+## Configuration Supabase
 
-```bash
-# Linter
-npm run lint
-npm run lint:fix
+### 1. Créer un Projet Supabase
+- Aller sur https://supabase.com
+- Créer un nouveau projet
+- Noter l'URL et la clé anonyme (anon key)
 
-# Formatage
-npm run format
-npm run format:check
+### 2. Appliquer les Migrations
+Les migrations sont dans `supabase/migrations/`:
+- `reset_database_for_mzaka.sql` - Crée toutes les tables
+- `add_storage_buckets_v2.sql` - Configure le storage
 
-# Vérification des types
-npm run typecheck
-```
+Appliquer via le dashboard Supabase SQL Editor ou Supabase CLI.
 
-## 🏗️ Build
+### 3. Configuration Storage
+Deux buckets sont créés automatiquement:
+- `property-images` - Photos des propriétés (public)
+- `avatars` - Photos de profil (public)
 
-```bash
-# Build de production
-npm run build
+## Développement
 
-# Prévisualiser le build
-npm run preview
-```
+### Ajouter une Nouvelle Fonctionnalité
 
-## 🤝 Contribution
+1. **Backend (Base de données)**
+   - Créer migration dans `supabase/migrations/`
+   - Appliquer la migration
+   - Mettre à jour les types dans `src/lib/database.types.ts`
 
-1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Commit les changements (`git commit -m 'feat: Add AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
+2. **Types TypeScript**
+   - Ajouter/modifier types dans `src/types/index.ts`
 
-Voir [CONTRIBUTING.md](docs/guides/CONTRIBUTING.md) pour plus de détails.
+3. **Service/API**
+   - Créer service dans `src/services/` si nécessaire
+   - Utiliser le client Supabase directement dans les composants pour une approche simple
 
-## 📝 Conventions de Commit
+4. **Composant/Page**
+   - Créer composant dans `src/components/` ou page dans `src/pages/`
+   - Ajouter route dans `src/routes/index.tsx`
 
-Nous suivons [Conventional Commits](https://www.conventionalcommits.org/):
+### Bonnes Pratiques
+- Toujours typer avec TypeScript
+- Utiliser les constantes de `src/constants/index.ts`
+- Gérer les erreurs proprement
+- Optimiser les images avant upload
+- Tester sur mobile
 
-```
-feat(scope): description courte
+## Adaptation au Burkina Faso
 
-Description détaillée si nécessaire.
+### Villes Principales
+Ouagadougou, Bobo-Dioulasso, Koudougou, Ouahigouya, Banfora, Dédougou, Kaya, Tenkodogo, Fada N'Gourma, Houndé, Réo, Gaoua
 
-Closes #123
-```
+### Paiements Mobile Money
+Le système est prêt pour:
+- Orange Money (07, 77)
+- Moov Africa (01, 71)
+- Coris Money
+- Espèces
 
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+### Langue
+- Interface en français
+- Format de date français (DD/MM/YYYY)
+- Devise: Franc CFA (XOF)
 
-## 🔐 Sécurité
+## Roadmap & Prochaines Fonctionnalités
 
-- Row Level Security (RLS) activé sur toutes les tables
-- Authentication via Supabase Auth
-- Variables d'environnement pour les secrets
+### Phase 1 - MVP Actuelle (v1.0) ✅
+- [x] Publication propriétés
+- [x] Recherche et filtres
+- [x] Messagerie
+- [x] Demandes de visite
+- [x] Favoris
+
+### Phase 2 - Améliorations (v1.1)
+- [ ] Notifications en temps réel
+- [ ] Upload multiple images amélioré
+- [ ] Carte interactive (Mapbox)
+- [ ] Filtres avancés
+- [ ] Profils publics enrichis
+
+### Phase 3 - Monétisation (v1.2)
+- [ ] Paiement Mobile Money intégré
+- [ ] Abonnements propriétaires
+- [ ] Annonces sponsorisées
+- [ ] Système de commission
+
+### Phase 4 - Avancé (v2.0)
+- [ ] Application mobile (React Native)
+- [ ] Contrats de location numériques
+- [ ] Système de notation et avis
+- [ ] Dashboard analytics avancé
+- [ ] API publique
+
+## Contribution
+
+Ce projet est actuellement en développement privé. Pour toute question ou suggestion:
+- Email: contact@mzaka.bf
+- Issue Tracker: À venir
+
+## Sécurité
+
+- Authentification sécurisée via Supabase Auth
+- Row Level Security (RLS) sur toutes les tables
 - Validation des entrées côté client et serveur
 - HTTPS uniquement en production
+- Protection CSRF
 
-Voir [SECURITY.md](docs/SECURITY.md) pour la politique de sécurité.
+Pour signaler une vulnérabilité: security@mzaka.bf
 
-## 📊 État du Projet
+## Performance
 
-### Epic 1: Vérification ANSUT
-- ✅ Infrastructure de vérification
-- 🚧 Intégration ONECI
-- 🚧 Intégration CNAM
-- 🚧 Intégration Smile ID
+- Build optimisé avec code splitting
+- Images lazy loading
+- Cache approprié
+- Bundle size optimisé
+- Lighthouse score cible: > 90
 
-### Epic 2: Signature Électronique
-- ✅ Génération de contrats
-- 🚧 Intégration CryptoNeo
-- 📅 Workflow de signature
+## Licence
 
-### Epic 3+: Futures Fonctionnalités
-- 📅 Mobile Money (Epics 3)
-- 📅 Notifications (Epic 4)
-- 📅 Cartes (Epic 5)
-- 📅 Dashboards (Epic 6)
+Copyright © 2025 MZAKA Platform. Tous droits réservés.
 
-Voir [BACKLOG.md](BACKLOG.md) pour le backlog complet.
+## Contact & Support
 
-## 🎯 Architecture & Qualité
-
-Ce projet suit des standards architecturaux stricts:
-
-- ✅ Separation of Concerns
-- ✅ Repository Pattern
-- ✅ Type Safety (TypeScript strict)
-- ✅ Component Library
-- ✅ State Management (Zustand + React Query)
-- ✅ Testing Infrastructure
-- ✅ CI/CD Pipeline
-- ✅ Comprehensive Documentation
-
-Voir [ARCHITECTURE_IMPLEMENTATION_SUMMARY.md](ARCHITECTURE_IMPLEMENTATION_SUMMARY.md) pour les détails.
-
-## 📈 Métriques
-
-- **Couverture de tests**: Cible 70% (Phase 2)
-- **Build time**: 14 secondes
-- **Bundle size**: 485 KB → 143 KB gzippé (main)
-- **Code splitting**: 110+ chunks (6-31 KB each)
-- **TypeScript**: Strict mode activé
-- **Repositories**: 7 (all database tables covered)
-- **Custom hooks**: 6 React Query hooks
-- **Routes**: 80+ with lazy loading
-- **Lighthouse score**: Cible >90
-
-## 🌍 Déploiement
-
-### Environnements
-
-- **Development**: Local avec Supabase
-- **Staging**: Preview deployments (Netlify)
-- **Production**: montoitv35.netlify.app (prévu)
-
-### Process de Déploiement
-
-1. Push vers `develop` → Deploy staging automatique
-2. Pull Request vers `main` → Review + tests CI
-3. Merge vers `main` → Deploy production automatique
-
-Voir [DEPLOYMENT.md](docs/DEPLOYMENT.md) pour plus de détails.
-
-## 📜 Licence
-
-Copyright © 2025 Mon Toit. Tous droits réservés.
-
-## 👥 Équipe
-
-- **Product Owner**: SOMET PATRICK
-- **Développement**: Équipe Mon Toit
-- **Architecture**: Manus AI
-
-## 📞 Contact
-
-- **Site web**: https://montoit.ci (prévu)
-- **Email**: contact@montoit.ci
-- **Support**: support@montoit.ci
-
-## 🙏 Remerciements
-
-- [Supabase](https://supabase.com/) - Backend infrastructure
-- [React](https://react.dev/) - UI framework
-- [Vite](https://vitejs.dev/) - Build tool
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-- Toutes les librairies open source utilisées
+- **Site web**: https://mzaka.bf (à venir)
+- **Email**: contact@mzaka.bf
+- **Support**: support@mzaka.bf
+- **WhatsApp**: +226 XX XX XX XX
 
 ---
 
-**Made with ❤️ in Côte d'Ivoire**
+**Made with ❤️ in Burkina Faso**
+
+🏠 MZAKA - Trouvez votre logement idéal au Burkina Faso

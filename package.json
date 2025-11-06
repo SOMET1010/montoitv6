@@ -1,7 +1,7 @@
 {
-  "name": "mon-toit-platform",
+  "name": "mzaka-platform",
   "private": true,
-  "version": "3.2.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
