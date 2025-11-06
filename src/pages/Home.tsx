@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Home as HomeIcon, ArrowRight, Sparkles, Zap, Shield, Clock, Phone, Mail, Star, Award, CheckCircle } from 'lucide-react';
+import { Search, MapPin, Home as HomeIcon, ArrowRight, Zap, Shield, Clock, Star, Award, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { PropertyWithOwner } from '../types';
+import { getHeroImages } from '../constants/burkinabeImages';
 
 export default function Home() {
   const [properties, setProperties] = useState<PropertyWithOwner[]>([]);
@@ -12,27 +13,7 @@ export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0);
 
   const cities = ['Ouagadougou', 'Bobo-Dioulasso', 'Koudougou', 'Ouahigouya', 'Banfora'];
-
-  const heroSlides = [
-    {
-      title: 'Trouvez votre MZAKA idéale',
-      subtitle: 'À Ouagadougou et dans tout le Burkina Faso',
-      image: 'https://images.pexels.com/photos/1546168/pexels-photo-1546168.jpeg?auto=compress&cs=tinysrgb&w=1920',
-      overlay: 'from-primary-900/80 via-primary-800/70 to-transparent'
-    },
-    {
-      title: 'Logements modernes et confortables',
-      subtitle: 'Studios, appartements, villas à votre portée',
-      image: 'https://images.pexels.com/photos/1648776/pexels-photo-1648776.jpeg?auto=compress&cs=tinysrgb&w=1920',
-      overlay: 'from-secondary-900/80 via-secondary-800/70 to-transparent'
-    },
-    {
-      title: 'Location simple et sécurisée',
-      subtitle: 'Contactez directement les propriétaires',
-      image: 'https://images.pexels.com/photos/1029599/pexels-photo-1029599.jpeg?auto=compress&cs=tinysrgb&w=1920',
-      overlay: 'from-accent-900/80 via-accent-800/70 to-transparent'
-    },
-  ];
+  const heroSlides = getHeroImages();
 
   useEffect(() => {
     loadFeaturedProperties();
@@ -77,7 +58,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero avec images contextuelles */}
+      {/* Hero avec images authentiques du Burkina Faso */}
       <section className="relative h-[95vh] flex items-center overflow-hidden">
         {/* Images de fond en slider */}
         {heroSlides.map((slide, index) => (
@@ -215,7 +196,7 @@ export default function Home() {
                 {/* Tags rapides */}
                 <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-gray-200">
                   <span className="text-sm text-gray-600 font-medium">Populaire :</span>
-                  {['Studio Ouaga', 'Villa 2Zone', 'Appart Bobo'].map((tag) => (
+                  {['Studio Ouaga', 'Villa Zone 1', 'Appart 2Plateaux'].map((tag) => (
                     <button
                       key={tag}
                       type="button"
