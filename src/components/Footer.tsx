@@ -1,117 +1,123 @@
-import { Building2, Mail, Phone, MapPin, Shield, Heart, Sparkles } from 'lucide-react';
+import { Home, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-olive-900 text-gray-300 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-terracotta-500 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500 rounded-full blur-3xl" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+    <footer className="bg-gray-900 text-white">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid md:grid-cols-4 gap-12 mb-12">
+          {/* À propos */}
           <div>
-            <div className="flex items-center space-x-3 mb-6 group">
-              <div className="relative">
-                <Building2 className="h-10 w-10 text-terracotta-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
-                <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-amber-400 animate-pulse" />
-              </div>
-              <span className="text-3xl font-bold text-gradient">Mon Toit</span>
+            <div className="flex items-center gap-2 mb-6">
+              <Home className="w-8 h-8 text-primary-400" strokeWidth={2.5} />
+              <span className="text-2xl font-black">MZAKA</span>
             </div>
-            <p className="text-sm text-gray-400 leading-relaxed mb-4">
-              Plateforme immobilière certifiée ANSUT pour un accès universel au logement en Côte d'Ivoire.
+            <p className="text-gray-400 leading-relaxed mb-6">
+              La marketplace immobilière du Burkina Faso. Trouvez votre logement idéal en toute simplicité.
             </p>
-            <div className="inline-flex items-center space-x-2 bg-olive-900/50 backdrop-blur-sm px-3 py-2 rounded-full border border-olive-700">
-              <Shield className="h-4 w-4 text-olive-400" />
-              <span className="text-xs font-bold text-olive-300">ANSUT Certifié</span>
+            <div className="flex gap-4">
+              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary-600 rounded-full flex items-center justify-center transition-colors">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary-600 rounded-full flex items-center justify-center transition-colors">
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary-600 rounded-full flex items-center justify-center transition-colors">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary-600 rounded-full flex items-center justify-center transition-colors">
+                <Linkedin className="w-5 h-5" />
+              </a>
             </div>
           </div>
 
+          {/* Liens rapides */}
           <div>
-            <h3 className="text-white font-bold mb-5 text-lg flex items-center space-x-2">
-              <span className="text-terracotta-400">●</span>
-              <span>Liens rapides</span>
-            </h3>
-            <ul className="space-y-3 text-sm">
+            <h3 className="text-lg font-bold mb-6">Liens rapides</h3>
+            <ul className="space-y-3">
               <li>
-                <a href="/" className="hover:text-terracotta-400 transition-colors hover:translate-x-2 transform inline-block duration-200 font-medium">
-                  🏠 Accueil
+                <Link to="/recherche" className="text-gray-400 hover:text-white transition-colors">
+                  Rechercher un logement
+                </Link>
+              </li>
+              <li>
+                <Link to="/publier" className="text-gray-400 hover:text-white transition-colors">
+                  Publier une annonce
+                </Link>
+              </li>
+              <li>
+                <Link to="/connexion" className="text-gray-400 hover:text-white transition-colors">
+                  Se connecter
+                </Link>
+              </li>
+              <li>
+                <Link to="/inscription" className="text-gray-400 hover:text-white transition-colors">
+                  Créer un compte
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Support */}
+          <div>
+            <h3 className="text-lg font-bold mb-6">Support</h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Centre d'aide
                 </a>
               </li>
               <li>
-                <a href="/recherche" className="hover:text-cyan-400 transition-colors hover:translate-x-2 transform inline-block duration-200 font-medium">
-                  🔍 Rechercher
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  FAQ
                 </a>
               </li>
               <li>
-                <a href="/a-propos" className="hover:text-amber-400 transition-colors hover:translate-x-2 transform inline-block duration-200 font-medium">
-                  ℹ️ À propos
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Conditions d'utilisation
+                </a>
+              </li>
+              <li>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">
+                  Politique de confidentialité
                 </a>
               </li>
             </ul>
           </div>
 
+          {/* Contact */}
           <div>
-            <h3 className="text-white font-bold mb-5 text-lg flex items-center space-x-2">
-              <span className="text-cyan-400">●</span>
-              <span>Légal</span>
-            </h3>
-            <ul className="space-y-3 text-sm">
-              <li>
-                <a href="/conditions" className="hover:text-terracotta-400 transition-colors hover:translate-x-2 transform inline-block duration-200 font-medium">
-                  📋 Conditions d'utilisation
-                </a>
+            <h3 className="text-lg font-bold mb-6">Contact</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3 text-gray-400">
+                <MapPin className="w-5 h-5 text-primary-400 flex-shrink-0 mt-0.5" />
+                <span>Ouagadougou, Burkina Faso</span>
               </li>
-              <li>
-                <a href="/confidentialite" className="hover:text-cyan-400 transition-colors hover:translate-x-2 transform inline-block duration-200 font-medium">
-                  🔒 Politique de confidentialité
-                </a>
+              <li className="flex items-center gap-3 text-gray-400">
+                <Phone className="w-5 h-5 text-primary-400" />
+                <span>+226 XX XX XX XX</span>
               </li>
-              <li>
-                <a href="/mentions-legales" className="hover:text-amber-400 transition-colors hover:translate-x-2 transform inline-block duration-200 font-medium">
-                  ⚖️ Mentions légales
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white font-bold mb-5 text-lg flex items-center space-x-2">
-              <span className="text-amber-400">●</span>
-              <span>Contact</span>
-            </h3>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-center space-x-3 group">
-                <div className="w-8 h-8 bg-terracotta-900/50 rounded-lg flex items-center justify-center group-hover:bg-terracotta-800 transition-colors">
-                  <Mail className="h-4 w-4 text-terracotta-400" />
-                </div>
-                <span className="font-medium">contact@mon-toit.ci</span>
-              </li>
-              <li className="flex items-center space-x-3 group">
-                <div className="w-8 h-8 bg-cyan-900/50 rounded-lg flex items-center justify-center group-hover:bg-cyan-800 transition-colors">
-                  <Phone className="h-4 w-4 text-cyan-400" />
-                </div>
-                <span className="font-medium">+225 XX XX XX XX XX</span>
-              </li>
-              <li className="flex items-center space-x-3 group">
-                <div className="w-8 h-8 bg-amber-900/50 rounded-lg flex items-center justify-center group-hover:bg-amber-800 transition-colors">
-                  <MapPin className="h-4 w-4 text-amber-400" />
-                </div>
-                <span className="font-medium">Abidjan, Côte d'Ivoire</span>
+              <li className="flex items-center gap-3 text-gray-400">
+                <Mail className="w-5 h-5 text-primary-400" />
+                <span>contact@mzaka.bf</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-700/50 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-sm text-gray-400">
-              &copy; 2025 <span className="font-bold text-white">Mon Toit</span>. Tous droits réservés.
+        {/* Barre du bas */}
+        <div className="border-t border-gray-800 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-gray-400 text-sm">
+              © {currentYear} MZAKA. Tous droits réservés.
             </p>
-            <div className="flex items-center space-x-2 text-sm">
-              <span className="text-gray-400">Fait avec</span>
-              <Heart className="h-4 w-4 text-coral-500 animate-pulse" />
-              <span className="text-gray-400">pour l'accès universel au logement</span>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-primary-600"></div>
+              <div className="w-6 h-6 rounded-full bg-secondary-600"></div>
+              <div className="w-6 h-6 rounded-full bg-accent-600"></div>
+              <span className="text-gray-400 text-sm ml-2">Made with ❤️ in Burkina Faso</span>
             </div>
           </div>
         </div>
