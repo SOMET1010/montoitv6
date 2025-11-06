@@ -1,4 +1,4 @@
-import { Home, Search, User, LogOut, Menu, X, MessageCircle, Heart } from 'lucide-react';
+import { Home, Search, User, LogOut, Menu, X, MessageCircle, Heart, Image } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useMessageNotifications } from '../hooks/useMessageNotifications';
 import { useState } from 'react';
@@ -59,6 +59,14 @@ export default function Header() {
                 >
                   <Heart className="w-5 h-5" />
                   <span>Favoris</span>
+                </Link>
+
+                <Link
+                  to="/photos"
+                  className="flex items-center gap-2 text-gray-700 hover:text-primary-600 font-medium transition-colors"
+                >
+                  <Image className="w-5 h-5" />
+                  <span>Photos</span>
                 </Link>
 
                 <div className="flex items-center gap-3 pl-6 border-l border-gray-200">

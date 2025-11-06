@@ -81,6 +81,8 @@ const MyDisputes = lazy(() => import('../pages/MyDisputes'));
 const CreateDispute = lazy(() => import('../pages/CreateDispute'));
 const DisputeDetail = lazy(() => import('../pages/DisputeDetail'));
 
+const Photos = lazy(() => import('../pages/Photos'));
+
 export const routes: RouteObject[] = [
   {
     path: '/',
@@ -570,6 +572,14 @@ export const routes: RouteObject[] = [
         element: (
           <ProtectedRoute>
             <DisputeDetail />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'photos',
+        element: (
+          <ProtectedRoute>
+            <Photos />
           </ProtectedRoute>
         ),
       },
