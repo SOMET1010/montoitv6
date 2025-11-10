@@ -125,7 +125,7 @@ export default function AddProperty() {
           has_garden: formData.has_garden,
           is_furnished: formData.is_furnished,
           has_ac: formData.has_ac,
-          status: 'disponible',
+          status: 'available',
         })
         .select()
         .single();

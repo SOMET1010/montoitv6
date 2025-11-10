@@ -62,7 +62,7 @@ export default function SearchProperties() {
       let query = supabase
         .from('properties')
         .select('*')
-        .eq('status', 'disponible');
+        .eq('status', 'available');
 
       if (searchCity) {
         query = query.or(`city.ilike.%${searchCity}%,neighborhood.ilike.%${searchCity}%`);
@@ -450,7 +450,7 @@ export default function SearchProperties() {
             {properties.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
-                  {properties.filter(p => p.status === 'disponible').length} disponibles
+                  {properties.filter(p => p.status === 'available').length} disponibles
                 </span>
                 {propertyType && (
                   <span className="text-xs bg-terracotta-100 text-terracotta-800 px-3 py-1 rounded-full font-semibold">

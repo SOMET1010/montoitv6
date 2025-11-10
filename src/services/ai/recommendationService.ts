@@ -101,7 +101,7 @@ export class RecommendationService {
       const { data: properties, error } = await supabase
         .from('properties')
         .select('*')
-        .eq('status', 'disponible')
+        .eq('status', 'available')
         .in('id', topPropertyIds);
 
       if (error) throw error;
@@ -139,7 +139,7 @@ export class RecommendationService {
     const { data: properties, error } = await supabase
       .from('properties')
       .select('*')
-      .eq('status', 'disponible')
+      .eq('status', 'available')
       .limit(100);
 
     if (error || !properties) return [];
@@ -248,7 +248,7 @@ export class RecommendationService {
       const { data, error } = await supabase
         .from('properties')
         .select('*')
-        .eq('status', 'disponible')
+        .eq('status', 'available')
         .order('view_count', { ascending: false })
         .limit(limit);
 
@@ -310,7 +310,7 @@ export class RecommendationService {
       const { data: similarProperties, error } = await supabase
         .from('properties')
         .select('*')
-        .eq('status', 'disponible')
+        .eq('status', 'available')
         .neq('id', propertyId)
         .eq('city', currentProperty.city)
         .eq('property_type', currentProperty.property_type)
