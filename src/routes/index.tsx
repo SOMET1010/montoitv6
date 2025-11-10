@@ -4,6 +4,10 @@ import { Layout, RouterErrorBoundary } from '../components/ui';
 import { ProtectedRoute } from '../components/auth';
 
 const Home = lazy(() => import('../pages/common/Home'));
+const About = lazy(() => import('../pages/common/About'));
+const Terms = lazy(() => import('../pages/common/Terms'));
+const Privacy = lazy(() => import('../pages/common/Privacy'));
+const Legal = lazy(() => import('../pages/common/Legal'));
 const Auth = lazy(() => import('../components/auth/Auth'));
 const AuthCallback = lazy(() => import('../components/auth/AuthCallback'));
 const ProfileSelection = lazy(() => import('../components/auth/ProfileSelection'));
@@ -88,6 +92,10 @@ export const routes: RouteObject[] = [
     errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Home /> },
+      { path: 'a-propos', element: <About /> },
+      { path: 'conditions', element: <Terms /> },
+      { path: 'confidentialite', element: <Privacy /> },
+      { path: 'mentions-legales', element: <Legal /> },
       { path: 'connexion', element: <Auth /> },
       { path: 'inscription', element: <Auth /> },
       { path: 'auth/callback', element: <AuthCallback /> },

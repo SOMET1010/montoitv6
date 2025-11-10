@@ -1,5 +1,9 @@
 // Common pages exports
 export { default as Home } from './Home';
+export { default as About } from './About';
+export { default as Terms } from './Terms';
+export { default as Privacy } from './Privacy';
+export { default as Legal } from './Legal';
 export { default as ContractDetail } from './ContractDetail';
 export { default as ContractDetailEnhanced } from './ContractDetailEnhanced';
 export { default as ContractsList } from './ContractsList';
