@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ProtectedRoute from '../components/ProtectedRoute';
+import RouterErrorBoundary from '../components/RouterErrorBoundary';
 
 const Home = lazy(() => import('../pages/Home'));
 const Auth = lazy(() => import('../pages/Auth'));
@@ -85,6 +86,7 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <Layout />,
+    errorElement: <RouterErrorBoundary />,
     children: [
       { index: true, element: <Home /> },
       { path: 'connexion', element: <Auth /> },
@@ -571,6 +573,24 @@ export const routes: RouteObject[] = [
           <ProtectedRoute>
             <DisputeDetail />
           </ProtectedRoute>
+        ),
+      },
+      {
+        path: '*',
+        element: (
+          <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <h1 className="text-6xl font-bold text-gray-900 mb-4">404</h1>
+              <h2 className="text-2xl font-semibold text-gray-700 mb-4">Page non trouvée</h2>
+              <p className="text-gray-600 mb-8">La page que vous recherchez n'existe pas.</p>
+              <a
+                href="/"
+                className="inline-block px-6 py-3 bg-terracotta-500 text-white rounded-lg hover:bg-terracotta-600 transition-colors"
+              >
+                Retour à l'accueil
+              </a>
+            </div>
+          </div>
         ),
       },
     ],
