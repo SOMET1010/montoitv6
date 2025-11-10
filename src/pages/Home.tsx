@@ -6,6 +6,7 @@ import QuickSearch from '../components/QuickSearch';
 import { FormatService } from '../services/format/formatService';
 import MapWrapper from '../components/MapWrapper';
 import ErrorDisplay from '../components/ErrorDisplay';
+import SEOHead from '../components/SEOHead';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -97,7 +98,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen custom-cursor">
+    <>
+      <SEOHead
+        title="Trouvez votre logement idéal en Côte d'Ivoire"
+        description="Location d'appartements, maisons et villas à Abidjan et dans toute la Côte d'Ivoire. Signature électronique, paiement sécurisé, certification ANSUT. Plus de 15 propriétés disponibles."
+        keywords="location immobilière côte d'ivoire, appartement abidjan, maison cocody, villa plateau, location sécurisée, ansut, signature électronique, mobile money"
+      />
+      <div className="min-h-screen custom-cursor">
       <section className="relative overflow-hidden bg-gradient-to-br from-terracotta-500 via-coral-500 to-amber-500 text-white py-32">
         <div className="absolute inset-0">
           {slides.map((slide, index) => (
@@ -427,6 +434,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
