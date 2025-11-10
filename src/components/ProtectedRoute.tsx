@@ -11,10 +11,21 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const location = useLocation();
   const { user, profile, loading, initialize } = useAuthStore();
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  useEffect(() => {
+    if (!profile && !loading) {
+      const timer = setTimeout(() => {
+        setLoadingTimeout(true);
+      }, 10000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [profile, loading]);
 
   if (loading) {
     return (
@@ -27,18 +38,6 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   if (!user) {
     return <Navigate to="/connexion" state={{ from: location }} replace />;
   }
-
-  const [loadingTimeout, setLoadingTimeout] = useState(false);
-
-  useEffect(() => {
-    if (!profile && !loading) {
-      const timer = setTimeout(() => {
-        setLoadingTimeout(true);
-      }, 10000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [profile, loading]);
 
   if (!profile && !loadingTimeout) {
     return (
