@@ -107,16 +107,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             details: 'Votre profil n\'a pas été créé correctement. Tentative de récupération échouée.'
           });
         } else if (error.message.includes('permission') || error.message.includes('denied')) {
-          console.warn('[AuthContext] Permission error detected, attempting recovery...');
-          const recovered = await attemptProfileRecovery(userId);
-          if (recovered) {
+          console.warn('[AuthContext] Permission error detected');
+
+          if (retryCount < MAX_RETRIES) {
+            console.log('[AuthContext] Retrying after permission error...');
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
             return loadProfile(userId, retryCount + 1);
           }
 
           setProfileError({
             type: 'permission',
-            message: 'Erreur de permission résolue',
-            details: 'Votre profil a été récupéré. Veuillez rafraîchir la page.'
+            message: 'Connexion à la base de données impossible',
+            details: 'permission denied for table profiles\n\nVérifiez votre connexion Internet et réessayez dans quelques instants.'
           });
         } else {
           setProfileError({

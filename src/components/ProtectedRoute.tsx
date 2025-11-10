@@ -125,7 +125,7 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
               </div>
             )}
 
-            {profileError?.type === 'network' && (
+            {(profileError?.type === 'network' || profileError?.type === 'permission') && (
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
                 <p className="text-sm text-amber-800 mb-2">
                   <strong>Conseils :</strong>
@@ -147,14 +147,6 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
               </div>
             )}
 
-            {profileError?.type === 'permission' && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-red-800">
-                  <strong>Accès refusé.</strong> Vous n'avez pas les permissions nécessaires.
-                  Veuillez contacter l'administrateur.
-                </p>
-              </div>
-            )}
 
             <div className="space-y-3">
               <button
