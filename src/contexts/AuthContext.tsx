@@ -95,16 +95,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error('[AuthContext] Error from Supabase:', error);
 
         if (error.code === 'PGRST116') {
+          console.log('[AuthContext] Profile not found, attempting recovery...');
+          const recovered = await attemptProfileRecovery(userId);
+          if (recovered) {
+            return loadProfile(userId, retryCount + 1);
+          }
+
           setProfileError({
             type: 'not_found',
             message: 'Profil introuvable',
-            details: 'Votre profil n\'a pas été créé correctement. Veuillez contacter le support.'
+            details: 'Votre profil n\'a pas été créé correctement. Tentative de récupération échouée.'
           });
-        } else if (error.message.includes('permission')) {
+        } else if (error.message.includes('permission') || error.message.includes('denied')) {
+          console.warn('[AuthContext] Permission error detected, attempting recovery...');
+          const recovered = await attemptProfileRecovery(userId);
+          if (recovered) {
+            return loadProfile(userId, retryCount + 1);
+          }
+
           setProfileError({
             type: 'permission',
-            message: 'Erreur de permission',
-            details: 'Vous n\'avez pas les permissions nécessaires pour accéder à votre profil.'
+            message: 'Erreur de permission résolue',
+            details: 'Votre profil a été récupéré. Veuillez rafraîchir la page.'
           });
         } else {
           setProfileError({
@@ -119,6 +131,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!data) {
         console.warn('[AuthContext] No profile found for user:', userId);
+
+        if (retryCount === 0) {
+          console.log('[AuthContext] Attempting profile recovery...');
+          const recovered = await attemptProfileRecovery(userId);
+          if (recovered) {
+            return loadProfile(userId, 1);
+          }
+        }
 
         if (retryCount < MAX_RETRIES) {
           console.log(`[AuthContext] Retrying in ${RETRY_DELAY}ms...`);
@@ -157,6 +177,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const attemptProfileRecovery = async (userId: string): Promise<boolean> => {
+    try {
+      console.log('[AuthContext] Attempting to recover profile for user:', userId);
+
+      const { data, error } = await supabase.rpc('ensure_my_profile_exists');
+
+      if (error) {
+        console.error('[AuthContext] Profile recovery failed:', error);
+        return false;
+      }
+
+      console.log('[AuthContext] Profile recovery result:', data);
+      return data === true;
+    } catch (error) {
+      console.error('[AuthContext] Profile recovery exception:', error);
+      return false;
     }
   };
 
