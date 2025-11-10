@@ -1,86 +1,85 @@
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
-import Layout from '../components/Layout';
-import ProtectedRoute from '../components/ProtectedRoute';
-import RouterErrorBoundary from '../components/RouterErrorBoundary';
+import { Layout, RouterErrorBoundary } from '../components/ui';
+import { ProtectedRoute } from '../components/auth';
 
-const Home = lazy(() => import('../pages/Home'));
-const Auth = lazy(() => import('../pages/Auth'));
-const AuthCallback = lazy(() => import('../pages/AuthCallback'));
-const ProfileSelection = lazy(() => import('../pages/ProfileSelection'));
-const Profile = lazy(() => import('../pages/Profile'));
+const Home = lazy(() => import('../pages/common/Home'));
+const Auth = lazy(() => import('../components/auth/Auth'));
+const AuthCallback = lazy(() => import('../components/auth/AuthCallback'));
+const ProfileSelection = lazy(() => import('../components/auth/ProfileSelection'));
+const Profile = lazy(() => import('../pages/user/Profile'));
 
-const SearchProperties = lazy(() => import('../pages/SearchProperties'));
-const PropertyDetail = lazy(() => import('../pages/PropertyDetail'));
-const Favorites = lazy(() => import('../pages/Favorites'));
-const SavedSearches = lazy(() => import('../pages/SavedSearches'));
-const Recommendations = lazy(() => import('../pages/Recommendations'));
+const SearchProperties = lazy(() => import('../pages/marketplace/SearchProperties'));
+const PropertyDetail = lazy(() => import('../pages/marketplace/PropertyDetail'));
+const Favorites = lazy(() => import('../pages/user/Favorites'));
+const SavedSearches = lazy(() => import('../pages/user/SavedSearches'));
+const Recommendations = lazy(() => import('../pages/marketplace/Recommendations'));
 
-const ApplicationForm = lazy(() => import('../pages/ApplicationForm'));
-const ApplicationDetail = lazy(() => import('../pages/ApplicationDetail'));
-const ScheduleVisit = lazy(() => import('../pages/ScheduleVisit'));
-const MyVisits = lazy(() => import('../pages/MyVisits'));
+const ApplicationForm = lazy(() => import('../pages/marketplace/ApplicationForm'));
+const ApplicationDetail = lazy(() => import('../pages/marketplace/ApplicationDetail'));
+const ScheduleVisit = lazy(() => import('../pages/marketplace/ScheduleVisit'));
+const MyVisits = lazy(() => import('../pages/user/MyVisits'));
 
-const Messages = lazy(() => import('../pages/Messages'));
+const Messages = lazy(() => import('../pages/user/Messages'));
 
-const CreateContract = lazy(() => import('../pages/CreateContract'));
-const MyContracts = lazy(() => import('../pages/MyContracts'));
-const ContractDetail = lazy(() => import('../pages/ContractDetail'));
-const ContractDetailEnhanced = lazy(() => import('../pages/ContractDetailEnhanced'));
-const SignLease = lazy(() => import('../pages/SignLease'));
-const ContractsList = lazy(() => import('../pages/ContractsList'));
+const CreateContract = lazy(() => import('../pages/common/CreateContract'));
+const MyContracts = lazy(() => import('../pages/user/MyContracts'));
+const ContractDetail = lazy(() => import('../pages/common/ContractDetail'));
+const ContractDetailEnhanced = lazy(() => import('../pages/common/ContractDetailEnhanced'));
+const SignLease = lazy(() => import('../pages/common/SignLease'));
+const ContractsList = lazy(() => import('../pages/common/ContractsList'));
 
-const MakePayment = lazy(() => import('../pages/MakePayment'));
-const PaymentHistory = lazy(() => import('../pages/PaymentHistory'));
+const MakePayment = lazy(() => import('../pages/user/MakePayment'));
+const PaymentHistory = lazy(() => import('../pages/user/PaymentHistory'));
 
-const VerificationRequest = lazy(() => import('../pages/VerificationRequest'));
-const AnsutVerification = lazy(() => import('../pages/AnsutVerification'));
-const VerificationSettings = lazy(() => import('../pages/VerificationSettings'));
-const MyCertificates = lazy(() => import('../pages/MyCertificates'));
-const RequestTrustValidation = lazy(() => import('../pages/RequestTrustValidation'));
+const VerificationRequest = lazy(() => import('../pages/user/VerificationRequest'));
+const AnsutVerification = lazy(() => import('../pages/user/AnsutVerification'));
+const VerificationSettings = lazy(() => import('../pages/user/VerificationSettings'));
+const MyCertificates = lazy(() => import('../pages/user/MyCertificates'));
+const RequestTrustValidation = lazy(() => import('../pages/user/RequestTrustValidation'));
 
-const RequestCEV = lazy(() => import('../pages/RequestCEV'));
-const CEVRequestDetail = lazy(() => import('../pages/CEVRequestDetail'));
+const RequestCEV = lazy(() => import('../pages/user/RequestCEV'));
+const CEVRequestDetail = lazy(() => import('../pages/common/CEVRequestDetail'));
 
-const TenantDashboard = lazy(() => import('../pages/TenantDashboard'));
-const TenantCalendar = lazy(() => import('../pages/TenantCalendar'));
-const TenantScore = lazy(() => import('../pages/TenantScore'));
-const TenantMaintenance = lazy(() => import('../pages/TenantMaintenance'));
+const TenantDashboard = lazy(() => import('../pages/user/TenantDashboard'));
+const TenantCalendar = lazy(() => import('../pages/user/TenantCalendar'));
+const TenantScore = lazy(() => import('../pages/user/TenantScore'));
+const TenantMaintenance = lazy(() => import('../pages/user/TenantMaintenance'));
 
-const OwnerDashboard = lazy(() => import('../pages/OwnerDashboard'));
-const AddProperty = lazy(() => import('../pages/AddProperty'));
-const PropertyStats = lazy(() => import('../pages/PropertyStats'));
-const OwnerMaintenance = lazy(() => import('../pages/OwnerMaintenance'));
+const OwnerDashboard = lazy(() => import('../pages/user/OwnerDashboard'));
+const AddProperty = lazy(() => import('../pages/marketplace/AddProperty'));
+const PropertyStats = lazy(() => import('../pages/marketplace/PropertyStats'));
+const OwnerMaintenance = lazy(() => import('../pages/user/OwnerMaintenance'));
 
-const AgencyDashboard = lazy(() => import('../pages/AgencyDashboard'));
-const AgencyRegistration = lazy(() => import('../pages/AgencyRegistration'));
-const AgencyTeam = lazy(() => import('../pages/AgencyTeam'));
-const AgencyProperties = lazy(() => import('../pages/AgencyProperties'));
-const AgencyCommissions = lazy(() => import('../pages/AgencyCommissions'));
+const AgencyDashboard = lazy(() => import('../pages/agency/AgencyDashboard'));
+const AgencyRegistration = lazy(() => import('../pages/agency/AgencyRegistration'));
+const AgencyTeam = lazy(() => import('../pages/agency/AgencyTeam'));
+const AgencyProperties = lazy(() => import('../pages/agency/AgencyProperties'));
+const AgencyCommissions = lazy(() => import('../pages/agency/AgencyCommissions'));
 
-const MaintenanceRequest = lazy(() => import('../pages/MaintenanceRequest'));
+const MaintenanceRequest = lazy(() => import('../pages/user/MaintenanceRequest'));
 
-const AdminDashboard = lazy(() => import('../pages/AdminDashboard'));
-const AdminUsers = lazy(() => import('../pages/AdminUsers'));
-const AdminUserRoles = lazy(() => import('../pages/AdminUserRoles'));
-const AdminApiKeys = lazy(() => import('../pages/AdminApiKeys'));
-const AdminServiceProviders = lazy(() => import('../pages/AdminServiceProviders'));
-const AdminServiceMonitoring = lazy(() => import('../pages/AdminServiceMonitoring'));
-const AdminServiceConfiguration = lazy(() => import('../pages/AdminServiceConfiguration'));
-const AdminTestDataGenerator = lazy(() => import('../pages/AdminTestDataGenerator'));
-const AdminQuickDemo = lazy(() => import('../pages/AdminQuickDemo'));
-const AdminCEVManagement = lazy(() => import('../pages/AdminCEVManagement'));
-const AdminTrustAgents = lazy(() => import('../pages/AdminTrustAgents'));
+const AdminDashboard = lazy(() => import('../pages/admin/AdminDashboard'));
+const AdminUsers = lazy(() => import('../pages/admin/AdminUsers'));
+const AdminUserRoles = lazy(() => import('../pages/admin/AdminUserRoles'));
+const AdminApiKeys = lazy(() => import('../pages/admin/AdminApiKeys'));
+const AdminServiceProviders = lazy(() => import('../pages/admin/AdminServiceProviders'));
+const AdminServiceMonitoring = lazy(() => import('../pages/admin/AdminServiceMonitoring'));
+const AdminServiceConfiguration = lazy(() => import('../pages/admin/AdminServiceConfiguration'));
+const AdminTestDataGenerator = lazy(() => import('../pages/admin/AdminTestDataGenerator'));
+const AdminQuickDemo = lazy(() => import('../pages/admin/AdminQuickDemo'));
+const AdminCEVManagement = lazy(() => import('../pages/admin/AdminCEVManagement'));
+const AdminTrustAgents = lazy(() => import('../pages/admin/AdminTrustAgents'));
 
-const TrustAgentDashboard = lazy(() => import('../pages/TrustAgentDashboard'));
-const TrustAgentModeration = lazy(() => import('../pages/TrustAgentModeration'));
-const TrustAgentMediation = lazy(() => import('../pages/TrustAgentMediation'));
-const TrustAgentAnalytics = lazy(() => import('../pages/TrustAgentAnalytics'));
+const TrustAgentDashboard = lazy(() => import('../pages/trust-agent/TrustAgentDashboard'));
+const TrustAgentModeration = lazy(() => import('../pages/trust-agent/TrustAgentModeration'));
+const TrustAgentMediation = lazy(() => import('../pages/trust-agent/TrustAgentMediation'));
+const TrustAgentAnalytics = lazy(() => import('../pages/trust-agent/TrustAgentAnalytics'));
 
-const NotificationPreferences = lazy(() => import('../pages/NotificationPreferences'));
-const MyDisputes = lazy(() => import('../pages/MyDisputes'));
-const CreateDispute = lazy(() => import('../pages/CreateDispute'));
-const DisputeDetail = lazy(() => import('../pages/DisputeDetail'));
+const NotificationPreferences = lazy(() => import('../pages/user/NotificationPreferences'));
+const MyDisputes = lazy(() => import('../pages/user/MyDisputes'));
+const CreateDispute = lazy(() => import('../pages/common/CreateDispute'));
+const DisputeDetail = lazy(() => import('../pages/common/DisputeDetail'));
 
 export const routes: RouteObject[] = [
   {

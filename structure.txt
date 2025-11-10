@@ -1,0 +1,48 @@
+components/
+Contient tous les éléments visuels réutilisables (boutons, formulaires, cartes, etc.).
+components/ui/
+Bibliothèque interne de composants ShadCN/UI, servant de base à toute l’interface.
+components/auth/
+Composants d’authentification : formulaires de login, inscription, OTP, reset password.
+pages/
+Chaque sous-dossier représente un module ou un rôle utilisateur (admin, marketplace, user…).
+contexts/
+Stocke les contextes React partagés globalement (Auth, Cart, Theme...).
+services/
+Regroupe toute la logique métier et les appels API (Supabase, REST, etc.).
+hooks/
+Contient les hooks personnalisés pour factoriser la logique React réutilisable.
+lib/
+Boîte à outils du projet : helpers, validations, formatteurs, constantes.
+types/
+Définitions de types et interfaces TypeScript, assurant la cohérence des données.
+3. Philosophie de l’Architecture
+✅ Séparation claire entre la logique, la présentation et les données.
+✅ Structure modulaire et scalable (ajout facile de nouveaux modules).
+✅ Réutilisabilité maximale des composants et hooks.
+✅ Standardisation entre tous les projets React.
+4. Récapitulatif des Dossiers
+Dossier
+Rôle Principal
+Contenu
+components/
+Composants UI réutilisables
+Boutons, formulaires, cartes
+pages/
+Vues principales
+Dashboard, Profil, Home
+contexts/
+État global
+Auth, Panier, Thème
+services/
+Logique métier
+Requêtes API, base de données
+hooks/
+Hooks personnalisés
+useAuth, useFetch, etc.
+lib/
+Fonctions utilitaires
+Helpers, constantes
+types/
+Typage TypeScript
+Interfaces, enums
