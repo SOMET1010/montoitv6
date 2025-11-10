@@ -368,7 +368,7 @@ BEGIN
     'total_visits', (SELECT COUNT(*) FROM visits),
     'pending_verifications', (SELECT COUNT(*) FROM user_verifications WHERE oneci_status = 'en_attente'),
     'pending_maintenance', (SELECT COUNT(*) FROM maintenance_requests WHERE status = 'en_attente'),
-    'total_revenue', (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'completed')
+    'total_revenue', (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'complete')
   ) INTO v_stats;
 
   RETURN v_stats;
@@ -387,8 +387,8 @@ SELECT
   (SELECT COUNT(*) FROM properties WHERE created_at >= CURRENT_DATE - INTERVAL '30 days') as new_properties_30d,
   (SELECT COUNT(*) FROM leases) as total_leases,
   (SELECT COUNT(*) FROM leases WHERE status = 'actif') as active_leases,
-  (SELECT COUNT(*) FROM payments WHERE status = 'completed') as completed_payments,
-  (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'completed') as total_revenue,
+  (SELECT COUNT(*) FROM payments WHERE status = 'complete') as completed_payments,
+  (SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'complete') as total_revenue,
   (SELECT COUNT(*) FROM user_verifications WHERE oneci_status = 'en_attente') as pending_verifications,
   (SELECT COUNT(*) FROM reported_content WHERE status = 'pending') as pending_reports;
 

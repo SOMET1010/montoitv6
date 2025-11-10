@@ -179,7 +179,7 @@ CREATE POLICY "Admins can view all LLM routing logs"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.user_type = 'admin'
+      AND profiles.user_type = 'admin_ansut'
     )
   );
 
@@ -201,7 +201,7 @@ CREATE POLICY "Admins can view all legal consultation logs"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.user_type = 'admin'
+      AND profiles.user_type = 'admin_ansut'
     )
   );
 
@@ -223,22 +223,22 @@ CREATE POLICY "Admins can manage legal articles"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.user_type = 'admin'
+      AND profiles.user_type = 'admin_ansut'
     )
   )
   WITH CHECK (
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.user_type = 'admin'
+      AND profiles.user_type = 'admin_ansut'
     )
   );
 
--- RLS Policies for AI Usage Logs
-CREATE POLICY "Users can view their own AI usage logs"
-  ON ai_usage_logs FOR SELECT
-  TO authenticated
-  USING (auth.uid() = user_id);
+-- RLS Policies for AI Usage Logs (already created in AI infrastructure migration)
+-- CREATE POLICY "Users can view their own AI usage logs"
+--   ON ai_usage_logs FOR SELECT
+--   TO authenticated
+--   USING (auth.uid() = user_id);
 
 CREATE POLICY "Admins can view all AI usage logs"
   ON ai_usage_logs FOR SELECT
@@ -247,7 +247,7 @@ CREATE POLICY "Admins can view all AI usage logs"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE profiles.id = auth.uid()
-      AND profiles.user_type = 'admin'
+      AND profiles.user_type = 'admin_ansut'
     )
   );
 

@@ -101,34 +101,6 @@ CREATE TABLE IF NOT EXISTS tenant_scores (
   UNIQUE(user_id, created_at)
 );
 
-CREATE TABLE IF NOT EXISTS score_achievements (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
-  achievement_type text NOT NULL CHECK (achievement_type IN (
-    'first_verification',
-    'payment_streak_3',
-    'payment_streak_6',
-    'payment_streak_12',
-    'profile_complete',
-    'five_star_tenant',
-    'early_bird',
-    'community_helper',
-    'property_ambassador',
-    'perfect_record'
-  )),
-  achievement_name text NOT NULL,
-  achievement_description text,
-  achievement_icon text,
-  achievement_color text DEFAULT '#FF6B35',
-  earned boolean DEFAULT false,
-  earned_at timestamptz,
-  progress numeric DEFAULT 0,
-  is_featured boolean DEFAULT false,
-  display_order integer DEFAULT 0,
-  created_at timestamptz DEFAULT now(),
-  UNIQUE(user_id, achievement_type)
-);
-
 CREATE TABLE IF NOT EXISTS certification_reminders (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
@@ -148,14 +120,12 @@ CREATE INDEX IF NOT EXISTS idx_facial_verifications_user ON facial_verifications
 CREATE INDEX IF NOT EXISTS idx_ansut_certifications_user ON ansut_certifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_ansut_certifications_status ON ansut_certifications(status);
 CREATE INDEX IF NOT EXISTS idx_tenant_scores_user ON tenant_scores(user_id);
-CREATE INDEX IF NOT EXISTS idx_achievements_user ON score_achievements(user_id);
 
 ALTER TABLE identity_verifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cnam_verifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE facial_verifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ansut_certifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tenant_scores ENABLE ROW LEVEL SECURITY;
-ALTER TABLE score_achievements ENABLE ROW LEVEL SECURITY;
 ALTER TABLE certification_reminders ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users view own identity" ON identity_verifications FOR SELECT TO authenticated USING (user_id = auth.uid());
@@ -167,7 +137,6 @@ CREATE POLICY "Users view own facial" ON facial_verifications FOR SELECT TO auth
 CREATE POLICY "Users insert own facial" ON facial_verifications FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
 CREATE POLICY "Users view own cert" ON ansut_certifications FOR SELECT TO authenticated USING (user_id = auth.uid());
 CREATE POLICY "Users view own scores" ON tenant_scores FOR SELECT TO authenticated USING (user_id = auth.uid());
-CREATE POLICY "Users view own achievements" ON score_achievements FOR SELECT TO authenticated USING (user_id = auth.uid());
 CREATE POLICY "Users view own reminders" ON certification_reminders FOR SELECT TO authenticated USING (user_id = auth.uid());
 CREATE POLICY "Users update own reminders" ON certification_reminders FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
 

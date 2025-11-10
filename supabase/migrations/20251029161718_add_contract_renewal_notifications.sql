@@ -263,7 +263,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Function to mark notification as read
-CREATE OR REPLACE FUNCTION mark_notification_read(notification_id uuid)
+CREATE OR REPLACE FUNCTION mark_contract_notification_read(notification_id uuid)
 RETURNS void AS $$
 BEGIN
   UPDATE contract_notifications
@@ -273,7 +273,7 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Function to mark all notifications as read for a user
-CREATE OR REPLACE FUNCTION mark_all_notifications_read()
+CREATE OR REPLACE FUNCTION mark_all_contract_notifications_read()
 RETURNS void AS $$
 BEGIN
   UPDATE contract_notifications

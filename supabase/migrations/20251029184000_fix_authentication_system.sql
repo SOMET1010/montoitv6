@@ -244,6 +244,7 @@ CREATE TRIGGER on_user_login
 -- Add indexes for performance
 -- ============================================================================
 
-CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
-CREATE INDEX IF NOT EXISTS idx_profiles_provider ON profiles(provider);
-CREATE INDEX IF NOT EXISTS idx_profiles_last_sign_in ON profiles(last_sign_in_at DESC);
+-- Note: Email index not needed since email is in auth.users table
+-- CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
+-- CREATE INDEX IF NOT EXISTS idx_profiles_provider ON profiles(provider);
+-- CREATE INDEX IF NOT EXISTS idx_profiles_last_sign_in ON profiles(last_sign_in_at DESC);

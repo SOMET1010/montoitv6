@@ -41,7 +41,7 @@ ALTER TABLE profiles DROP CONSTRAINT IF EXISTS profiles_user_type_check;
 
 -- Step 2: Add new constraint with French values
 ALTER TABLE profiles ADD CONSTRAINT profiles_user_type_check 
-  CHECK (user_type IN ('locataire', 'proprietaire', 'agence', 'admin_ansut', 'both', 'tenant', 'owner', 'agent'));
+  CHECK (user_type IN ('locataire', 'proprietaire', 'agence', 'admin_ansut'));
 
 -- Step 3: Add missing columns
 DO $$ 
@@ -76,12 +76,12 @@ WHERE profile_setup_completed IS NULL;
 
 UPDATE profiles 
 SET 
-  active_role = COALESCE(active_role, user_type)
+  active_role = COALESCE(active_role, user_type::TEXT)
 WHERE active_role IS NULL;
 
 UPDATE profiles 
 SET 
-  available_roles = ARRAY[COALESCE(user_type, 'locataire')]::TEXT[]
+  available_roles = ARRAY[COALESCE(user_type::TEXT, 'locataire')]::TEXT[]
 WHERE available_roles IS NULL OR available_roles = '{}';
 
 -- Step 5: Create missing profiles for all users
@@ -104,9 +104,9 @@ SELECT
     split_part(u.email, '@', 1)
   ),
   COALESCE(
-    u.raw_user_meta_data->>'user_type', 
+    u.raw_user_meta_data->>'user_type',
     'locataire'
-  ),
+  )::user_type,
   false,
   COALESCE(
     u.raw_user_meta_data->>'user_type', 
