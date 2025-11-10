@@ -54,18 +54,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const loadProfile = async (userId: string) => {
+  const loadProfile = async (userId: string, retryCount = 0) => {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000;
+
     try {
+      console.log(`[AuthContext] Loading profile for user ${userId} (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('[AuthContext] Error from Supabase:', error);
+        throw error;
+      }
+
+      if (!data) {
+        console.warn('[AuthContext] No profile found for user:', userId);
+
+        if (retryCount < MAX_RETRIES) {
+          console.log(`[AuthContext] Retrying in ${RETRY_DELAY}ms...`);
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+          return loadProfile(userId, retryCount + 1);
+        }
+
+        console.error('[AuthContext] Profile not found after all retries');
+        throw new Error('Profile not found. Please contact support.');
+      }
+
+      console.log('[AuthContext] Profile loaded successfully:', data.email);
       setProfile(data);
-    } catch (error) {
-      console.error('Error loading profile:', error);
+    } catch (error: any) {
+      console.error('[AuthContext] Error loading profile:', error);
+
+      if (retryCount < MAX_RETRIES) {
+        console.log(`[AuthContext] Retrying after error in ${RETRY_DELAY}ms...`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        return loadProfile(userId, retryCount + 1);
+      }
     } finally {
       setLoading(false);
     }
