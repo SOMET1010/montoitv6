@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Shield, FileSignature, Smartphone, TrendingUp, Building2, Sparkles, Home as HomeIcon, Users, Map } from 'lucide-react';
+import { Search, MapPin, Shield, FileSignature, Smartphone, TrendingUp, Building2, Sparkles, Home as HomeIcon, Users, Map, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 import QuickSearch from '../components/QuickSearch';
 import { FormatService } from '../services/format/formatService';
 import MapWrapper from '../components/MapWrapper';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -12,6 +13,7 @@ export default function Home() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [totalProperties, setTotalProperties] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchCity, setSearchCity] = useState('');
   const [scrollY, setScrollY] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,10 +59,11 @@ export default function Home() {
 
   const loadProperties = async () => {
     try {
+      setError(null);
       const { data, error } = await supabase
         .from('properties')
         .select('*')
-        .eq('status', 'disponible')
+        .eq('status', 'available')
         .order('created_at', { ascending: false })
         .limit(6);
 
@@ -70,11 +73,15 @@ export default function Home() {
       const { count } = await supabase
         .from('properties')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'disponible');
+        .eq('status', 'available');
 
       setTotalProperties(count || 0);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading properties:', error);
+      setError(
+        error?.message ||
+        'Impossible de charger les propriétés. Veuillez vérifier votre connexion internet et réessayer.'
+      );
     } finally {
       setLoading(false);
     }
@@ -91,7 +98,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen custom-cursor">
-      <section className="relative overflow-hidden bg-gradient-to-br from-terracotta-400 via-coral-400 to-amber-400 text-white py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-terracotta-500 via-coral-500 to-amber-500 text-white py-32">
         <div className="absolute inset-0">
           {slides.map((slide, index) => (
             <div
@@ -124,17 +131,17 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12 animate-slide-down">
-            <div className="inline-flex items-center space-x-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <Sparkles className="h-5 w-5 text-amber-300" />
-              <span className="text-sm font-medium">Plateforme certifiée ANSUT</span>
+            <div className="inline-flex items-center space-x-2 mb-6 bg-white/20 backdrop-blur-sm px-5 py-2.5 rounded-full shadow-lg">
+              <Sparkles className="h-6 w-6 text-amber-200" />
+              <span className="text-base font-bold">Plateforme certifiée ANSUT</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="inline-block animate-scale-in">Trouvez votre </span>
-              <span className="inline-block animate-scale-in text-amber-200" style={{ animationDelay: '0.1s' }}>logement idéal</span>
+              <span className="inline-block animate-scale-in drop-shadow-lg">Trouvez votre </span>
+              <span className="inline-block animate-scale-in text-amber-100 drop-shadow-lg" style={{ animationDelay: '0.1s' }}>logement idéal</span>
               <br />
-              <span className="inline-block animate-scale-in" style={{ animationDelay: '0.2s' }}>en toute </span>
-              <span className="inline-block animate-scale-in text-cyan-200" style={{ animationDelay: '0.3s' }}>confiance</span>
+              <span className="inline-block animate-scale-in drop-shadow-lg" style={{ animationDelay: '0.2s' }}>en toute </span>
+              <span className="inline-block animate-scale-in text-white drop-shadow-lg" style={{ animationDelay: '0.3s' }}>confiance</span>
             </h1>
 
             <p className="text-xl md:text-2xl text-amber-100 mb-8 max-w-3xl mx-auto animate-slide-up">
@@ -164,17 +171,18 @@ export default function Home() {
             </div>
           </form>
 
-          <div className="flex justify-center mt-8 space-x-3 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+          <div className="flex justify-center mt-8 space-x-4 animate-slide-up" style={{ animationDelay: '0.5s' }}>
             {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`transition-all duration-300 rounded-full ${
+                className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-4 focus:ring-white/50 ${
                   index === currentSlide
-                    ? 'w-12 h-3 bg-white shadow-glow'
-                    : 'w-3 h-3 bg-white/40 hover:bg-white/60'
+                    ? 'w-16 h-4 bg-white shadow-glow'
+                    : 'w-4 h-4 bg-white/50 hover:bg-white/70'
                 }`}
                 aria-label={`Aller à la diapositive ${index + 1}`}
+                aria-current={index === currentSlide ? 'true' : 'false'}
               />
             ))}
           </div>
@@ -273,7 +281,15 @@ export default function Home() {
             </a>
           </div>
 
-          {loading ? (
+          {error ? (
+            <ErrorDisplay
+              title="Erreur de chargement"
+              message={error}
+              onRetry={loadProperties}
+              showHomeButton={false}
+              type="error"
+            />
+          ) : loading ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
@@ -347,9 +363,19 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-gradient-to-br from-amber-50 to-coral-50 rounded-3xl">
-              <Building2 className="h-20 w-20 text-terracotta-300 mx-auto mb-4" />
-              <p className="text-xl text-gray-600">Aucune propriété disponible pour le moment.</p>
+            <div className="text-center py-20 bg-gradient-to-br from-amber-50 to-coral-50 rounded-3xl shadow-lg border-4 border-terracotta-100">
+              <Building2 className="h-24 w-24 text-terracotta-400 mx-auto mb-6 animate-bounce-subtle" />
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">Aucune propriété disponible</h3>
+              <p className="text-lg text-gray-700 mb-6 max-w-md mx-auto">
+                Soyez le premier à publier une annonce et trouvez des locataires rapidement!
+              </p>
+              <a
+                href="/add-property"
+                className="inline-flex items-center space-x-2 btn-primary"
+              >
+                <Plus className="h-5 w-5" />
+                <span>Publier une annonce gratuitement</span>
+              </a>
             </div>
           )}
         </div>
