@@ -26,7 +26,13 @@ export async function performHealthCheck(): Promise<HealthCheckResult> {
   };
 
   try {
-    const { data, error } = await supabase.from('profiles').select('count').limit(1).maybeSingle();
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Database check timeout')), 5000)
+    );
+    const queryPromise = supabase.from('profiles').select('count').limit(1).maybeSingle();
+
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
+
     if (error) {
       result.errors.push(`Database: ${error.message}`);
     } else {
@@ -76,13 +82,45 @@ export async function performHealthCheck(): Promise<HealthCheckResult> {
 
 export async function testDatabaseConnection(): Promise<{ success: boolean; message: string }> {
   try {
-    const { error } = await supabase.from('profiles').select('id').limit(1);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Connection timeout after 5 seconds')), 5000)
+    );
+
+    const queryPromise = supabase.from('profiles').select('id').limit(1);
+
+    const { error } = await Promise.race([queryPromise, timeoutPromise]) as any;
+
     if (error) {
       return { success: false, message: error.message };
     }
     return { success: true, message: 'Database connection successful' };
   } catch (err: any) {
+    if (err.message.includes('timeout')) {
+      return { success: false, message: 'La connexion a expiré. Vérifiez votre connexion Internet.' };
+    }
     return { success: false, message: err.message };
+  }
+}
+
+export async function testProfileAccess(userId: string): Promise<{ success: boolean; message: string; hasProfile: boolean }> {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) {
+      return { success: false, message: error.message, hasProfile: false };
+    }
+
+    if (!data) {
+      return { success: true, message: 'Profile not found but query succeeded', hasProfile: false };
+    }
+
+    return { success: true, message: 'Profile access successful', hasProfile: true };
+  } catch (err: any) {
+    return { success: false, message: err.message, hasProfile: false };
   }
 }
 
@@ -108,4 +146,46 @@ export async function testStorageConnection(): Promise<{ success: boolean; messa
   } catch (err: any) {
     return { success: false, message: err.message };
   }
+}
+
+export async function diagnoseProfileIssue(userId: string): Promise<{
+  canConnect: boolean;
+  hasPermission: boolean;
+  profileExists: boolean;
+  issues: string[];
+  recommendations: string[];
+}> {
+  const result = {
+    canConnect: false,
+    hasPermission: false,
+    profileExists: false,
+    issues: [] as string[],
+    recommendations: [] as string[]
+  };
+
+  const dbTest = await testDatabaseConnection();
+  result.canConnect = dbTest.success;
+
+  if (!dbTest.success) {
+    result.issues.push('Impossible de se connecter à la base de données');
+    result.recommendations.push('Vérifiez votre connexion Internet');
+    result.recommendations.push('Réessayez dans quelques instants');
+    return result;
+  }
+
+  const profileTest = await testProfileAccess(userId);
+  result.hasPermission = profileTest.success;
+  result.profileExists = profileTest.hasProfile;
+
+  if (!profileTest.success) {
+    result.issues.push('Erreur d\'accès au profil');
+    result.recommendations.push('Vérifiez vos permissions');
+    result.recommendations.push('Contactez le support si le problème persiste');
+  } else if (!profileTest.hasProfile) {
+    result.issues.push('Profil introuvable dans la base de données');
+    result.recommendations.push('Votre compte pourrait être incomplet');
+    result.recommendations.push('Contactez le support à support@montoit.ci');
+  }
+
+  return result;
 }

@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { RefreshCw, AlertCircle } from 'lucide-react';
+import { RefreshCw, AlertCircle, Wifi, Database, Shield, Clock, HelpCircle } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -10,8 +10,9 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const location = useLocation();
-  const { user, profile, loading, initialize } = useAuthStore();
+  const { user, profile, loading, initialize, profileError, clearProfileError, forceRefresh, retryCount } = useAuthStore();
   const [loadingTimeout, setLoadingTimeout] = useState(false);
+  const [retrying, setRetrying] = useState(false);
 
   useEffect(() => {
     initialize();
@@ -53,34 +54,131 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
     );
   }
 
-  if (!profile && loadingTimeout) {
+  const handleRetry = async () => {
+    setRetrying(true);
+    setLoadingTimeout(false);
+    clearProfileError();
+    await forceRefresh();
+    setTimeout(() => setRetrying(false), 1000);
+  };
+
+  const getErrorIcon = () => {
+    if (!profileError) return <AlertCircle className="w-8 h-8" />;
+
+    switch (profileError.type) {
+      case 'network':
+        return <Wifi className="w-8 h-8" />;
+      case 'database':
+        return <Database className="w-8 h-8" />;
+      case 'permission':
+        return <Shield className="w-8 h-8" />;
+      case 'timeout':
+        return <Clock className="w-8 h-8" />;
+      case 'not_found':
+        return <HelpCircle className="w-8 h-8" />;
+      default:
+        return <AlertCircle className="w-8 h-8" />;
+    }
+  };
+
+  const getErrorColor = () => {
+    if (!profileError) return 'red';
+
+    switch (profileError.type) {
+      case 'network':
+        return 'orange';
+      case 'permission':
+        return 'red';
+      case 'not_found':
+        return 'yellow';
+      default:
+        return 'red';
+    }
+  };
+
+  if ((!profile && loadingTimeout) || profileError) {
+    const errorColor = getErrorColor();
+
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md w-full mx-4">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-              <AlertCircle className="w-8 h-8 text-red-600" />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-coral-50">
+        <div className="max-w-lg w-full mx-4">
+          <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-100">
+            <div className={`inline-flex items-center justify-center w-16 h-16 bg-${errorColor}-100 rounded-full mb-6`}>
+              <div className={`text-${errorColor}-600`}>
+                {getErrorIcon()}
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Problème de chargement</h2>
-            <p className="text-gray-600 mb-6">
-              Impossible de charger votre profil. Cela peut être dû à un problème de connexion.
+
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">
+              {profileError?.message || 'Problème de chargement'}
+            </h2>
+
+            <p className="text-gray-600 mb-4">
+              {profileError?.details || 'Impossible de charger votre profil. Cela peut être dû à un problème de connexion.'}
             </p>
-            <button
-              onClick={() => {
-                setLoadingTimeout(false);
-                initialize();
-              }}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-terracotta-500 text-white rounded-lg hover:bg-terracotta-600 transition-colors font-semibold"
-            >
-              <RefreshCw className="w-5 h-5" />
-              Réessayer
-            </button>
-            <button
-              onClick={() => window.location.href = '/connexion'}
-              className="block w-full mt-3 px-6 py-3 text-gray-700 hover:text-gray-900 transition-colors"
-            >
-              Retour à la connexion
-            </button>
+
+            {retryCount > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Tentative {retryCount + 1}/6</strong> - Nouvelle tentative en cours...
+                </p>
+              </div>
+            )}
+
+            {profileError?.type === 'network' && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-amber-800 mb-2">
+                  <strong>Conseils :</strong>
+                </p>
+                <ul className="text-sm text-amber-700 space-y-1 list-disc list-inside">
+                  <li>Vérifiez votre connexion Internet</li>
+                  <li>Réessayez dans quelques instants</li>
+                  <li>Contactez le support si le problème persiste</li>
+                </ul>
+              </div>
+            )}
+
+            {profileError?.type === 'not_found' && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-yellow-800">
+                  <strong>Votre profil n'a pas été trouvé.</strong> Cela peut arriver si votre compte vient d'être créé.
+                  Veuillez contacter le support à <strong>support@montoit.ci</strong>
+                </p>
+              </div>
+            )}
+
+            {profileError?.type === 'permission' && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <p className="text-sm text-red-800">
+                  <strong>Accès refusé.</strong> Vous n'avez pas les permissions nécessaires.
+                  Veuillez contacter l'administrateur.
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <button
+                onClick={handleRetry}
+                disabled={retrying || loading}
+                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-terracotta-500 text-white rounded-xl hover:bg-terracotta-600 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              >
+                <RefreshCw className={`w-5 h-5 ${retrying || loading ? 'animate-spin' : ''}`} />
+                {retrying || loading ? 'Nouvelle tentative...' : 'Réessayer'}
+              </button>
+
+              <button
+                onClick={() => window.location.href = '/connexion'}
+                className="w-full px-6 py-3 text-gray-700 hover:text-gray-900 transition-colors font-medium border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50"
+              >
+                Retour à la connexion
+              </button>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <p className="text-sm text-gray-500 text-center">
+                Besoin d'aide ? Contactez-nous à <a href="mailto:support@montoit.ci" className="text-terracotta-600 hover:text-terracotta-700 font-medium">support@montoit.ci</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

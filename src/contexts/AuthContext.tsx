@@ -2,20 +2,29 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session, AuthError, Provider } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
+import { testDatabaseConnection } from '../utils/supabaseHealthCheck';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
+
+export type ProfileError = {
+  type: 'network' | 'database' | 'not_found' | 'permission' | 'unknown';
+  message: string;
+  details?: string;
+};
 
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
+  profileError: ProfileError | null;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
   signUp: (email: string, password: string, userData: { full_name: string; user_type?: string }) => Promise<{ error: AuthError | null }>;
   signInWithProvider: (provider: Provider) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: AuthError | null }>;
+  clearProfileError: () => void;
   refreshProfile: () => Promise<void>;
 }
 
@@ -26,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileError, setProfileError] = useState<ProfileError | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,11 +65,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadProfile = async (userId: string, retryCount = 0) => {
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY = 1000;
+    const MAX_RETRIES = 5;
+    const RETRY_DELAY = 1500;
 
     try {
       console.log(`[AuthContext] Loading profile for user ${userId} (attempt ${retryCount + 1}/${MAX_RETRIES + 1})`);
+
+      if (retryCount === 0) {
+        const healthCheck = await testDatabaseConnection();
+        if (!healthCheck.success) {
+          console.error('[AuthContext] Database connection failed:', healthCheck.message);
+          setProfileError({
+            type: 'network',
+            message: 'Problème de connexion à la base de données',
+            details: healthCheck.message
+          });
+          setLoading(false);
+          return;
+        }
+      }
 
       const { data, error } = await supabase
         .from('profiles')
@@ -69,6 +93,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.error('[AuthContext] Error from Supabase:', error);
+
+        if (error.code === 'PGRST116') {
+          setProfileError({
+            type: 'not_found',
+            message: 'Profil introuvable',
+            details: 'Votre profil n\'a pas été créé correctement. Veuillez contacter le support.'
+          });
+        } else if (error.message.includes('permission')) {
+          setProfileError({
+            type: 'permission',
+            message: 'Erreur de permission',
+            details: 'Vous n\'avez pas les permissions nécessaires pour accéder à votre profil.'
+          });
+        } else {
+          setProfileError({
+            type: 'database',
+            message: 'Erreur de base de données',
+            details: error.message
+          });
+        }
+
         throw error;
       }
 
@@ -77,23 +122,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (retryCount < MAX_RETRIES) {
           console.log(`[AuthContext] Retrying in ${RETRY_DELAY}ms...`);
-          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
           return loadProfile(userId, retryCount + 1);
         }
 
         console.error('[AuthContext] Profile not found after all retries');
-        throw new Error('Profile not found. Please contact support.');
+        setProfileError({
+          type: 'not_found',
+          message: 'Profil introuvable',
+          details: 'Impossible de trouver votre profil après plusieurs tentatives. Veuillez contacter le support.'
+        });
+        setLoading(false);
+        return;
       }
 
       console.log('[AuthContext] Profile loaded successfully:', data.email);
       setProfile(data);
+      setProfileError(null);
     } catch (error: any) {
       console.error('[AuthContext] Error loading profile:', error);
 
       if (retryCount < MAX_RETRIES) {
-        console.log(`[AuthContext] Retrying after error in ${RETRY_DELAY}ms...`);
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+        console.log(`[AuthContext] Retrying after error in ${RETRY_DELAY * (retryCount + 1)}ms...`);
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (retryCount + 1)));
         return loadProfile(userId, retryCount + 1);
+      }
+
+      if (!profileError) {
+        setProfileError({
+          type: 'unknown',
+          message: 'Erreur inconnue',
+          details: error.message || 'Une erreur inattendue s\'est produite.'
+        });
       }
     } finally {
       setLoading(false);
@@ -180,8 +240,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshProfile = async () => {
     if (user) {
+      setLoading(true);
+      setProfileError(null);
       await loadProfile(user.id);
     }
+  };
+
+  const clearProfileError = () => {
+    setProfileError(null);
   };
 
   return (
@@ -190,6 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       profile,
       session,
       loading,
+      profileError,
       signIn,
       signUp,
       signInWithProvider,
@@ -197,6 +264,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       updateProfile,
       resetPassword,
       refreshProfile,
+      clearProfileError,
     }}>
       {children}
     </AuthContext.Provider>
