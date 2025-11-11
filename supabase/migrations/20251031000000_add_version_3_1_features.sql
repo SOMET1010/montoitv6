@@ -150,7 +150,7 @@ BEGIN
   UPDATE properties
   SET trending_score = calculate_trending_score(id),
       updated_at = now()
-  WHERE status = 'available';
+  WHERE status = 'disponible';
 END;
 $$ LANGUAGE plpgsql;
 

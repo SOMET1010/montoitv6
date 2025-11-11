@@ -132,7 +132,7 @@ DROP POLICY IF EXISTS "Public properties are viewable by everyone" ON public.pro
 CREATE POLICY "Anyone can view available properties"
   ON public.properties FOR SELECT
   TO authenticated, anon
-  USING (status = 'available' OR owner_id = (select auth.uid()));
+  USING (status = 'disponible' OR owner_id = (select auth.uid()));
 
 CREATE POLICY "Owners can insert properties"
   ON public.properties FOR INSERT
