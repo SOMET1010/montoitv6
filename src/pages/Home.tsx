@@ -162,12 +162,12 @@ export default function Home() {
 
           <form onSubmit={handleSearch} className="max-w-4xl mx-auto animate-scale-in" style={{ animationDelay: '0.4s' }}>
             <div className="glass-card rounded-3xl p-3 flex flex-col md:flex-row items-center gap-3 transform hover:scale-105 transition-all duration-300">
-              <div className="flex-1 w-full flex items-center bg-white/50 rounded-2xl px-4 py-3">
+              <div className="flex-1 w-full flex items-center bg-white/50 rounded-2xl px-4 py-3 border-2 border-transparent focus-within:border-terracotta-500 focus-within:ring-4 focus-within:ring-terracotta-200 focus-within:shadow-lg transition-all duration-300 hover:border-terracotta-300">
                 <MapPin className="h-6 w-6 text-terracotta-500 mr-3 flex-shrink-0" />
                 <input
                   type="text"
                   placeholder="Où souhaitez-vous habiter ? (Abidjan, Cocody, Plateau...)"
-                  className="flex-1 bg-transparent text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-terracotta-400 rounded-lg px-2 py-1 text-lg"
+                  className="flex-1 bg-transparent text-gray-900 placeholder-gray-600 focus:outline-none text-lg"
                   value={searchCity}
                   onChange={(e) => setSearchCity(e.target.value)}
                   aria-label="Rechercher une ville ou un quartier"

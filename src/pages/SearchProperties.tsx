@@ -184,7 +184,7 @@ export default function SearchProperties() {
               <input
                 type="text"
                 placeholder="Où cherchez-vous ? (Cocody, Plateau, Yopougon...)"
-                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:border-terracotta-500 transition-all bg-white/90 text-lg font-medium"
+                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white/90 text-lg font-medium hover:border-terracotta-300"
                 value={searchCity}
                 onChange={(e) => setSearchCity(e.target.value)}
                 aria-label="Rechercher une ville ou un quartier"
@@ -251,7 +251,7 @@ export default function SearchProperties() {
                 <select
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value as PropertyType | '')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">🏘️ Tous les types</option>
                   <option value="appartement">🏢 Appartement</option>
@@ -272,7 +272,7 @@ export default function SearchProperties() {
                   placeholder="0 FCFA"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white font-medium hover:border-terracotta-300"
                 />
               </div>
 
@@ -285,7 +285,7 @@ export default function SearchProperties() {
                   placeholder="Illimité"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white font-medium hover:border-terracotta-300"
                 />
               </div>
 
@@ -296,7 +296,7 @@ export default function SearchProperties() {
                 <select
                   value={bedrooms}
                   onChange={(e) => setBedrooms(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="1">1+ chambres</option>
@@ -314,7 +314,7 @@ export default function SearchProperties() {
                 <select
                   value={bathrooms}
                   onChange={(e) => setBathrooms(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="1">1+ salles de bain</option>
@@ -330,7 +330,7 @@ export default function SearchProperties() {
                 <select
                   value={isFurnished === null ? '' : isFurnished ? 'yes' : 'no'}
                   onChange={(e) => setIsFurnished(e.target.value === '' ? null : e.target.value === 'yes')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="yes">Meublé</option>
@@ -345,7 +345,7 @@ export default function SearchProperties() {
                 <select
                   value={hasParking === null ? '' : hasParking ? 'yes' : 'no'}
                   onChange={(e) => setHasParking(e.target.value === '' ? null : e.target.value === 'yes')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="yes">Avec parking</option>
@@ -360,7 +360,7 @@ export default function SearchProperties() {
                 <select
                   value={hasAC === null ? '' : hasAC ? 'yes' : 'no'}
                   onChange={(e) => setHasAC(e.target.value === '' ? null : e.target.value === 'yes')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="yes">Avec climatisation</option>
@@ -525,7 +525,7 @@ export default function SearchProperties() {
                 setSortBy(e.target.value as any);
                 loadProperties();
               }}
-              className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white cursor-pointer font-bold text-terracotta-600"
+              className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white cursor-pointer font-bold text-terracotta-600 hover:border-terracotta-300"
               aria-label="Trier les propriétés"
             >
               <option value="recent">✨ Plus récent</option>

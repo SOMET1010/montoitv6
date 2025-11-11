@@ -69,7 +69,7 @@ export default function EnhancedSearch({ onSearch, showQuickFilters = true, comp
     return (
       <div className="glass-card rounded-2xl p-3">
         <div className="flex items-center space-x-2">
-          <div className="flex-1 flex items-center bg-white/50 rounded-xl px-3 py-2">
+          <div className="flex-1 flex items-center bg-white/50 rounded-xl px-3 py-2 border-2 border-transparent focus-within:border-terracotta-500 focus-within:ring-2 focus-within:ring-terracotta-200 focus-within:shadow-lg transition-all duration-300 hover:border-terracotta-300">
             <MapPin className="h-5 w-5 text-terracotta-500 mr-2" />
             <input
               type="text"
@@ -95,7 +95,7 @@ export default function EnhancedSearch({ onSearch, showQuickFilters = true, comp
     <div className="space-y-4">
       <div className="glass-card rounded-3xl p-4">
         <div className="flex flex-col md:flex-row items-stretch gap-3">
-          <div className="flex-1 flex items-center bg-white/70 rounded-2xl px-4 py-3 border-2 border-white/50 focus-within:border-terracotta-300 transition-colors">
+          <div className="flex-1 flex items-center bg-white/70 rounded-2xl px-4 py-3 border-2 border-white/50 focus-within:border-terracotta-500 focus-within:ring-4 focus-within:ring-terracotta-200 focus-within:shadow-lg transition-all duration-300 hover:border-terracotta-300">
             <MapPin className="h-6 w-6 text-terracotta-500 mr-3 flex-shrink-0" />
             <input
               type="text"
@@ -152,7 +152,7 @@ export default function EnhancedSearch({ onSearch, showQuickFilters = true, comp
                 <select
                   value={filters.propertyType}
                   onChange={(e) => setFilters({ ...filters, propertyType: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-300 focus:outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-500 focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:shadow-lg transition-all duration-300 hover:border-terracotta-300"
                 >
                   <option value="">Tous les types</option>
                   <option value="appartement">Appartement</option>
@@ -173,7 +173,7 @@ export default function EnhancedSearch({ onSearch, showQuickFilters = true, comp
                     placeholder="Ex: 100000"
                     value={filters.minPrice}
                     onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-300 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-500 focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:shadow-lg transition-all duration-300 hover:border-terracotta-300"
                   />
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function EnhancedSearch({ onSearch, showQuickFilters = true, comp
                     placeholder="Ex: 500000"
                     value={filters.maxPrice}
                     onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-300 focus:outline-none"
+                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-500 focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:shadow-lg transition-all duration-300 hover:border-terracotta-300"
                   />
                 </div>
               </div>
@@ -201,7 +201,7 @@ export default function EnhancedSearch({ onSearch, showQuickFilters = true, comp
                 <select
                   value={filters.bedrooms}
                   onChange={(e) => setFilters({ ...filters, bedrooms: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-300 focus:outline-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white/70 border-2 border-white/50 focus:border-terracotta-500 focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:shadow-lg transition-all duration-300 hover:border-terracotta-300"
                 >
                   <option value="">Peu importe</option>
                   <option value="1">1+ chambre</option>
