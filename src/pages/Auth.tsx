@@ -71,12 +71,33 @@ export default function Auth() {
 
   const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setError('');
+    setSuccess('');
     setLoading(true);
+
     try {
+      const providerName = provider === 'google' ? 'Google' : 'Facebook';
+
       const { error } = await signInWithProvider(provider);
-      if (error) throw error;
+
+      if (error) {
+        console.error(`${providerName} auth error:`, error);
+
+        if (error.message?.includes('not configured') || error.message?.includes('provider')) {
+          setError(`L'authentification ${providerName} n'est pas encore configurée. Veuillez utiliser l'email/mot de passe ou contacter l'administrateur.`);
+        } else if (error.message?.includes('popup') || error.message?.includes('blocked')) {
+          setError(`La fenêtre de connexion ${providerName} a été bloquée. Autorisez les popups et réessayez.`);
+        } else {
+          setError(error.message || `Erreur de connexion ${providerName}`);
+        }
+        setLoading(false);
+        return;
+      }
+
+      setSuccess(`Redirection vers ${providerName}...`);
     } catch (err: any) {
-      setError(err.message || 'Erreur de connexion sociale');
+      console.error('Social login error:', err);
+      const providerName = provider === 'google' ? 'Google' : 'Facebook';
+      setError(err.message || `Erreur de connexion ${providerName}`);
       setLoading(false);
     }
   };
