@@ -1,13 +1,13 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List, Star, Navigation } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import type { Database } from '../lib/database.types';
-import { recommendationService } from '../services/ai/recommendationService';
-import { useAuth } from '../contexts/AuthContext';
-import { DistanceCalculator } from '../utils/distanceCalculator';
-import GeolocationButton from '../components/GeolocationButton';
+import { supabase } from '../../lib/supabase';
+import type { Database } from '../../lib/database.types';
+import { recommendationService } from '../../services/ai/recommendationService';
+import { useAuth } from '../../contexts/AuthContext';
+import { DistanceCalculator } from '../../utils/distanceCalculator';
+import GeolocationButton from '../../components/GeolocationButton';
 
-const MapboxMap = lazy(() => import('../components/MapboxMap'));
+const MapboxMap = lazy(() => import('../../components/MapboxMap'));
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type PropertyType = Database['public']['Tables']['properties']['Row']['property_type'];

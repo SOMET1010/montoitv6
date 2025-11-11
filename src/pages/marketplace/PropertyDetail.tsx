@@ -1,11 +1,11 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, ArrowLeft, Send, Heart, X, ChevronLeft, ChevronRight, Maximize2, Shield, CheckCircle, MessageCircle, Clock, Navigation, ExternalLink } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
-import type { Database } from '../lib/database.types';
-import Breadcrumb from '../components/Breadcrumb';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import type { Database } from '../../lib/database.types';
+import Breadcrumb from '../../components/Breadcrumb';
 
-const MapboxMap = lazy(() => import('../components/MapboxMap'));
+const MapboxMap = lazy(() => import('../../components/MapboxMap'));
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];

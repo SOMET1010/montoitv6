@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Plus, Home, Eye, Calendar, TrendingUp, Edit, ExternalLink, Award, Filter, DollarSign, MessageSquare, Users, Clock, BarChart3, TrendingDown, Wrench, FileText } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
-import { ScoringService } from '../services/scoringService';
-import type { Database } from '../lib/database.types';
-import Breadcrumb from '../components/Breadcrumb';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { ScoringService } from '../../services/scoringService';
+import type { Database } from '../../lib/database.types';
+import Breadcrumb from '../../components/Breadcrumb';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Application = Database['public']['Tables']['rental_applications']['Row'];

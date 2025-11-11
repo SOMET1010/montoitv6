@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Home, DollarSign, MessageSquare, Clock, Calendar, Heart, Search, AlertCircle, CheckCircle, FileText, Wrench } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { useAuth } from '../contexts/AuthContext';
-import type { Database } from '../lib/database.types';
-import Breadcrumb from '../components/Breadcrumb';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import type { Database } from '../../lib/database.types';
+import Breadcrumb from '../../components/Breadcrumb';
 
 type Lease = Database['public']['Tables']['leases']['Row'];
 type Property = Database['public']['Tables']['properties']['Row'];

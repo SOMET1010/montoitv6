@@ -1,10 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { useAuth } from '../../contexts/AuthContext';
+import { supabase } from '../../lib/supabase';
 import { ArrowLeft, FileText, Download, Edit, CheckCircle, X } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Breadcrumb from '../components/Breadcrumb';
+import Breadcrumb from '../../components/Breadcrumb';
 
 interface Contract {
   id: string;
