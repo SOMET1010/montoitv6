@@ -184,7 +184,7 @@ export default function SearchProperties() {
               <input
                 type="text"
                 placeholder="Où cherchez-vous ? (Cocody, Plateau, Yopougon...)"
-                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white/90 text-lg font-medium hover:border-terracotta-300"
+                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-terracotta-300 focus:border-terracotta-500 focus:shadow-xl focus:bg-white transition-all duration-200 bg-white/90 text-lg font-medium hover:border-terracotta-300 hover:bg-white"
                 value={searchCity}
                 onChange={(e) => setSearchCity(e.target.value)}
                 aria-label="Rechercher une ville ou un quartier"
@@ -457,7 +457,7 @@ export default function SearchProperties() {
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
                             className="text-xs text-cyan-700 hover:text-cyan-800 font-mono bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-lg inline-flex items-center space-x-1 transition-colors"
-                            title="Ouvrir dans Google Maps"
+                            title="Ouvrir la localisation dans Maps"
                           >
                             <Navigation className="h-3 w-3" />
                             <span>{property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
@@ -606,7 +606,7 @@ export default function SearchProperties() {
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           className="text-xs text-cyan-700 hover:text-cyan-800 font-mono bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-lg flex items-center space-x-1 transition-colors"
-                          title="Ouvrir dans Google Maps"
+                          title="Ouvrir la localisation dans Maps"
                         >
                           <Navigation className="h-3 w-3" />
                           <span>{property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>

@@ -70,6 +70,11 @@ export default function MapboxMap({
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
     try {
+      if (!MAPBOX_TOKEN || MAPBOX_TOKEN === 'undefined') {
+        console.error('Mapbox token is not configured');
+        return;
+      }
+
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v12',

@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, ArrowLeft, Send, Heart, X, ChevronLeft, ChevronRight, Maximize2, Shield, CheckCircle, MessageCircle, Clock, Navigation, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { Database } from '../lib/database.types';
 import Breadcrumb from '../components/Breadcrumb';
+
+const MapboxMap = lazy(() => import('../components/MapboxMap'));
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -423,7 +425,7 @@ export default function PropertyDetail() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn-primary px-4 py-3 text-sm flex items-center justify-center space-x-2 focus:ring-4 focus:ring-terracotta-300 focus:ring-offset-2"
-                          aria-label="Ouvrir dans Google Maps"
+                          aria-label="Ouvrir la localisation dans Maps"
                         >
                           <ExternalLink className="h-4 w-4" />
                           <span>Ouvrir dans Maps</span>
@@ -442,17 +444,33 @@ export default function PropertyDetail() {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-gray-200" style={{ height: '400px' }}>
-                    <iframe
-                      title="Carte de localisation de la propriété"
-                      width="100%"
-                      height="100%"
-                      frameBorder="0"
-                      style={{ border: 0 }}
-                      src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8'}&q=${property.latitude},${property.longitude}&zoom=15`}
-                      allowFullScreen
-                      aria-hidden="false"
-                    />
+                  <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-gray-200">
+                    <Suspense fallback={
+                      <div className="w-full h-[400px] bg-gray-100 flex items-center justify-center">
+                        <div className="text-center">
+                          <MapPin className="h-12 w-12 text-terracotta-500 mx-auto mb-3 animate-pulse" />
+                          <p className="text-gray-600">Chargement de la carte...</p>
+                        </div>
+                      </div>
+                    }>
+                      <MapboxMap
+                        center={[property.longitude, property.latitude]}
+                        zoom={15}
+                        properties={[{
+                          id: property.id,
+                          title: property.title,
+                          monthly_rent: property.monthly_rent,
+                          longitude: property.longitude,
+                          latitude: property.latitude,
+                          status: property.status,
+                          images: property.images as string[],
+                          city: property.city,
+                          neighborhood: property.neighborhood,
+                        }]}
+                        height="400px"
+                        singleMarker={true}
+                      />
+                    </Suspense>
                   </div>
                 </div>
               )}
