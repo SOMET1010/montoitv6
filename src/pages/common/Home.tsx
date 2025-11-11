@@ -6,7 +6,7 @@ import QuickSearch from '../../components/QuickSearch';
 import { FormatService } from '../../services/format/formatService';
 import MapWrapper from '../../components/MapWrapper';
 import ErrorDisplay from '../../components/ErrorDisplay';
-import SEOHead from '../../components/SEOHead';
+import SEOHead from '../../components/ui/SEOHead';
 import GeolocationButton from '../../components/GeolocationButton';
 
 type Property = Database['public']['Tables']['properties']['Row'];
