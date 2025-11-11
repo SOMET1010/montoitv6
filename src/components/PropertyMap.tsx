@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { MapPin, Loader } from 'lucide-react';
+import { MapPin, Loader, AlertCircle } from 'lucide-react';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mapboxgl: any;
+  }
+}
 
 interface Property {
   id: string;
@@ -25,20 +33,24 @@ export default function PropertyMap({
   onMarkerClick
 }: PropertyMapProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const map = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markers = useRef<any[]>([]);
   const [mapboxToken, setMapboxToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     loadMapboxToken();
   }, []);
 
   useEffect(() => {
-    if (!mapboxToken || !mapContainer.current || map.current) return;
+    if (!mapboxToken || !mapContainer.current || map.current || !scriptLoaded) return;
 
     initializeMap();
-  }, [mapboxToken]);
+  }, [mapboxToken, scriptLoaded]);
 
   useEffect(() => {
     if (map.current && mapboxToken) {
@@ -57,12 +69,19 @@ export default function PropertyMap({
 
       if (error) throw error;
 
-      if (data?.keys?.access_token) {
-        setMapboxToken(data.keys.access_token);
+      // Type assertion pour éviter les erreurs TypeScript
+      const dataRecord = data as Record<string, unknown>;
+      if (dataRecord && typeof dataRecord === 'object' && 'keys' in dataRecord) {
+        const keys = dataRecord['keys'] as Record<string, unknown>;
+        if (keys && typeof keys === 'object' && 'access_token' in keys) {
+          setMapboxToken(String(keys['access_token']));
+        } else {
+          setError('Mapbox token not configured');
+        }
       } else {
         setError('Mapbox token not configured');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error loading Mapbox token:', err);
       setError('Failed to load map');
     } finally {
@@ -73,44 +92,107 @@ export default function PropertyMap({
   const initializeMap = () => {
     if (!mapContainer.current || !mapboxToken) return;
 
+    // Vérifier si le script est déjà chargé
+    if (window.mapboxgl) {
+      setScriptLoaded(true);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js';
     script.async = true;
+    script.onerror = () => {
+      console.error('Failed to load Mapbox script');
+      setError('Impossible de charger la carte');
+      setLoading(false);
+    };
+    
     script.onload = () => {
-      const link = document.createElement('link');
-      link.href = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+      // Vérifier si le CSS est déjà chargé
+      if (!document.querySelector('link[href*="mapbox-gl.css"]')) {
+        const link = document.createElement('link');
+        link.href = 'https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css';
+        link.rel = 'stylesheet';
+        link.onerror = () => {
+          console.warn('Failed to load Mapbox CSS');
+        };
+        document.head.appendChild(link);
+      }
 
-      const mapboxgl = (window as any).mapboxgl;
-      mapboxgl.accessToken = mapboxToken;
-
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: [center.lng, center.lat],
-        zoom: zoom
-      });
-
-      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-      updateMarkers();
+      setScriptLoaded(true);
     };
 
     document.head.appendChild(script);
   };
 
+  useEffect(() => {
+    if (!scriptLoaded || !mapboxToken || map.current) return;
+
+    try {
+      const mapboxgl = window.mapboxgl;
+      mapboxgl.accessToken = mapboxToken;
+
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current!,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [center.lng, center.lat],
+        zoom: zoom
+      });
+
+      if (map.current) {
+        map.current.addControl(new window.mapboxgl.NavigationControl(), 'top-right');
+
+        map.current.on('load', () => {
+          updateMarkers();
+        });
+
+        map.current.on('error', (e: { error: Error }) => {
+          console.error('Mapbox error:', e.error);
+          setError('Erreur lors du chargement de la carte');
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing map:', error);
+      setError('Impossible d\'initialiser la carte');
+    }
+  }, [scriptLoaded, mapboxToken, center, zoom]);
+
+  const validateCoordinates = (lng: number, lat: number): [number, number] | null => {
+    if (isNaN(lng) || isNaN(lat)) return null;
+    if (lng < -9 || lng > -2 || lat < 4 || lat > 11) return null;
+    return [lng, lat];
+  };
+
   const updateMarkers = () => {
     if (!map.current) return;
 
-    const mapboxgl = (window as any).mapboxgl;
+    const mapboxgl = window.mapboxgl;
     if (!mapboxgl) return;
 
-    const markers = document.querySelectorAll('.mapboxgl-marker');
-    markers.forEach(marker => marker.remove());
+    // Nettoyer les marqueurs existants
+    markers.current.forEach(marker => {
+      if (marker && typeof marker.remove === 'function') {
+        marker.remove();
+      }
+    });
+    markers.current = [];
 
-    properties.forEach(property => {
-      if (!property.latitude || !property.longitude) return;
+    const validProperties = properties.filter(property => {
+      if (!property.latitude || !property.longitude) return false;
+      return validateCoordinates(property.longitude, property.latitude) !== null;
+    });
+
+    if (validProperties.length === 0) {
+      console.warn('No valid properties with coordinates to display');
+      return;
+    }
+
+    validProperties.forEach(property => {
+      const validCoords = validateCoordinates(
+        property.longitude || 0,
+        property.latitude || 0
+      );
+      if (!validCoords) return;
 
       const el = document.createElement('div');
       el.className = 'custom-marker';
@@ -124,6 +206,8 @@ export default function PropertyMap({
         box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         cursor: pointer;
         position: relative;
+        transition: transform 0.2s ease;
+        z-index: 10;
       `;
 
       const icon = document.createElement('div');
@@ -137,15 +221,31 @@ export default function PropertyMap({
       `;
       el.appendChild(icon);
 
-      const marker = new mapboxgl.Marker(el)
-        .setLngLat([property.longitude, property.latitude])
-        .addTo(map.current);
+      // Améliorer l'interactivité
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'rotate(-45deg) scale(1.1)';
+        el.style.zIndex = '1000';
+      });
+
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'rotate(-45deg) scale(1)';
+        el.style.zIndex = '10';
+      });
+
+      const marker = new mapboxgl.Marker({
+        element: el,
+        anchor: 'bottom',
+        offset: [0, 20]
+      })
+        .setLngLat(validCoords)
+        .addTo(map.current!);
 
       const popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: false
+        offset: 30,
+        closeButton: true,
+        closeOnClick: false
       }).setHTML(`
-        <div style="padding: 10px; min-width: 200px;">
+        <div style="padding: 12px; min-width: 220px;">
           <h3 style="margin: 0 0 8px 0; font-size: 16px; font-weight: bold; color: #1f2937;">
             ${property.title}
           </h3>
@@ -160,21 +260,48 @@ export default function PropertyMap({
 
       marker.setPopup(popup);
 
-      el.addEventListener('click', () => {
+      const handleClick = (event: Event) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (onMarkerClick) {
           onMarkerClick(property);
         }
-      });
-    });
+        // Ouvrir le popup avec un léger délai
+        setTimeout(() => {
+          marker.togglePopup();
+        }, 50);
+      };
 
-    if (properties.length > 0 && properties.some(p => p.latitude && p.longitude)) {
-      const bounds = new mapboxgl.LngLatBounds();
-      properties.forEach(property => {
-        if (property.latitude && property.longitude) {
-          bounds.extend([property.longitude, property.latitude]);
+      el.addEventListener('click', handleClick);
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick(e);
         }
       });
-      map.current.fitBounds(bounds, { padding: 50, maxZoom: 15 });
+
+      el.setAttribute('role', 'button');
+      el.setAttribute('aria-label', `Voir ${property.title}`);
+      el.tabIndex = 0;
+
+      markers.current.push(marker);
+    });
+
+    // Ajuster la vue pour inclure tous les marqueurs
+    if (validProperties.length > 0) {
+      const bounds = new mapboxgl.LngLatBounds();
+      validProperties.forEach(property => {
+        const validCoords = validateCoordinates(
+          property.longitude || 0,
+          property.latitude || 0
+        );
+        if (validCoords) {
+          bounds.extend(validCoords);
+        }
+      });
+      if (map.current) {
+        map.current.fitBounds(bounds, { padding: 50, maxZoom: 15 });
+      }
     }
   };
 
@@ -192,9 +319,19 @@ export default function PropertyMap({
   if (error) {
     return (
       <div className="w-full h-96 bg-gray-100 rounded-xl flex items-center justify-center">
-        <div className="text-center">
-          <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">{error}</p>
+        <div className="text-center max-w-md p-6">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => {
+              setError('');
+              setLoading(true);
+              loadMapboxToken();
+            }}
+            className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+          >
+            Réessayer
+          </button>
         </div>
       </div>
     );

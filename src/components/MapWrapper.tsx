@@ -3,6 +3,39 @@ import { Map, AlertCircle, MapPin } from 'lucide-react';
 
 const MapboxMap = lazy(() => import('./MapboxMap'));
 
+// Composant simple pour gérer les erreurs de Mapbox
+function MapboxErrorBoundary({
+  children,
+  onError
+}: {
+  children: React.ReactNode;
+  onError: () => void;
+}) {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const handleError = (event: ErrorEvent) => {
+      if (event.message && (
+        event.message.includes('mapbox') ||
+        event.message.includes('Map') ||
+        event.filename && event.filename.includes('mapbox')
+      )) {
+        setHasError(true);
+        onError();
+      }
+    };
+
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, [onError]);
+
+  if (hasError) {
+    return null; // Le composant parent gérera l'affichage du fallback
+  }
+
+  return <>{children}</>;
+}
+
 interface Property {
   id: string;
   title: string;
@@ -21,6 +54,7 @@ interface MapWrapperProps {
   properties: Property[];
   highlightedPropertyId?: string;
   onMarkerClick?: (property: Property) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onBoundsChange?: (bounds: any) => void;
   clustering?: boolean;
   draggableMarker?: boolean;
@@ -35,32 +69,67 @@ interface MapWrapperProps {
 }
 
 export default function MapWrapper(props: MapWrapperProps) {
-  const [mapError, setMapError] = useState(false);
   const [useAzureFallback, setUseAzureFallback] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [errorDetails, setErrorDetails] = useState<string>('');
 
   useEffect(() => {
     const checkMapboxToken = () => {
-      const token = import.meta.env.VITE_MAPBOX_PUBLIC_TOKEN || import.meta.env.VITE_MAPBOX_TOKEN;
+      const token = import.meta.env['VITE_MAPBOX_PUBLIC_TOKEN'] || import.meta.env['VITE_MAPBOX_TOKEN'];
       if (!token || token === '' || token === 'undefined') {
         console.warn('Mapbox token not configured, using Azure Maps fallback');
         setUseAzureFallback(true);
+        setErrorDetails('Token Mapbox non configuré');
+      }
+    };
+
+    const handleMapError = (event?: Event) => {
+      console.error('Mapbox failed to load, switching to Azure Maps');
+      setUseAzureFallback(true);
+      setErrorDetails(event ? 'Erreur de chargement de Mapbox' : 'Erreur inconnue');
+    };
+
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      if (event.reason && typeof event.reason === 'string' && event.reason.includes('mapbox')) {
+        handleMapError();
       }
     };
 
     checkMapboxToken();
 
-    const handleMapError = () => {
-      console.error('Mapbox failed to load, switching to Azure Maps');
-      setMapError(true);
-      setUseAzureFallback(true);
-    };
-
     window.addEventListener('mapbox-error', handleMapError);
-    return () => window.removeEventListener('mapbox-error', handleMapError);
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    
+    return () => {
+      window.removeEventListener('mapbox-error', handleMapError);
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
   }, []);
 
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    setUseAzureFallback(false);
+    setErrorDetails('');
+    
+    // Forcer le rechargement du composant
+    const token = import.meta.env['VITE_MAPBOX_PUBLIC_TOKEN'] || import.meta.env['VITE_MAPBOX_TOKEN'];
+    if (!token || token === '' || token === 'undefined') {
+      setTimeout(() => {
+        setUseAzureFallback(true);
+        setErrorDetails('Token Mapbox toujours non configuré');
+      }, 1000);
+    }
+  };
+
   if (useAzureFallback) {
-    return <AzureMapsComponent {...props} />;
+    return (
+      <AzureMapsComponent
+        {...props}
+        errorDetails={errorDetails}
+        onRetry={handleRetry}
+        retryCount={retryCount}
+      />
+    );
   }
 
   return (
@@ -96,15 +165,14 @@ export default function MapWrapper(props: MapWrapperProps) {
         </div>
       }
     >
-      <div
+      <MapboxErrorBoundary
         onError={() => {
-          console.error('Mapbox component error, using fallback');
-          setMapError(true);
           setUseAzureFallback(true);
+          setErrorDetails('Erreur de rendu du composant Mapbox');
         }}
       >
-        <MapboxMap {...props} />
-      </div>
+        <MapboxMap {...props} key={`mapbox-${retryCount}`} />
+      </MapboxErrorBoundary>
     </Suspense>
   );
 }
@@ -112,10 +180,15 @@ export default function MapWrapper(props: MapWrapperProps) {
 function AzureMapsComponent({
   properties,
   height = '500px',
-  center = [-4.0083, 5.36],
-  zoom = 12,
   onMarkerClick,
-}: MapWrapperProps) {
+  errorDetails = '',
+  onRetry,
+  retryCount = 0,
+}: MapWrapperProps & {
+  errorDetails?: string;
+  onRetry?: () => void;
+  retryCount?: number;
+}) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
 
   const handleMarkerClick = (property: Property) => {
@@ -140,12 +213,22 @@ function AzureMapsComponent({
               Azure Maps - Mode de Secours
             </h3>
             <p className="text-gray-600 mb-4">
-              Mapbox n'est pas disponible. Utilisation d'Azure Maps comme solution alternative.
+              Mapbox n'est pas disponible. Utilisation du mode de secours.
             </p>
-            <div className="flex items-center justify-center space-x-2 text-sm text-blue-600 bg-blue-50 px-4 py-2 rounded-lg">
-              <AlertCircle className="h-4 w-4" />
-              <span>Configuration Azure Maps en cours...</span>
-            </div>
+            {errorDetails && (
+              <div className="flex items-center justify-center space-x-2 text-sm text-red-600 bg-red-50 px-4 py-2 rounded-lg mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <span>{errorDetails}</span>
+              </div>
+            )}
+            {onRetry && retryCount < 3 && (
+              <button
+                onClick={onRetry}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors mb-4"
+              >
+                Réessayer Mapbox ({3 - retryCount} tentative{3 - retryCount > 1 ? 's' : ''} restante{3 - retryCount > 1 ? 's' : ''})
+              </button>
+            )}
           </div>
 
           {properties.length > 0 && (
@@ -192,10 +275,15 @@ function AzureMapsComponent({
             </div>
           )}
 
-          <div className="mt-6 text-sm text-gray-500">
+          <div className="mt-6 text-sm text-gray-500 space-y-2">
             <p>
               💡 <strong>Note:</strong> Pour activer Mapbox, ajoutez votre token dans les variables d'environnement
             </p>
+            {retryCount >= 3 && (
+              <p className="text-red-600">
+                ⚠️ Nombre maximum de tentatives atteint. Veuillez vérifier votre configuration.
+              </p>
+            )}
           </div>
         </div>
       </div>
