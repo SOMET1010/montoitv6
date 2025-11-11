@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Shield, Save, Camera, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Shield, Save, Camera, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import ScoreSection from '../../components/ScoreSection';
@@ -221,6 +221,18 @@ export default function Profile() {
 
               <div className="mb-4">
                 <RoleSwitcher />
+              </div>
+
+              {/* Bouton pour demander un changement de rôle */}
+              <div className="mb-6">
+                <a
+                  href="/changer-role"
+                  className="inline-flex items-center space-x-2 bg-gradient-to-r from-olive-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-olive-600 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg"
+                >
+                  <User className="h-5 w-5" />
+                  <span>Demander un nouveau rôle</span>
+                  <ArrowRight className="h-4 w-4" />
+                </a>
               </div>
 
               {verificationData && (

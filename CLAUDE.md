@@ -20,6 +20,9 @@ npm run typecheck    # TypeScript type checking
 npm run test         # Run tests in watch mode
 npm run test:ui      # Run tests with UI interface
 npm run test:coverage # Generate coverage report
+
+# Code Quality (Additional)
+npm run format:check # Check code formatting without making changes
 ```
 
 ## Project Architecture
@@ -124,6 +127,13 @@ Copy `.env.example` to `.env` and configure all required services.
 - **E2E Tests**: User flow testing (planned)
 - **Coverage Target**: 70% (Phase 2)
 
+### Git Hooks & Code Quality
+
+The project uses Husky for Git hooks and lint-staged for pre-commit checks:
+- **Pre-commit**: Runs lint and format on staged files
+- **Pre-push**: Runs typecheck and tests
+- All commits must follow conventional commit format
+
 ### Development Workflow
 
 1. **Feature Development**: Create feature branches from `develop`
@@ -137,6 +147,7 @@ Copy `.env.example` to `.env` and configure all required services.
 
 - `src/routes/index.tsx` - All route definitions with lazy loading (80+ routes)
 - `src/components/ui/Layout.tsx` - Main layout component with conditional rendering
+- `src/components/ui/ProtectedRoute.tsx` - Route protection with role-based access
 - `src/api/repositories/index.ts` - Repository exports and data access layer
 - `vite.config.ts` - Build configuration with path aliases (`@/` → `src/`)
 
@@ -151,6 +162,15 @@ Key tables managed through repositories:
 - `payments` - Transaction records
 - `maintenance_requests` - Maintenance issues
 
+### Development Workflow
+
+1. **Feature Development**: Create feature branches from `develop`
+2. **Code Review**: Pull requests require review
+3. **Testing**: All tests must pass before merge
+4. **Deployment**:
+   - `develop` → Staging (auto-deploy)
+   - `main` → Production (auto-deploy)
+
 ### Common Development Tasks
 
 **Adding a New Page:**
@@ -164,6 +184,15 @@ Key tables managed through repositories:
 2. Add React Query hook in `src/hooks/`
 3. Update TypeScript types in `src/types/`
 4. Test with proper error handling
+
+**Running Single Tests:**
+```bash
+# Run specific test file
+npm test src/components/__tests__/Component.test.tsx
+
+# Run tests matching pattern
+npm test -- --grep "component name"
+```
 
 **Environment Setup:**
 1. Copy `.env.example` to `.env`

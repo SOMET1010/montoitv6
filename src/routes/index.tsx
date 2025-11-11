@@ -12,6 +12,7 @@ const Auth = lazy(() => import('../components/auth/Auth'));
 const AuthCallback = lazy(() => import('../components/auth/AuthCallback'));
 const ProfileSelection = lazy(() => import('../components/auth/ProfileSelection'));
 const Profile = lazy(() => import('../pages/user/Profile'));
+const RoleChangeRequest = lazy(() => import('../pages/user/RoleChangeRequest'));
 
 const SearchProperties = lazy(() => import('../pages/marketplace/SearchProperties'));
 const PropertyDetail = lazy(() => import('../pages/marketplace/PropertyDetail'));
@@ -112,6 +113,14 @@ export const routes: RouteObject[] = [
         element: (
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'changer-role',
+        element: (
+          <ProtectedRoute>
+            <RoleChangeRequest />
           </ProtectedRoute>
         ),
       },
