@@ -69,10 +69,10 @@ DROP INDEX IF EXISTS public.idx_messages_sender;
 DROP INDEX IF EXISTS public.idx_messages_receiver;
 
 -- Drop unused visit indexes
-DROP INDEX IF EXISTS public.idx_visits_property;
-DROP INDEX IF EXISTS public.idx_visits_tenant;
-DROP INDEX IF EXISTS public.idx_visits_owner;
-DROP INDEX IF EXISTS public.idx_visits_status;
+DROP INDEX IF EXISTS public.idx_property_visits_property;
+DROP INDEX IF EXISTS public.idx_property_visits_visitor;
+DROP INDEX IF EXISTS public.idx_property_visits_owner;
+DROP INDEX IF EXISTS public.idx_property_visits_status;
 
 -- Drop unused profile indexes
 DROP INDEX IF EXISTS public.idx_profiles_email;
@@ -177,63 +177,63 @@ CREATE POLICY "Users can update read status"
   WITH CHECK (receiver_id = (select auth.uid()));
 
 -- =============================================================================
--- 6. OPTIMIZE RLS POLICIES - VISITS TABLE
+-- 6. OPTIMIZE RLS POLICIES - PROPERTY_VISITS TABLE
 -- =============================================================================
 
 -- Drop existing policies
-DROP POLICY IF EXISTS "Users can view their visits" ON public.visits;
-DROP POLICY IF EXISTS "Tenants can request visits" ON public.visits;
-DROP POLICY IF EXISTS "Tenants can cancel visits" ON public.visits;
-DROP POLICY IF EXISTS "Owners can update visit status" ON public.visits;
+DROP POLICY IF EXISTS "Users can view their visits" ON public.property_visits;
+DROP POLICY IF EXISTS "Tenants can request visits" ON public.property_visits;
+DROP POLICY IF EXISTS "Tenants can cancel visits" ON public.property_visits;
+DROP POLICY IF EXISTS "Owners can update visit status" ON public.property_visits;
 
 -- Recreate optimized policies (single UPDATE policy)
 CREATE POLICY "Users can view their visits"
-  ON public.visits FOR SELECT
+  ON public.property_visits FOR SELECT
   TO authenticated
   USING (
-    tenant_id = (select auth.uid()) OR
+    visitor_id = (select auth.uid()) OR
     property_id IN (SELECT id FROM public.properties WHERE owner_id = (select auth.uid()))
   );
 
 CREATE POLICY "Tenants can request visits"
-  ON public.visits FOR INSERT
+  ON public.property_visits FOR INSERT
   TO authenticated
-  WITH CHECK (tenant_id = (select auth.uid()));
+  WITH CHECK (visitor_id = (select auth.uid()));
 
 CREATE POLICY "Users can update visits"
-  ON public.visits FOR UPDATE
+  ON public.property_visits FOR UPDATE
   TO authenticated
   USING (
-    tenant_id = (select auth.uid()) OR
+    visitor_id = (select auth.uid()) OR
     property_id IN (SELECT id FROM public.properties WHERE owner_id = (select auth.uid()))
   )
   WITH CHECK (
-    tenant_id = (select auth.uid()) OR
+    visitor_id = (select auth.uid()) OR
     property_id IN (SELECT id FROM public.properties WHERE owner_id = (select auth.uid()))
   );
 
 -- =============================================================================
--- 7. OPTIMIZE RLS POLICIES - FAVORITES TABLE
+-- 7. OPTIMIZE RLS POLICIES - PROPERTY_FAVORITES TABLE
 -- =============================================================================
 
 -- Drop existing policies
-DROP POLICY IF EXISTS "Users can view own favorites" ON public.favorites;
-DROP POLICY IF EXISTS "Users can add favorites" ON public.favorites;
-DROP POLICY IF EXISTS "Users can remove favorites" ON public.favorites;
+DROP POLICY IF EXISTS "Users can view own favorites" ON public.property_favorites;
+DROP POLICY IF EXISTS "Users can add favorites" ON public.property_favorites;
+DROP POLICY IF EXISTS "Users can remove favorites" ON public.property_favorites;
 
 -- Recreate optimized policies
 CREATE POLICY "Users can view own favorites"
-  ON public.favorites FOR SELECT
+  ON public.property_favorites FOR SELECT
   TO authenticated
   USING (user_id = (select auth.uid()));
 
 CREATE POLICY "Users can add favorites"
-  ON public.favorites FOR INSERT
+  ON public.property_favorites FOR INSERT
   TO authenticated
   WITH CHECK (user_id = (select auth.uid()));
 
 CREATE POLICY "Users can remove favorites"
-  ON public.favorites FOR DELETE
+  ON public.property_favorites FOR DELETE
   TO authenticated
   USING (user_id = (select auth.uid()));
 
