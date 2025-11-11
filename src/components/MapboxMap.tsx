@@ -40,6 +40,7 @@ export default function MapboxMap({
   highlightedPropertyId,
   onMarkerClick,
   onBoundsChange,
+  clustering = false,
   draggableMarker = false,
   showRadius = false,
   radiusKm = 1,
@@ -64,44 +65,26 @@ export default function MapboxMap({
   };
 
   const validateCoordinates = (lng: number, lat: number): [number, number] => {
-    // Validation stricte des coordonnées pour un positionnement précis
-    if (typeof lng !== 'number' || typeof lat !== 'number' || isNaN(lng) || isNaN(lat)) {
-      console.warn(`Invalid coordinates detected: lng=${lng}, lat=${lat}, using default center`, center);
+    // Validation des coordonnées pour éviter les erreurs de positionnement
+    if (isNaN(lng) || isNaN(lat)) {
+      console.warn('Invalid coordinates detected, using default center');
       return center;
     }
-
-    // Vérification des bornes valides pour la Côte d'Ivoire (avec un peu de marge)
-    if (lng < -10 || lng > -1 || lat < 3 || lat > 12) {
-      console.warn(`Coordinates outside Ivory Coast bounds: lng=${lng}, lat=${lat}, using default center`, center);
+    // Vérification des bornes valides pour la Côte d'Ivoire
+    if (lng < -9 || lng > -2 || lat < 4 || lat > 11) {
+      console.warn('Coordinates outside Ivory Coast bounds, using default center');
       return center;
     }
-
-    // S'assurer que les coordonnées ont une précision suffisante
-    const preciseLng = parseFloat(lng.toFixed(6));
-    const preciseLat = parseFloat(lat.toFixed(6));
-
-    return [preciseLng, preciseLat];
+    return [lng, lat];
   };
-
-  useEffect(() => {
-    // Initialiser la fonction globale pour les clics depuis les popups
-    (window as Record<string, unknown>).mapPropertyClick = (propertyId: string) => {
-      const property = properties.find(p => p.id === propertyId);
-      if (property && onMarkerClick) {
-        onMarkerClick(property);
-      }
-    };
-
-    return () => {
-      delete (window as Record<string, unknown>).mapPropertyClick;
-    };
-  }, [properties, onMarkerClick]);
 
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
-    const mapboxWithTelemetry = mapboxgl as typeof mapboxgl & Record<string, unknown>;
+    const mapboxWithTelemetry = mapboxgl as typeof mapboxgl & {
+      setTelemetryDisabled?: (state: boolean) => void;
+    };
     mapboxWithTelemetry.setTelemetryDisabled?.(true); // Prevent blocked event calls on privacy tools
 
     try {
@@ -153,7 +136,7 @@ export default function MapboxMap({
         map.current = null;
       }
     };
-  }, [MAPBOX_TOKEN, center, onBoundsChange, onMapClick, zoom]);
+  }, []);
 
   useEffect(() => {
     if (!map.current || !mapLoaded) return;
@@ -172,7 +155,7 @@ export default function MapboxMap({
       const marker = new mapboxgl.Marker({
         color: color,
         draggable: draggableMarker,
-        anchor: 'center', // Ancrage au centre pour une précision optimale
+        anchor: 'bottom', // Ancrage approprié pour le positionnement
       })
         .setLngLat(validCoords)
         .addTo(map.current!);
@@ -194,82 +177,64 @@ export default function MapboxMap({
 
         const el = document.createElement('div');
         el.className = 'custom-marker';
-        el.style.width = '44px';
-        el.style.height = '44px';
-        el.style.borderRadius = '50% 50% 50% 0';
-        el.style.transform = 'rotate(-45deg)';
+        el.style.width = '36px';
+        el.style.height = '36px';
+        el.style.borderRadius = '50%';
         el.style.backgroundColor = color;
-        el.style.border = '4px solid white';
-        el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.5)';
+        el.style.border = '3px solid white';
+        el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
         el.style.cursor = 'pointer';
-        el.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        el.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
         el.style.display = 'flex';
         el.style.alignItems = 'center';
         el.style.justifyContent = 'center';
+        el.style.color = 'white';
+        el.style.fontSize = '16px';
+        el.style.fontWeight = 'bold';
         el.style.pointerEvents = 'auto';
         el.style.position = 'relative';
         el.style.zIndex = '10';
         el.tabIndex = 0;
         el.setAttribute('role', 'button');
         el.setAttribute('aria-label', `Voir ${property.title}`);
+        el.innerHTML = '🏠';
 
-        // Ajouter l'icône de la maison
-        const iconEl = document.createElement('div');
-        iconEl.innerHTML = '🏠';
-        iconEl.style.transform = 'rotate(45deg)';
-        iconEl.style.fontSize = '18px';
-        iconEl.style.position = 'absolute';
-        iconEl.style.top = '50%';
-        iconEl.style.left = '50%';
-        iconEl.style.marginTop = '-2px';
-        iconEl.style.marginLeft = '-2px';
-        el.appendChild(iconEl);
+        // Amélioration de la gestion des événements pour éviter les conflits
+        const stopEvent = (event: MouseEvent | TouchEvent) => {
+          event.preventDefault();
+          event.stopPropagation();
+        };
 
-        // Amélioration de la gestion des événements pour une meilleure interactivité
+        el.addEventListener('mousedown', stopEvent);
+        el.addEventListener('touchstart', stopEvent);
+
         el.addEventListener('mouseenter', () => {
-          el.style.transform = 'rotate(-45deg) scale(1.15)';
-          el.style.boxShadow = '0 8px 20px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,255,255,0.7)';
+          el.style.transform = 'scale(1.2)';
+          el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4)';
           el.style.zIndex = '1000';
-          el.style.cursor = 'pointer';
         });
 
         el.addEventListener('mouseleave', () => {
-          el.style.transform = 'rotate(-45deg) scale(1)';
-          el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.5)';
-          el.style.zIndex = '10';
-          el.style.cursor = 'pointer';
+          el.style.transform = 'scale(1)';
+          el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+          el.style.zIndex = '1';
         });
 
         const popupContent = `
-          <div style="padding: 16px; min-width: 250px; font-family: system-ui, -apple-system, sans-serif;">
+          <div style="padding: 12px; min-width: 200px;">
             ${property.images && property.images.length > 0 ?
-              `<img src="${property.images[0]}" alt="${property.title}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" />`
-              : '<div style="width: 100%; height: 80px; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 14px;">🏠 Aucune image</div>'}
-            <h3 style="font-weight: bold; font-size: 18px; margin-bottom: 8px; color: #1f2937; line-height: 1.3;">${property.title}</h3>
+              `<img src="${property.images[0]}" alt="${property.title}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;" />`
+              : ''}
+            <h3 style="font-weight: bold; font-size: 16px; margin-bottom: 4px; color: #1f2937;">${property.title}</h3>
             ${property.city || property.neighborhood ?
-              `<p style="color: #6b7280; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 4px;">
-                📍 ${property.city || ''}${property.neighborhood ? ' • ' + property.neighborhood : ''}
-              </p>`
+              `<p style="color: #6b7280; font-size: 14px; margin-bottom: 8px;">${property.city || ''}${property.neighborhood ? ' • ' + property.neighborhood : ''}</p>`
               : ''}
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <p style="color: #ff6b35; font-weight: bold; font-size: 20px; margin: 0;">${property.monthly_rent.toLocaleString()} FCFA</p>
-              <p style="color: #6b7280; font-size: 12px; margin: 0;">/mois</p>
-            </div>
+            <p style="color: #ff6b35; font-weight: bold; font-size: 18px; margin-bottom: 8px;">${property.monthly_rent.toLocaleString()} FCFA/mois</p>
             ${property.status ?
-              `<div style="margin-bottom: 12px;">
-                <span style="background: ${property.status === 'disponible' ? '#10B981' : property.status === 'loue' ? '#EF4444' : '#F59E0B'}; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">
-                  ${property.status === 'disponible' ? '✅ Disponible' : property.status === 'loue' ? '🔴 Loué' : '⏳ En attente'}
-                </span>
-              </div>`
+              `<span style="background: ${property.status === 'disponible' ? '#10B981' : '#EF4444'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                ${property.status === 'disponible' ? 'Disponible' : property.status === 'loue' ? 'Loué' : 'En attente'}
+              </span>`
               : ''}
-            <button
-              onclick="window.mapPropertyClick && window.mapPropertyClick('${property.id}')"
-              style="width: 100%; background: linear-gradient(135deg, #ff6b35, #f97316); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s ease; margin-top: 8px;"
-              onmouseover="this.style.background='linear-gradient(135deg, #f97316, #ea580c)'; this.style.transform='translateY(-1px)';"
-              onmouseout="this.style.background='linear-gradient(135deg, #ff6b35, #f97316)'; this.style.transform='translateY(0)';"
-            >
-              Voir les détails →
-            </button>
           </div>
         `;
 
@@ -282,44 +247,30 @@ export default function MapboxMap({
 
         const marker = new mapboxgl.Marker({
           element: el,
-          anchor: 'center', // Ancrage au centre pour un positionnement précis
-          offset: [0, 0] // Pas de décalage pour un positionnement exact
+          anchor: 'bottom', // Ancrage approprié pour un meilleur positionnement
+          offset: [0, 18] // Décalage pour centrer le marqueur
         })
           .setLngLat(validCoords)
           .setPopup(popup)
           .addTo(map.current!);
 
-        const handleMarkerClick = (event: Event) => {
+        const handleNavigate = (event: Event) => {
           event.preventDefault();
           event.stopPropagation();
-
-          // Ajouter un effet visuel immédiat avec rotation
-          el.style.transform = 'rotate(-45deg) scale(1.25)';
-          el.style.boxShadow = '0 10px 25px rgba(255, 107, 53, 0.7), 0 0 0 4px rgba(255, 107, 53, 0.3)';
-          el.style.backgroundColor = '#ff6b35';
-
-          // Appeler le callback externe
           if (onMarkerClick) {
             onMarkerClick(property);
           }
-
-          // Ouvrir le popup avec une animation fluide
+          // Ouvrir le popup après un court délai pour éviter les conflits
           setTimeout(() => {
             marker.togglePopup();
-            // Réinitialiser l'effet visuel après un délai
-            setTimeout(() => {
-              el.style.transform = 'rotate(-45deg) scale(1)';
-              el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.5)';
-              el.style.backgroundColor = color;
-            }, 300);
-          }, 100);
+          }, 50);
         };
 
-        el.addEventListener('click', handleMarkerClick);
+        el.addEventListener('click', handleNavigate);
         el.addEventListener('keydown', (event) => {
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
-            handleMarkerClick(event);
+            handleNavigate(event);
           }
         });
 
@@ -386,17 +337,14 @@ export default function MapboxMap({
         });
       }
     }
-  }, [properties, mapLoaded, singleMarker, draggableMarker, fitBounds, showRadius, radiusKm, onMarkerClick, onMarkerDrag, validateCoordinates]);
+  }, [properties, mapLoaded, singleMarker, draggableMarker, fitBounds, showRadius, radiusKm]);
 
   useEffect(() => {
     if (!highlightedPropertyId) {
       Object.values(markers.current).forEach((marker) => {
         const el = marker.getElement();
-        el.style.transform = 'rotate(-45deg) scale(1)';
-        el.style.zIndex = '10';
-        el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.4), 0 0 0 2px rgba(255,255,255,0.5)';
-        el.style.opacity = '1';
-        el.style.filter = 'none';
+        el.style.transform = 'scale(1)';
+        el.style.zIndex = '1';
       });
       return;
     }
@@ -404,15 +352,13 @@ export default function MapboxMap({
     Object.entries(markers.current).forEach(([id, marker]) => {
       const el = marker.getElement();
       if (id === highlightedPropertyId) {
-        el.style.transform = 'rotate(-45deg) scale(1.3)';
+        el.style.transform = 'scale(1.3)';
         el.style.zIndex = '1000';
-        el.style.boxShadow = '0 12px 30px rgba(255, 107, 53, 0.8), 0 0 0 5px rgba(255, 107, 53, 0.4)';
-        el.style.backgroundColor = '#ff6b35';
+        el.style.boxShadow = '0 6px 16px rgba(255, 107, 53, 0.6)';
       } else {
-        el.style.transform = 'rotate(-45deg) scale(0.85)';
+        el.style.transform = 'scale(0.9)';
         el.style.zIndex = '1';
-        el.style.opacity = '0.6';
-        el.style.filter = 'grayscale(0.5)';
+        el.style.opacity = '0.5';
       }
     });
   }, [highlightedPropertyId]);

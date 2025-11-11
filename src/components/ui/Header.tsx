@@ -131,7 +131,7 @@ export default function Header() {
               <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-amber-400 animate-pulse" />
             </div>
             <div>
-              <span className="text-3xl font-bold text-gradient">Mon Toit</span>
+              <span className="text-2xl font-bold text-gradient">Mon Toit</span>
               <div className="flex items-center space-x-1">
                 <span className="text-xs bg-gradient-to-r from-olive-100 to-olive-200 text-olive-800 px-2 py-0.5 rounded-full font-bold">
                   ANSUT Certifié
@@ -303,48 +303,6 @@ export default function Header() {
                     </span>
                   )}
                 </a>
-
-                {/* Menu utilisateur */}
-                <div className="relative">
-                  <button
-                    onMouseEnter={() => handleMenuEnter('user', setShowUserMenu)}
-                    onMouseLeave={() => handleMenuLeave('user', setShowUserMenu)}
-                    onClick={() => setShowUserMenu((prev) => !prev)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
-                      isActive('/profil') || isActive('/notifications/preferences') || isActive('/recherches-sauvegardees')
-                        ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg'
-                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50 hover:text-green-700'
-                    }`}
-                  >
-                  </button>
-                  {showUserMenu && (
-                    <div
-                      className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-green-100 py-2 z-50"
-                      onMouseEnter={() => handleMenuEnter('user', setShowUserMenu)}
-                      onMouseLeave={() => handleMenuLeave('user', setShowUserMenu)}
-                    >
-                      <div className="px-4 py-2 border-b border-green-100">
-                        <p className="text-xs font-bold text-green-600 uppercase">Mon espace</p>
-                      </div>
-                      <a href="/profil" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                        <User className="h-4 w-4 mr-3 text-blue-500" />
-                        Mon profil
-                      </a>
-                      <a href="/recherches-sauvegardees" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                        <Search className="h-4 w-4 mr-3 text-purple-500" />
-                        Recherches sauvegardées
-                      </a>
-                      <a href="/notifications/preferences" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                        <Bell className="h-4 w-4 mr-3 text-orange-500" />
-                        Préférences de notification
-                      </a>
-                      <a href="/mes-certificats" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                        <Award className="h-4 w-4 mr-3 text-yellow-500" />
-                        Mes certificats
-                      </a>
-                    </div>
-                  )}
-                </div>
 
                 {/* Menu Agence */}
                 {profile?.user_type === 'agence' && (
