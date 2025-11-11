@@ -1,26 +1,38 @@
-import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X, Shield, Database, Activity, Cog, TestTube, Zap, UserCheck, CheckCircle, FileCheck } from 'lucide-react';
+import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X, Shield, Database, Activity, Cog, TestTube, Zap, UserCheck, CheckCircle, FileCheck, MapPin, CreditCard, HelpCircle, FileSignature, HomeIcon, FolderOpen, TrendingUp, Lock, Globe, Phone, Mail, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMessageNotifications } from '../../hooks/useMessageNotifications';
+import { useLocation } from 'react-router-dom';
 import CertificationReminder from '../CertificationReminder';
 import LanguageSelector from './LanguageSelector';
 import RoleSwitcher from './RoleSwitcher';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 
 export default function Header() {
   const { user, profile, signOut } = useAuth();
   const { unreadCount } = useMessageNotifications();
+  const location = useLocation();
   const [verificationStatus, setVerificationStatus] = useState({
     oneciVerified: false,
     faceVerified: false,
     ansutCertified: false
   });
-  const [showMaintenanceMenu, setShowMaintenanceMenu] = useState(false);
+  
+  // États pour les sous-menus réorganisés
+  const [showPropertyMenu, setShowPropertyMenu] = useState(false);
+  const [showServicesMenu, setShowServicesMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAgencyMenu, setShowAgencyMenu] = useState(false);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [showTrustAgentMenu, setShowTrustAgentMenu] = useState(false);
-  const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+
+  // Fonction pour vérifier si un lien est actif
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   useEffect(() => {
     if (user && profile) {
@@ -28,12 +40,33 @@ export default function Header() {
     }
   }, [user, profile]);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+        setShowAccountMenu(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowAccountMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
   const loadVerificationStatus = async () => {
     try {
       const { data } = await supabase
         .from('user_verifications')
         .select('oneci_status, face_verification_status, ansut_certified')
-        .eq('user_id', user?.id)
+        .eq('user_id', user?.id || '')
         .maybeSingle();
 
       if (data) {
@@ -76,149 +109,235 @@ export default function Header() {
             </div>
           </a>
 
-          <nav className="hidden md:flex items-center space-x-2">
+          <nav className="hidden md:flex items-center space-x-1">
+            {/* Navigation principale - toujours visible */}
             <a
               href="/"
-              className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-terracotta-50 hover:to-coral-50 hover:text-terracotta-700 transition-all duration-300 font-semibold transform hover:scale-105"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                isActive('/')
+                  ? 'bg-gradient-to-r from-terracotta-500 to-coral-500 text-white shadow-lg'
+                  : 'text-gray-700 hover:bg-gradient-to-r hover:from-terracotta-50 hover:to-coral-50 hover:text-terracotta-700'
+              }`}
             >
               <Home className="h-5 w-5" />
               <span>Accueil</span>
             </a>
+            
             <a
               href="/recherche"
-              className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-cyan-100 hover:text-cyan-700 transition-all duration-300 font-semibold transform hover:scale-105"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                isActive('/recherche')
+                  ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg'
+                  : 'text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-cyan-100 hover:text-cyan-700'
+              }`}
             >
               <Search className="h-5 w-5" />
               <span>Rechercher</span>
             </a>
+
             {user && (
               <>
+                {/* Menu Propriétés et Services */}
+                <div className="relative" onMouseLeave={() => setShowPropertyMenu(false)}>
+                  <button
+                    onMouseEnter={() => setShowPropertyMenu(true)}
+                    onClick={() => setShowPropertyMenu(!showPropertyMenu)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                      isActive('/favoris') || isActive('/mes-visites') || isActive('/mes-contrats')
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:text-purple-700'
+                    }`}
+                  >
+                    <FolderOpen className="h-5 w-5" />
+                    <span>Propriétés</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  {showPropertyMenu && (
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-purple-100 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-purple-100">
+                        <p className="text-xs font-bold text-purple-600 uppercase">Immobilier</p>
+                      </div>
+                      <a href="/favoris" className="flex items-center px-4 py-2 text-gray-700 hover:bg-purple-50 font-medium">
+                        <Heart className="h-4 w-4 mr-3 text-red-500" />
+                        Mes favoris
+                      </a>
+                      <a href="/mes-visites" className="flex items-center px-4 py-2 text-gray-700 hover:bg-purple-50 font-medium">
+                        <Calendar className="h-4 w-4 mr-3 text-green-500" />
+                        Visites programmées
+                      </a>
+                      <a href="/mes-contrats" className="flex items-center px-4 py-2 text-gray-700 hover:bg-purple-50 font-medium">
+                        <FileText className="h-4 w-4 mr-3 text-blue-500" />
+                        Mes contrats
+                      </a>
+                      {(profile?.user_type === 'proprietaire' || profile?.user_type === 'agence') && (
+                        <a href="/dashboard/ajouter-propriete" className="flex items-center px-4 py-2 text-gray-700 hover:bg-purple-50 font-medium">
+                          <Building2 className="h-4 w-4 mr-3 text-orange-500" />
+                          Ajouter une propriété
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Menu Services */}
+                <div className="relative" onMouseLeave={() => setShowServicesMenu(false)}>
+                  <button
+                    onMouseEnter={() => setShowServicesMenu(true)}
+                    onClick={() => setShowServicesMenu(!showServicesMenu)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                      isActive('/maintenance') || isActive('/score-locataire') || isActive('/effectuer-paiement')
+                        ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-red-50 hover:text-orange-700'
+                    }`}
+                  >
+                    <Wrench className="h-5 w-5" />
+                    <span>Services</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  {showServicesMenu && (
+                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-orange-100">
+                        <p className="text-xs font-bold text-orange-600 uppercase">Services</p>
+                      </div>
+                      
+                      {(profile?.user_type === 'locataire' || profile?.user_type === 'proprietaire') && (
+                        <>
+                          <div className="px-4 py-2 border-b border-gray-100">
+                            <p className="text-xs font-semibold text-gray-500">Maintenance</p>
+                          </div>
+                          {profile?.user_type === 'locataire' && (
+                            <>
+                              <a href="/maintenance/locataire" className="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 font-medium">
+                                <Wrench className="h-4 w-4 mr-3 text-red-500" />
+                                Mes demandes
+                              </a>
+                              <a href="/maintenance/nouvelle" className="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 font-medium">
+                                <Plus className="h-4 w-4 mr-3 text-green-500" />
+                                Nouvelle demande
+                              </a>
+                            </>
+                          )}
+                          {profile?.user_type === 'proprietaire' && (
+                            <a href="/maintenance/proprietaire" className="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 font-medium">
+                              <Settings className="h-4 w-4 mr-3 text-blue-500" />
+                              Gérer les demandes
+                            </a>
+                          )}
+                        </>
+                      )}
+                      
+                      {profile?.user_type === 'locataire' && (
+                        <>
+                          <div className="px-4 py-2 border-b border-gray-100">
+                            <p className="text-xs font-semibold text-gray-500">Locataire</p>
+                          </div>
+                          <a href="/score-locataire" className="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 font-medium">
+                            <Award className="h-4 w-4 mr-3 text-yellow-500" />
+                            Mon score locataire
+                          </a>
+                          <a href="/effectuer-paiement" className="flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 font-medium">
+                            <CreditCard className="h-4 w-4 mr-3 text-green-500" />
+                            Payer un loyer
+                          </a>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Messages avec compteur */}
                 <a
                   href="/messages"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 relative"
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 relative ${
+                    isActive('/messages')
+                      ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700'
+                  }`}
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span>Messages</span>
                   {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </a>
-                <a
-                  href="/mes-visites"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105"
-                >
-                  <Calendar className="h-5 w-5" />
-                  <span>Mes visites</span>
-                </a>
-                <a
-                  href="/favoris"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 transition-all duration-300 font-semibold transform hover:scale-105"
-                >
-                  <Heart className="h-5 w-5" />
-                  <span>Favoris</span>
-                </a>
-                <div className="relative" onMouseLeave={() => setShowNotifMenu(false)}>
+
+                {/* Menu utilisateur */}
+                <div className="relative" onMouseLeave={() => setShowUserMenu(false)}>
                   <button
-                    onMouseEnter={() => setShowNotifMenu(true)}
-                    onClick={() => setShowNotifMenu(!showNotifMenu)}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:text-orange-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                    onMouseEnter={() => setShowUserMenu(true)}
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
+                      isActive('/profil') || isActive('/notifications/preferences') || isActive('/recherches-sauvegardees')
+                        ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50 hover:text-green-700'
+                    }`}
                   >
-                    <Bell className="h-5 w-5" />
-                    <span>Alertes</span>
+                    <User className="h-5 w-5" />
+                    <span>Mon espace</span>
                     <ChevronDown className="h-4 w-4" />
                   </button>
-                  {showNotifMenu && (
-                    <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-gray-100 py-2 z-50">
-                      <a href="/recherches-sauvegardees" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                        Mes recherches sauvegardées
+                  {showUserMenu && (
+                    <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-green-100 py-2 z-50">
+                      <div className="px-4 py-2 border-b border-green-100">
+                        <p className="text-xs font-bold text-green-600 uppercase">Mon espace</p>
+                      </div>
+                      <a href="/profil" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                        <User className="h-4 w-4 mr-3 text-blue-500" />
+                        Mon profil
                       </a>
-                      <a href="/notifications/preferences" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                        <Settings className="h-4 w-4 inline mr-2" />
-                        Préférences
+                      <a href="/recherches-sauvegardees" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                        <Search className="h-4 w-4 mr-3 text-purple-500" />
+                        Recherches sauvegardées
+                      </a>
+                      <a href="/notifications/preferences" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                        <Bell className="h-4 w-4 mr-3 text-orange-500" />
+                        Préférences de notification
+                      </a>
+                      <a href="/mes-certificats" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                        <Award className="h-4 w-4 mr-3 text-yellow-500" />
+                        Mes certificats
                       </a>
                     </div>
                   )}
                 </div>
-                <a
-                  href="/mes-contrats"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:text-purple-700 transition-all duration-300 font-semibold transform hover:scale-105"
-                >
-                  <FileText className="h-5 w-5" />
-                  <span>Contrats</span>
-                </a>
 
-                {(profile?.user_type === 'locataire' || profile?.user_type === 'proprietaire') && (
-                  <div className="relative" onMouseLeave={() => setShowMaintenanceMenu(false)}>
-                    <button
-                      onMouseEnter={() => setShowMaintenanceMenu(true)}
-                      onClick={() => setShowMaintenanceMenu(!showMaintenanceMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-700 transition-all duration-300 font-semibold transform hover:scale-105"
-                    >
-                      <Wrench className="h-5 w-5" />
-                      <span>Maintenance</span>
-                      <ChevronDown className="h-4 w-4" />
-                    </button>
-                    {showMaintenanceMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-gray-100 py-2 z-50">
-                        {profile?.user_type === 'locataire' && (
-                          <>
-                            <a href="/maintenance/locataire" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                              Mes demandes
-                            </a>
-                            <a href="/maintenance/nouvelle" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                              Nouvelle demande
-                            </a>
-                          </>
-                        )}
-                        {profile?.user_type === 'proprietaire' && (
-                          <a href="/maintenance/proprietaire" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                            Gérer les demandes
-                          </a>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {profile?.user_type === 'locataire' && (
-                  <a
-                    href="/score-locataire"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-amber-100 hover:text-yellow-700 transition-all duration-300 font-semibold transform hover:scale-105"
-                  >
-                    <Award className="h-5 w-5" />
-                    <span>Mon Score</span>
-                  </a>
-                )}
-
+                {/* Menu Agence */}
                 {profile?.user_type === 'agence' && (
                   <div className="relative" onMouseLeave={() => setShowAgencyMenu(false)}>
                     <button
                       onMouseEnter={() => setShowAgencyMenu(true)}
                       onClick={() => setShowAgencyMenu(!showAgencyMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-teal-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 border-2 ${
+                        isActive('/agence')
+                          ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg border-teal-300'
+                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-teal-700 border-teal-200'
+                      }`}
                     >
                       <Building2 className="h-5 w-5" />
                       <span>Agence</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAgencyMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border-2 border-gray-100 py-2 z-50">
-                        <a href="/agence/tableau-de-bord" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                          <BarChart className="h-4 w-4 inline mr-2" />
+                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-teal-100 py-2 z-50">
+                        <div className="px-4 py-2 border-b border-teal-100">
+                          <p className="text-xs font-bold text-teal-600 uppercase">Espace Agence</p>
+                        </div>
+                        <a href="/agence/tableau-de-bord" className="flex items-center px-4 py-2 text-gray-700 hover:bg-teal-50 font-medium">
+                          <BarChart className="h-4 w-4 mr-3 text-blue-500" />
                           Tableau de bord
                         </a>
-                        <a href="/agence/equipe" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                          <Users className="h-4 w-4 inline mr-2" />
+                        <a href="/agence/equipe" className="flex items-center px-4 py-2 text-gray-700 hover:bg-teal-50 font-medium">
+                          <Users className="h-4 w-4 mr-3 text-green-500" />
                           Mon équipe
                         </a>
-                        <a href="/agence/proprietes" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                          <Building2 className="h-4 w-4 inline mr-2" />
+                        <a href="/agence/proprietes" className="flex items-center px-4 py-2 text-gray-700 hover:bg-teal-50 font-medium">
+                          <Building2 className="h-4 w-4 mr-3 text-orange-500" />
                           Propriétés
                         </a>
-                        <a href="/agence/commissions" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 font-medium">
-                          <FileText className="h-4 w-4 inline mr-2" />
+                        <a href="/agence/commissions" className="flex items-center px-4 py-2 text-gray-700 hover:bg-teal-50 font-medium">
+                          <TrendingUp className="h-4 w-4 mr-3 text-purple-500" />
                           Commissions
                         </a>
                       </div>
@@ -226,88 +345,89 @@ export default function Header() {
                   </div>
                 )}
 
-                <a
-                  href="/profil"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 hover:text-amber-700 transition-all duration-300 font-semibold transform hover:scale-105"
-                >
-                  <User className="h-5 w-5" />
-                  <span>Profil</span>
-                </a>
-
-                {(profile?.user_type === 'admin_ansut' || profile?.role?.includes('admin')) && (
+                {/* Menu Admin */}
+                {(profile?.user_type === 'admin_ansut' || profile?.available_roles?.includes('admin')) && (
                   <div className="relative" onMouseLeave={() => setShowAdminMenu(false)}>
                     <button
                       onMouseEnter={() => setShowAdminMenu(true)}
                       onClick={() => setShowAdminMenu(!showAdminMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-blue-200"
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 border-2 ${
+                        isActive('/admin')
+                          ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg border-red-300'
+                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 border-red-200'
+                      }`}
                     >
                       <Shield className="h-5 w-5" />
                       <span>Admin</span>
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAdminMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border-2 border-blue-100 py-2 z-50 max-h-96 overflow-y-auto">
-                        <div className="px-4 py-2 border-b border-gray-100">
-                          <p className="text-xs font-bold text-gray-500 uppercase">Administration</p>
+                      <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border-2 border-red-100 py-2 z-50 max-h-96 overflow-y-auto">
+                        <div className="px-4 py-2 border-b border-red-100">
+                          <p className="text-xs font-bold text-red-600 uppercase">Administration ANSUT</p>
                         </div>
-                        <a href="/admin/tableau-de-bord" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <BarChart className="h-4 w-4 inline mr-2" />
+                        
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-xs font-semibold text-gray-500">Gestion principale</p>
+                        </div>
+                        <a href="/admin/tableau-de-bord" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <BarChart className="h-4 w-4 mr-3 text-blue-500" />
                           Dashboard Principal
                         </a>
-                        <a href="/admin/utilisateurs" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Users className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/utilisateurs" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Users className="h-4 w-4 mr-3 text-green-500" />
                           Gestion Utilisateurs
                         </a>
-                        <a href="/admin/gestion-roles" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Shield className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/gestion-roles" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Shield className="h-4 w-4 mr-3 text-purple-500" />
                           Attribuer des Rôles
                         </a>
-                        <a href="/admin/trust-agents" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <UserCheck className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/trust-agents" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <UserCheck className="h-4 w-4 mr-3 text-orange-500" />
                           Agents de Confiance
                         </a>
 
-                        <div className="px-4 py-2 border-b border-t border-gray-100 mt-2">
-                          <p className="text-xs font-bold text-gray-500 uppercase">Services & API</p>
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-xs font-semibold text-gray-500">Services techniques</p>
                         </div>
-                        <a href="/admin/api-keys" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Key className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/api-keys" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Key className="h-4 w-4 mr-3 text-yellow-500" />
                           Clés API
                         </a>
-                        <a href="/admin/service-providers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Database className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/service-providers" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Database className="h-4 w-4 mr-3 text-indigo-500" />
                           Fournisseurs Services
                         </a>
-                        <a href="/admin/service-monitoring" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Activity className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/service-monitoring" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Activity className="h-4 w-4 mr-3 text-red-500" />
                           Monitoring Services
                         </a>
-                        <a href="/admin/service-configuration" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Cog className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/service-configuration" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Cog className="h-4 w-4 mr-3 text-gray-500" />
                           Configuration
                         </a>
 
-                        <div className="px-4 py-2 border-b border-t border-gray-100 mt-2">
-                          <p className="text-xs font-bold text-gray-500 uppercase">Vérifications</p>
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-xs font-semibold text-gray-500">Vérifications</p>
                         </div>
-                        <a href="/admin/cev-management" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <FileCheck className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/cev-management" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <FileCheck className="h-4 w-4 mr-3 text-teal-500" />
                           CEV/ONECI
                         </a>
-                        <a href="/ansut-verification" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <CheckCircle className="h-4 w-4 inline mr-2" />
+                        <a href="/ansut-verification" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <CheckCircle className="h-4 w-4 mr-3 text-green-500" />
                           ANSUT Certifications
                         </a>
 
-                        <div className="px-4 py-2 border-b border-t border-gray-100 mt-2">
-                          <p className="text-xs font-bold text-gray-500 uppercase">Outils de Test</p>
+                        <div className="px-4 py-2 border-b border-gray-100">
+                          <p className="text-xs font-semibold text-gray-500">Outils de test</p>
                         </div>
-                        <a href="/admin/demo-rapide" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <Zap className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/demo-rapide" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <Zap className="h-4 w-4 mr-3 text-yellow-500" />
                           Démo Rapide
                         </a>
-                        <a href="/admin/test-data-generator" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 font-medium">
-                          <TestTube className="h-4 w-4 inline mr-2" />
+                        <a href="/admin/test-data-generator" className="flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 font-medium">
+                          <TestTube className="h-4 w-4 mr-3 text-purple-500" />
                           Générateur de Données
                         </a>
                       </div>
@@ -315,12 +435,17 @@ export default function Header() {
                   </div>
                 )}
 
-                {profile?.role?.includes('trust_agent') && (
+                {/* Menu Trust Agent */}
+                {profile?.available_roles?.includes('trust_agent') && (
                   <div className="relative" onMouseLeave={() => setShowTrustAgentMenu(false)}>
                     <button
                       onMouseEnter={() => setShowTrustAgentMenu(true)}
                       onClick={() => setShowTrustAgentMenu(!showTrustAgentMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-green-200"
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 border-2 ${
+                        isActive('/trust-agent')
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-300'
+                          : 'text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 border-green-200'
+                      }`}
                     >
                       <UserCheck className="h-5 w-5" />
                       <span>Trust Agent</span>
@@ -328,20 +453,23 @@ export default function Header() {
                     </button>
                     {showTrustAgentMenu && (
                       <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-green-100 py-2 z-50">
-                        <a href="/trust-agent/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                          <BarChart className="h-4 w-4 inline mr-2" />
+                        <div className="px-4 py-2 border-b border-green-100">
+                          <p className="text-xs font-bold text-green-600 uppercase">Espace Trust Agent</p>
+                        </div>
+                        <a href="/trust-agent/dashboard" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <BarChart className="h-4 w-4 mr-3 text-blue-500" />
                           Dashboard Agent
                         </a>
-                        <a href="/trust-agent/moderation" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                          <Shield className="h-4 w-4 inline mr-2" />
+                        <a href="/trust-agent/moderation" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <Shield className="h-4 w-4 mr-3 text-purple-500" />
                           Modération
                         </a>
-                        <a href="/trust-agent/mediation" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                          <Users className="h-4 w-4 inline mr-2" />
+                        <a href="/trust-agent/mediation" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <Users className="h-4 w-4 mr-3 text-orange-500" />
                           Médiation
                         </a>
-                        <a href="/trust-agent/analytics" className="block px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
-                          <Activity className="h-4 w-4 inline mr-2" />
+                        <a href="/trust-agent/analytics" className="flex items-center px-4 py-2 text-gray-700 hover:bg-green-50 font-medium">
+                          <Activity className="h-4 w-4 mr-3 text-red-500" />
                           Analytiques
                         </a>
                       </div>
@@ -358,32 +486,114 @@ export default function Header() {
                 <div className="hidden lg:block">
                   <RoleSwitcher />
                 </div>
-                <div className="hidden md:flex items-center space-x-3 bg-gradient-to-r from-amber-50 to-coral-50 px-4 py-2 rounded-2xl">
-                  {profile?.avatar_url ? (
-                    <img
-                      src={profile.avatar_url}
-                      alt="Avatar"
-                      className="h-10 w-10 rounded-full border-2 border-terracotta-300 shadow-md"
-                    />
-                  ) : (
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-terracotta-500 to-coral-500 flex items-center justify-center text-white font-bold text-lg shadow-glow">
-                      {profile?.full_name?.[0] || 'U'}
+                <div className="hidden md:block relative" ref={accountMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowAccountMenu((prev) => !prev)}
+                    className="flex items-center space-x-3 bg-gradient-to-r from-amber-50 to-coral-50 px-4 py-2 rounded-2xl shadow-inner border border-amber-100 hover:shadow-lg transition-all duration-300"
+                  >
+                    {profile?.avatar_url ? (
+                      <img
+                        src={profile.avatar_url}
+                        alt="Avatar utilisateur"
+                        className="h-10 w-10 rounded-full border-2 border-terracotta-300 shadow-md object-cover"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded-full bg-gradient-to-br from-terracotta-500 to-coral-500 flex items-center justify-center text-white font-bold text-lg shadow-glow">
+                        {profile?.full_name?.[0] || user?.email?.[0] || 'U'}
+                      </div>
+                    )}
+                    <div className="text-left">
+                      <p className="text-sm font-bold text-gray-900 leading-tight">
+                        {profile?.full_name || 'Utilisateur'}
+                      </p>
+                      <span className="text-xs text-gray-500">Mon compte</span>
+                    </div>
+                    <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${showAccountMenu ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {showAccountMenu && (
+                    <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+                      <div className="flex items-center gap-3 px-4 py-4 bg-gradient-to-r from-amber-50 to-coral-50 border-b border-gray-100">
+                        {profile?.avatar_url ? (
+                          <img
+                            src={profile.avatar_url}
+                            alt="Avatar utilisateur"
+                            className="h-12 w-12 rounded-full border-2 border-white shadow"
+                          />
+                        ) : (
+                          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-terracotta-500 to-coral-500 flex items-center justify-center text-white font-bold text-xl shadow-glow">
+                            {profile?.full_name?.[0] || user?.email?.[0] || 'U'}
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-base font-semibold text-gray-900">{profile?.full_name || 'Utilisateur'}</p>
+                          <p className="text-xs text-gray-600">{profile?.email || user?.email}</p>
+                        </div>
+                      </div>
+
+                      <div className="px-4 py-2 border-b border-gray-100 bg-gray-50/60">
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Mon compte</p>
+                      </div>
+                      <a
+                        href="/profil"
+                        onClick={() => setShowAccountMenu(false)}
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                      >
+                        <User className="h-4 w-4 mr-3 text-blue-500" />
+                        Mon profil
+                      </a>
+                      <a
+                        href="/notifications/preferences"
+                        onClick={() => setShowAccountMenu(false)}
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                      >
+                        <Bell className="h-4 w-4 mr-3 text-orange-500" />
+                        Préférences de notification
+                      </a>
+
+                      <div className="px-4 py-2 border-y border-gray-100 bg-gray-50/60">
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Mon espace</p>
+                      </div>
+                      <a
+                        href="/recherches-sauvegardees"
+                        onClick={() => setShowAccountMenu(false)}
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                      >
+                        <Search className="h-4 w-4 mr-3 text-purple-500" />
+                        Recherches sauvegardées
+                      </a>
+                      <a
+                        href="/mes-certificats"
+                        onClick={() => setShowAccountMenu(false)}
+                        className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                      >
+                        <Award className="h-4 w-4 mr-3 text-yellow-500" />
+                        Mes certificats
+                      </a>
+
+                      <div className="px-4 py-3 border-t border-gray-100">
+                        <p className="text-xs font-bold text-gray-500 uppercase mb-2">Langue</p>
+                        <div className="inline-flex items-center gap-2 rounded-full bg-gray-50 px-3 py-1">
+                          <LanguageSelector />
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowAccountMenu(false);
+                          signOut();
+                        }}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 font-semibold hover:bg-red-50 border-t border-gray-100 transition-colors"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Déconnexion
+                      </button>
                     </div>
                   )}
-                  <span className="text-sm font-bold text-gray-800">
-                    {profile?.full_name || 'Utilisateur'}
-                  </span>
                 </div>
-                <div className="hidden md:block">
-                  <LanguageSelector />
-                </div>
-                <button
-                  onClick={() => signOut()}
-                  className="hidden md:flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 font-semibold transform hover:scale-105"
-                >
-                  <LogOut className="h-5 w-5" />
-                  <span>Déconnexion</span>
-                </button>
+
                 <button
                   onClick={() => setShowMobileMenu(!showMobileMenu)}
                   className="md:hidden p-2 rounded-lg hover:bg-gray-100"
@@ -405,164 +615,367 @@ export default function Header() {
                 >
                   Inscription
                 </a>
+                <div className="hidden md:block">
+                  <LanguageSelector />
+                </div>
               </>
             )}
           </div>
         </div>
 
         {showMobileMenu && user && (
-          <div className="md:hidden border-t border-gray-200 py-4 px-4 bg-white">
+          <div className="md:hidden border-t border-gray-200 py-4 px-4 bg-white max-h-96 overflow-y-auto">
             <div className="mb-4">
               <RoleSwitcher />
             </div>
-            <div className="space-y-2">
-              <a href="/" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <Home className="h-4 w-4 inline mr-2" />
+            
+            {/* Navigation principale mobile */}
+            <div className="space-y-1">
+              <div className="px-4 py-2 border-b border-gray-200">
+                <p className="text-xs font-bold text-terracotta-600 uppercase">Navigation principale</p>
+              </div>
+              
+              <a 
+                href="/" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                  isActive('/') ? 'bg-gradient-to-r from-terracotta-50 to-coral-50 text-terracotta-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Home className="h-5 w-5 mr-3" />
                 Accueil
               </a>
-              <a href="/recherche" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <Search className="h-4 w-4 inline mr-2" />
+              
+              <a 
+                href="/recherche" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                  isActive('/recherche') ? 'bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Search className="h-5 w-5 mr-3" />
                 Rechercher
               </a>
-              <a href="/messages" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium relative">
-                <MessageCircle className="h-4 w-4 inline mr-2" />
+              
+              <a 
+                href="/messages" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors relative ${
+                  isActive('/messages') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <MessageCircle className="h-5 w-5 mr-3" />
                 Messages
                 {unreadCount > 0 && (
-                  <span className="absolute right-4 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute right-4 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-pulse">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
               </a>
-              <a href="/mes-visites" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <Calendar className="h-4 w-4 inline mr-2" />
-                Mes visites
-              </a>
-              <a href="/favoris" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <Heart className="h-4 w-4 inline mr-2" />
-                Favoris
-              </a>
-              <a href="/mes-contrats" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <FileText className="h-4 w-4 inline mr-2" />
-                Contrats
-              </a>
+            </div>
 
-              {profile?.user_type === 'locataire' && (
-                <>
-                  <a href="/score-locataire" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Award className="h-4 w-4 inline mr-2" />
-                    Mon Score
-                  </a>
-                  <a href="/maintenance/locataire" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Wrench className="h-4 w-4 inline mr-2" />
-                    Mes demandes
-                  </a>
-                </>
-              )}
-
-              {profile?.user_type === 'proprietaire' && (
-                <a href="/maintenance/proprietaire" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                  <Wrench className="h-4 w-4 inline mr-2" />
-                  Demandes de maintenance
+            {/* Section Propriétés */}
+            <div className="space-y-1 mt-4">
+              <div className="px-4 py-2 border-b border-gray-200">
+                <p className="text-xs font-bold text-purple-600 uppercase">Propriétés</p>
+              </div>
+              
+              <a 
+                href="/favoris" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                  isActive('/favoris') ? 'bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Heart className="h-5 w-5 mr-3 text-red-500" />
+                Mes favoris
+              </a>
+              
+              <a 
+                href="/mes-visites" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                  isActive('/mes-visites') ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <Calendar className="h-5 w-5 mr-3 text-green-500" />
+                Visites programmées
+              </a>
+              
+              <a 
+                href="/mes-contrats" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                  isActive('/mes-contrats') ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <FileText className="h-5 w-5 mr-3 text-blue-500" />
+                Mes contrats
+              </a>
+              
+              {(profile?.user_type === 'proprietaire' || profile?.user_type === 'agence') && (
+                <a 
+                  href="/dashboard/ajouter-propriete" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Plus className="h-5 w-5 mr-3 text-orange-500" />
+                  Ajouter une propriété
                 </a>
               )}
+            </div>
 
-              {profile?.user_type === 'agence' && (
-                <>
-                  <a href="/agence/tableau-de-bord" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <BarChart className="h-4 w-4 inline mr-2" />
-                    Tableau de bord
+            {/* Section Services */}
+            {(profile?.user_type === 'locataire' || profile?.user_type === 'proprietaire') && (
+              <div className="space-y-1 mt-4">
+                <div className="px-4 py-2 border-b border-gray-200">
+                  <p className="text-xs font-bold text-orange-600 uppercase">Services</p>
+                </div>
+                
+                {profile?.user_type === 'locataire' && (
+                  <>
+                    <a 
+                      href="/maintenance/locataire" 
+                      className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                    >
+                      <Wrench className="h-5 w-5 mr-3 text-red-500" />
+                      Mes demandes de maintenance
+                    </a>
+                    <a 
+                      href="/maintenance/nouvelle" 
+                      className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                    >
+                      <Plus className="h-5 w-5 mr-3 text-green-500" />
+                      Nouvelle demande
+                    </a>
+                    <a 
+                      href="/score-locataire" 
+                      className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                        isActive('/score-locataire') ? 'bg-gradient-to-r from-yellow-50 to-amber-50 text-yellow-700' : 'hover:bg-gray-50 text-gray-700'
+                      }`}
+                    >
+                      <Award className="h-5 w-5 mr-3 text-yellow-500" />
+                      Mon score locataire
+                    </a>
+                    <a 
+                      href="/effectuer-paiement" 
+                      className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                    >
+                      <CreditCard className="h-5 w-5 mr-3 text-green-500" />
+                      Payer un loyer
+                    </a>
+                  </>
+                )}
+                
+                {profile?.user_type === 'proprietaire' && (
+                  <a 
+                    href="/maintenance/proprietaire" 
+                    className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                  >
+                    <Settings className="h-5 w-5 mr-3 text-blue-500" />
+                    Gérer les demandes
                   </a>
-                  <a href="/agence/equipe" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Users className="h-4 w-4 inline mr-2" />
-                    Mon équipe
-                  </a>
-                  <a href="/agence/proprietes" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Building2 className="h-4 w-4 inline mr-2" />
-                    Propriétés
-                  </a>
-                </>
-              )}
-
-              {(profile?.user_type === 'admin_ansut' || profile?.role?.includes('admin')) && (
-                <>
-                  <div className="py-2 px-4 border-b border-gray-200">
-                    <p className="text-xs font-bold text-blue-600 uppercase">Administration</p>
-                  </div>
-                  <a href="/admin/tableau-de-bord" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <BarChart className="h-4 w-4 inline mr-2" />
-                    Dashboard
-                  </a>
-                  <a href="/admin/utilisateurs" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Users className="h-4 w-4 inline mr-2" />
-                    Utilisateurs
-                  </a>
-                  <a href="/admin/gestion-roles" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Shield className="h-4 w-4 inline mr-2" />
-                    Attribuer Rôles
-                  </a>
-                  <a href="/admin/api-keys" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Key className="h-4 w-4 inline mr-2" />
-                    Clés API
-                  </a>
-                  <a href="/admin/service-monitoring" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Activity className="h-4 w-4 inline mr-2" />
-                    Monitoring
-                  </a>
-                  <a href="/admin/demo-rapide" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Zap className="h-4 w-4 inline mr-2" />
-                    Démo Rapide
-                  </a>
-                  <a href="/admin/cev-management" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <FileCheck className="h-4 w-4 inline mr-2" />
-                    CEV/ONECI
-                  </a>
-                </>
-              )}
-
-              {profile?.role?.includes('trust_agent') && (
-                <>
-                  <div className="py-2 px-4 border-b border-t border-gray-200 mt-2">
-                    <p className="text-xs font-bold text-green-600 uppercase">Trust Agent</p>
-                  </div>
-                  <a href="/trust-agent/dashboard" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <BarChart className="h-4 w-4 inline mr-2" />
-                    Dashboard Agent
-                  </a>
-                  <a href="/trust-agent/moderation" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Shield className="h-4 w-4 inline mr-2" />
-                    Modération
-                  </a>
-                  <a href="/trust-agent/mediation" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                    <Users className="h-4 w-4 inline mr-2" />
-                    Médiation
-                  </a>
-                </>
-              )}
-
-              <a href="/notifications/preferences" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <Settings className="h-4 w-4 inline mr-2" />
-                Préférences
-              </a>
-              <a href="/profil" className="block py-2 px-4 rounded-lg hover:bg-gray-50 font-medium">
-                <User className="h-4 w-4 inline mr-2" />
-                Profil
-              </a>
-
-              <div className="border-t border-gray-200 my-2"></div>
-
-              <div className="py-2 px-4">
-                <p className="text-sm font-bold text-gray-700 mb-1">{profile?.full_name || 'Utilisateur'}</p>
-                <p className="text-xs text-gray-500">{profile?.email}</p>
+                )}
               </div>
+            )}
 
+            {/* Section Agence */}
+            {profile?.user_type === 'agence' && (
+              <div className="space-y-1 mt-4">
+                <div className="px-4 py-2 border-b border-gray-200">
+                  <p className="text-xs font-bold text-teal-600 uppercase">Espace Agence</p>
+                </div>
+                
+                <a 
+                  href="/agence/tableau-de-bord" 
+                  className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                    isActive('/agence') ? 'bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700' : 'hover:bg-gray-50 text-gray-700'
+                  }`}
+                >
+                  <BarChart className="h-5 w-5 mr-3 text-blue-500" />
+                  Tableau de bord
+                </a>
+                
+                <a 
+                  href="/agence/equipe" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Users className="h-5 w-5 mr-3 text-green-500" />
+                  Mon équipe
+                </a>
+                
+                <a 
+                  href="/agence/proprietes" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Building2 className="h-5 w-5 mr-3 text-orange-500" />
+                  Propriétés
+                </a>
+                
+                <a 
+                  href="/agence/commissions" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <TrendingUp className="h-5 w-5 mr-3 text-purple-500" />
+                  Commissions
+                </a>
+              </div>
+            )}
+
+            {/* Section Admin */}
+            {(profile?.user_type === 'admin_ansut' || profile?.available_roles?.includes('admin')) && (
+              <div className="space-y-1 mt-4">
+                <div className="px-4 py-2 border-b border-gray-200">
+                  <p className="text-xs font-bold text-red-600 uppercase">Administration ANSUT</p>
+                </div>
+                
+                <a 
+                  href="/admin/tableau-de-bord" 
+                  className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                    isActive('/admin') ? 'bg-gradient-to-r from-red-50 to-pink-50 text-red-700' : 'hover:bg-gray-50 text-gray-700'
+                  }`}
+                >
+                  <BarChart className="h-5 w-5 mr-3 text-blue-500" />
+                  Dashboard Principal
+                </a>
+                
+                <a 
+                  href="/admin/utilisateurs" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Users className="h-5 w-5 mr-3 text-green-500" />
+                  Gestion Utilisateurs
+                </a>
+                
+                <a 
+                  href="/admin/gestion-roles" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Shield className="h-5 w-5 mr-3 text-purple-500" />
+                  Attribuer des Rôles
+                </a>
+                
+                <a 
+                  href="/admin/api-keys" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Key className="h-5 w-5 mr-3 text-yellow-500" />
+                  Clés API
+                </a>
+                
+                <a 
+                  href="/admin/service-monitoring" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Activity className="h-5 w-5 mr-3 text-red-500" />
+                  Monitoring Services
+                </a>
+                
+                <a 
+                  href="/admin/cev-management" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <FileCheck className="h-5 w-5 mr-3 text-teal-500" />
+                  CEV/ONECI
+                </a>
+              </div>
+            )}
+
+            {/* Section Trust Agent */}
+            {profile?.available_roles?.includes('trust_agent') && (
+              <div className="space-y-1 mt-4">
+                <div className="px-4 py-2 border-b border-gray-200">
+                  <p className="text-xs font-bold text-green-600 uppercase">Espace Trust Agent</p>
+                </div>
+                
+                <a 
+                  href="/trust-agent/dashboard" 
+                  className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                    isActive('/trust-agent') ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700' : 'hover:bg-gray-50 text-gray-700'
+                  }`}
+                >
+                  <BarChart className="h-5 w-5 mr-3 text-blue-500" />
+                  Dashboard Agent
+                </a>
+                
+                <a 
+                  href="/trust-agent/moderation" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Shield className="h-5 w-5 mr-3 text-purple-500" />
+                  Modération
+                </a>
+                
+                <a 
+                  href="/trust-agent/mediation" 
+                  className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+                >
+                  <Users className="h-5 w-5 mr-3 text-orange-500" />
+                  Médiation
+                </a>
+              </div>
+            )}
+
+            {/* Section Mon Compte */}
+            <div className="space-y-1 mt-4">
+              <div className="px-4 py-2 border-b border-gray-200">
+                <p className="text-xs font-bold text-green-600 uppercase">Mon compte</p>
+              </div>
+              
+              <a 
+                href="/profil" 
+                className={`flex items-center py-3 px-4 rounded-lg font-medium transition-colors ${
+                  isActive('/profil') ? 'bg-gradient-to-r from-green-50 to-teal-50 text-green-700' : 'hover:bg-gray-50 text-gray-700'
+                }`}
+              >
+                <User className="h-5 w-5 mr-3 text-blue-500" />
+                Mon profil
+              </a>
+              
+              <a 
+                href="/recherches-sauvegardees" 
+                className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+              >
+                <Search className="h-5 w-5 mr-3 text-purple-500" />
+                Recherches sauvegardées
+              </a>
+              
+              <a 
+                href="/notifications/preferences" 
+                className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+              >
+                <Bell className="h-5 w-5 mr-3 text-orange-500" />
+                Préférences de notification
+              </a>
+              
+              <a 
+                href="/mes-certificats" 
+                className="flex items-center py-3 px-4 rounded-lg font-medium transition-colors hover:bg-gray-50 text-gray-700"
+              >
+                <Award className="h-5 w-5 mr-3 text-yellow-500" />
+                Mes certificats
+              </a>
+            </div>
+
+            {/* Infos utilisateur et déconnexion */}
+            <div className="border-t border-gray-200 mt-6 pt-4">
+              <div className="px-4 py-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg mb-3">
+                <p className="text-sm font-bold text-gray-800">{profile?.full_name || 'Utilisateur'}</p>
+                <p className="text-xs text-gray-600">{profile?.email}</p>
+                <p className="text-xs text-terracotta-600 font-semibold mt-1">
+                  {profile?.user_type === 'locataire' && '🏠 Locataire'}
+                  {profile?.user_type === 'proprietaire' && '🔑 Propriétaire'}
+                  {profile?.user_type === 'agence' && '🏢 Agence'}
+                  {profile?.user_type === 'admin_ansut' && '🛡️ Admin ANSUT'}
+                </p>
+              </div>
+              
+              <div className="px-4 py-3 bg-gray-50 rounded-lg mb-3">
+                <p className="text-xs font-bold text-gray-500 uppercase mb-2">Langue</p>
+                <LanguageSelector />
+              </div>
+              
               <button
                 onClick={() => {
                   setShowMobileMenu(false);
                   signOut();
                 }}
-                className="w-full text-left py-2 px-4 rounded-lg hover:bg-red-50 text-red-600 font-medium"
+                className="w-full flex items-center py-3 px-4 rounded-lg hover:bg-red-50 text-red-600 font-medium transition-colors"
               >
-                <LogOut className="h-4 w-4 inline mr-2" />
+                <LogOut className="h-5 w-5 mr-3" />
                 Déconnexion
               </button>
             </div>
