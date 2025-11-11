@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Languages, Globe, Check } from 'lucide-react';
 import { azureTranslatorService } from '../../services/azure/azureTranslatorService';
 
@@ -32,6 +33,8 @@ export default function LanguageSelector({
   const [isOpen, setIsOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(defaultLanguage);
   const [translating, setTranslating] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState<{ top: number; left: number; width: number } | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('preferred_language');
@@ -69,10 +72,35 @@ export default function LanguageSelector({
   };
 
   const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === currentLanguage) || SUPPORTED_LANGUAGES[0];
+  const updateDropdownPosition = useCallback(() => {
+    if (typeof window === 'undefined' || !triggerRef.current) return;
+    const rect = triggerRef.current.getBoundingClientRect();
+    const width = 256; // match w-64
+    const viewportPadding = 12;
+    let left = rect.right - width;
+    left = Math.max(viewportPadding, Math.min(left, window.innerWidth - width - viewportPadding));
+    setDropdownPosition({
+      top: rect.bottom + 8,
+      left,
+      width
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || typeof window === 'undefined') return;
+    updateDropdownPosition();
+    window.addEventListener('resize', updateDropdownPosition);
+    window.addEventListener('scroll', updateDropdownPosition, true);
+    return () => {
+      window.removeEventListener('resize', updateDropdownPosition);
+      window.removeEventListener('scroll', updateDropdownPosition, true);
+    };
+  }, [isOpen, updateDropdownPosition]);
 
   return (
     <div className="relative">
       <button
+        ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-white border-2 border-gray-200 hover:border-terracotta-400 transition-all"
         disabled={translating}
@@ -85,49 +113,52 @@ export default function LanguageSelector({
         )}
       </button>
 
-      {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-gray-200 z-50 animate-scale-in">
-          <div className="p-3 border-b border-gray-200">
-            <div className="flex items-center space-x-2 text-gray-700">
-              <Languages className="h-5 w-5 text-terracotta-600" />
-              <span className="font-bold">Choisir la langue</span>
+      {isOpen && dropdownPosition && typeof document !== 'undefined' && createPortal(
+        <>
+          <div
+            className="fixed inset-0 z-[999]"
+            onClick={() => setIsOpen(false)}
+          ></div>
+          <div
+            className="fixed w-64 bg-white rounded-xl shadow-2xl border-2 border-gray-200 z-[1000] animate-scale-in"
+            style={{ top: dropdownPosition.top, left: dropdownPosition.left, width: dropdownPosition.width }}
+          >
+            <div className="p-3 border-b border-gray-200">
+              <div className="flex items-center space-x-2 text-gray-700">
+                <Languages className="h-5 w-5 text-terracotta-600" />
+                <span className="font-bold">Choisir la langue</span>
+              </div>
+            </div>
+
+            <div className="max-h-96 overflow-y-auto">
+              {SUPPORTED_LANGUAGES.map((language) => (
+                <button
+                  key={language.code}
+                  onClick={() => handleLanguageSelect(language.code)}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-terracotta-50 transition-colors ${
+                    currentLanguage === language.code ? 'bg-terracotta-50' : ''
+                  }`}
+                >
+                  <span className="text-2xl">{language.flag}</span>
+                  <div className="flex-1 text-left">
+                    <div className="font-medium text-gray-900">{language.nativeName}</div>
+                    <div className="text-xs text-gray-500">{language.name}</div>
+                  </div>
+                  {currentLanguage === language.code && (
+                    <Check className="h-5 w-5 text-terracotta-600" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <div className="p-3 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+              <p className="text-xs text-gray-500 text-center">
+                Traduction propulsée par Azure AI
+              </p>
             </div>
           </div>
-
-          <div className="max-h-96 overflow-y-auto">
-            {SUPPORTED_LANGUAGES.map((language) => (
-              <button
-                key={language.code}
-                onClick={() => handleLanguageSelect(language.code)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 hover:bg-terracotta-50 transition-colors ${
-                  currentLanguage === language.code ? 'bg-terracotta-50' : ''
-                }`}
-              >
-                <span className="text-2xl">{language.flag}</span>
-                <div className="flex-1 text-left">
-                  <div className="font-medium text-gray-900">{language.nativeName}</div>
-                  <div className="text-xs text-gray-500">{language.name}</div>
-                </div>
-                {currentLanguage === language.code && (
-                  <Check className="h-5 w-5 text-terracotta-600" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="p-3 border-t border-gray-200 bg-gray-50 rounded-b-xl">
-            <p className="text-xs text-gray-500 text-center">
-              Traduction propulsée par Azure AI
-            </p>
-          </div>
-        </div>
-      )}
-
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
-        ></div>
+        </>,
+        document.body
       )}
     </div>
   );
