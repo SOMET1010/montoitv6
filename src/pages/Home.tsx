@@ -143,15 +143,15 @@ export default function Home() {
               <span className="text-base font-bold">Plateforme certifiée ANSUT</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="inline-block animate-scale-in drop-shadow-lg">Trouvez votre </span>
-              <span className="inline-block animate-scale-in text-amber-100 drop-shadow-lg" style={{ animationDelay: '0.1s' }}>logement idéal</span>
+            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight text-white">
+              <span className="inline-block animate-scale-in drop-shadow-2xl">Trouvez votre </span>
+              <span className="inline-block animate-scale-in drop-shadow-2xl" style={{ animationDelay: '0.1s' }}>logement idéal</span>
               <br />
-              <span className="inline-block animate-scale-in drop-shadow-lg" style={{ animationDelay: '0.2s' }}>en toute </span>
-              <span className="inline-block animate-scale-in text-white drop-shadow-lg" style={{ animationDelay: '0.3s' }}>confiance</span>
+              <span className="inline-block animate-scale-in drop-shadow-2xl" style={{ animationDelay: '0.2s' }}>en toute </span>
+              <span className="inline-block animate-scale-in drop-shadow-2xl" style={{ animationDelay: '0.3s' }}>confiance</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-amber-100 mb-8 max-w-3xl mx-auto animate-slide-up">
+            <p className="text-xl md:text-2xl text-white mb-8 max-w-3xl mx-auto animate-slide-up drop-shadow-lg">
               L'immobilier accessible à tous avec signature électronique et paiement sécurisé
             </p>
           </div>
@@ -163,9 +163,10 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="Où souhaitez-vous habiter ? (Abidjan, Cocody, Plateau...)"
-                  className="flex-1 bg-transparent text-gray-900 placeholder-gray-600 focus:outline-none text-lg"
+                  className="flex-1 bg-transparent text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-terracotta-400 rounded-lg px-2 py-1 text-lg"
                   value={searchCity}
                   onChange={(e) => setSearchCity(e.target.value)}
+                  aria-label="Rechercher une ville ou un quartier"
                 />
               </div>
               <button
@@ -183,7 +184,7 @@ export default function Home() {
               <button
                 key={index}
                 onClick={() => setCurrentSlide(index)}
-                className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-4 focus:ring-white/50 ${
+                className={`transition-all duration-300 rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-terracotta-500 ${
                   index === currentSlide
                     ? 'w-16 h-4 bg-white shadow-glow'
                     : 'w-4 h-4 bg-white/50 hover:bg-white/70'

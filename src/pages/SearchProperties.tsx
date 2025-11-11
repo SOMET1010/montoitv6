@@ -159,9 +159,10 @@ export default function SearchProperties() {
               <input
                 type="text"
                 placeholder="Où cherchez-vous ? (Cocody, Plateau, Yopougon...)"
-                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white/90 text-lg font-medium"
+                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:border-terracotta-500 transition-all bg-white/90 text-lg font-medium"
                 value={searchCity}
                 onChange={(e) => setSearchCity(e.target.value)}
+                aria-label="Rechercher une ville ou un quartier"
               />
             </div>
             <button
@@ -174,12 +175,14 @@ export default function SearchProperties() {
             <button
               type="button"
               onClick={() => setShowFilters(!showFilters)}
-              className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-4 border-2 border-terracotta-500 text-terracotta-600 rounded-3xl hover:bg-terracotta-50 transition-all font-bold transform hover:scale-105"
+              className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-4 border-2 border-terracotta-500 text-terracotta-600 rounded-3xl hover:bg-terracotta-50 transition-all font-bold transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:ring-offset-2"
+              aria-label="Afficher les filtres de recherche"
+              aria-expanded={showFilters}
             >
               <SlidersHorizontal className="h-6 w-6" />
               <span>Filtres</span>
               {activeFiltersCount > 0 && (
-                <span className="bg-gradient-to-r from-coral-500 to-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-glow">
+                <span className="bg-gradient-to-r from-coral-500 to-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-glow" aria-label={`${activeFiltersCount} filtres actifs`}>
                   {activeFiltersCount}
                 </span>
               )}

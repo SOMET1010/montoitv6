@@ -22,11 +22,11 @@
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-terracotta-500 to-coral-500 text-white font-semibold px-6 py-4 rounded-2xl shadow-lg hover:shadow-glow-lg transform hover:scale-105 transition-all duration-300 hover:animate-glow min-h-[44px] focus:outline-none focus:ring-4 focus:ring-terracotta-300 focus:ring-offset-2;
+    @apply bg-gradient-to-r from-terracotta-500 to-coral-500 text-white font-semibold px-6 py-4 rounded-2xl shadow-lg hover:shadow-glow-lg transform hover:scale-105 transition-all duration-300 hover:animate-glow min-h-[44px] focus:outline-none focus-visible:ring-4 focus-visible:ring-terracotta-400 focus-visible:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply bg-white border-2 border-terracotta-500 text-terracotta-600 font-semibold px-6 py-4 rounded-2xl hover:bg-terracotta-50 transform hover:scale-105 transition-all duration-300 min-h-[44px] focus:outline-none focus:ring-4 focus:ring-terracotta-300 focus:ring-offset-2;
+    @apply bg-white border-2 border-terracotta-500 text-terracotta-600 font-semibold px-6 py-4 rounded-2xl hover:bg-terracotta-50 transform hover:scale-105 transition-all duration-300 min-h-[44px] focus:outline-none focus-visible:ring-4 focus-visible:ring-terracotta-400 focus-visible:ring-offset-2;
   }
 
   .card-scrapbook {
@@ -107,5 +107,23 @@
     overflow: visible;
     clip: auto;
     white-space: normal;
+  }
+
+  *:focus-visible {
+    outline: 3px solid rgb(242, 120, 92);
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 3px solid rgb(242, 120, 92);
+    outline-offset: 2px;
+  }
+
+  .focus-visible-ring {
+    @apply focus:outline-none focus-visible:ring-4 focus-visible:ring-terracotta-400 focus-visible:ring-offset-2;
   }
 }
