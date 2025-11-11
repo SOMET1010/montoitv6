@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { FileText, Calendar, DollarSign, Eye, Edit, X, CheckCircle } from 'lucide-react';
-import Header from '../../components/ui/Header';
-import Footer from '../../components/ui/Footer';
 
 interface Contract {
   id: string;
@@ -167,212 +165,204 @@ export default function MyContracts() {
 
   if (!user) {
     return (
-      <>
-        <Header />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
-              Connexion requise
-            </h2>
-            <p className="text-gray-600">
-              Veuillez vous connecter pour voir vos contrats
-            </p>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Connexion requise
+          </h2>
+          <p className="text-gray-600">
+            Veuillez vous connecter pour voir vos contrats
+          </p>
         </div>
-        <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gray-50 pt-20 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Mes contrats de bail</h1>
+    <div className="min-h-screen bg-gray-50 pt-20 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Mes contrats de bail</h1>
 
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setFilter('all')}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
-                  filter === 'all'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Tous
-              </button>
-              <button
-                onClick={() => setFilter('active')}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
-                  filter === 'active'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Actifs
-              </button>
-              <button
-                onClick={() => setFilter('pending')}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
-                  filter === 'pending'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                En attente
-              </button>
-              <button
-                onClick={() => setFilter('expired')}
-                className={`px-4 py-2 rounded-lg font-semibold transition ${
-                  filter === 'expired'
-                    ? 'bg-orange-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Expirés
-              </button>
-            </div>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                filter === 'all'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Tous
+            </button>
+            <button
+              onClick={() => setFilter('active')}
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                filter === 'active'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Actifs
+            </button>
+            <button
+              onClick={() => setFilter('pending')}
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                filter === 'pending'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              En attente
+            </button>
+            <button
+              onClick={() => setFilter('expired')}
+              className={`px-4 py-2 rounded-lg font-semibold transition ${
+                filter === 'expired'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              Expirés
+            </button>
           </div>
+        </div>
 
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
-            </div>
-          ) : contracts.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-              <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Aucun contrat
-              </h3>
-              <p className="text-gray-600">
-                Vous n'avez pas encore de contrat de bail
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {contracts.map((contract) => (
-                <div key={contract.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/4">
-                      <img
-                        src={contract.property.main_image || 'https://via.placeholder.com/400x300'}
-                        alt={contract.property.title}
-                        className="w-full h-48 md:h-full object-cover"
-                      />
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
+          </div>
+        ) : contracts.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+            <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              Aucun contrat
+            </h3>
+            <p className="text-gray-600">
+              Vous n'avez pas encore de contrat de bail
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {contracts.map((contract) => (
+              <div key={contract.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="flex flex-col md:flex-row">
+                  <div className="md:w-1/4">
+                    <img
+                      src={contract.property.main_image || 'https://via.placeholder.com/400x300'}
+                      alt={contract.property.title}
+                      className="w-full h-48 md:h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <div className="flex items-center space-x-3 mb-2">
+                          <h3 className="text-xl font-bold text-gray-900">
+                            {contract.contract_number}
+                          </h3>
+                          {getStatusBadge(contract.status)}
+                        </div>
+                        <p className="text-gray-600 font-semibold mb-1">
+                          {contract.property.title}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {contract.property.address}, {contract.property.city}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="flex items-center space-x-3 mb-2">
-                            <h3 className="text-xl font-bold text-gray-900">
-                              {contract.contract_number}
-                            </h3>
-                            {getStatusBadge(contract.status)}
-                          </div>
-                          <p className="text-gray-600 font-semibold mb-1">
-                            {contract.property.title}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {contract.property.address}, {contract.property.city}
-                          </p>
-                        </div>
-                      </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Type</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {getContractTypeLabel(contract.contract_type)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Date de début</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {formatDate(contract.start_date)}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Loyer mensuel</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {contract.monthly_rent.toLocaleString()} FCFA
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 mb-1">Caution</p>
-                          <p className="text-sm font-semibold text-gray-900">
-                            {contract.deposit_amount.toLocaleString()} FCFA
-                          </p>
-                        </div>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Type</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {getContractTypeLabel(contract.contract_type)}
+                        </p>
                       </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Date de début</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {formatDate(contract.start_date)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Loyer mensuel</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {contract.monthly_rent.toLocaleString()} FCFA
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Caution</p>
+                        <p className="text-sm font-semibold text-gray-900">
+                          {contract.deposit_amount.toLocaleString()} FCFA
+                        </p>
+                      </div>
+                    </div>
 
-                      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">
-                              {isOwner(contract) ? 'Locataire' : 'Propriétaire'}
-                            </p>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {isOwner(contract) ? contract.tenant.full_name : contract.owner.full_name}
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              {isOwner(contract) ? contract.tenant.email : contract.owner.email}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Signatures</p>
-                            <div className="flex items-center space-x-3">
-                              <div className="flex items-center space-x-1">
-                                {contract.owner_signed_at ? (
-                                  <CheckCircle className="w-4 h-4 text-green-600" />
-                                ) : (
-                                  <X className="w-4 h-4 text-red-600" />
-                                )}
-                                <span className="text-xs text-gray-600">Propriétaire</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                {contract.tenant_signed_at ? (
-                                  <CheckCircle className="w-4 h-4 text-green-600" />
-                                ) : (
-                                  <X className="w-4 h-4 text-red-600" />
-                                )}
-                                <span className="text-xs text-gray-600">Locataire</span>
-                              </div>
+                    <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1">
+                            {isOwner(contract) ? 'Locataire' : 'Propriétaire'}
+                          </p>
+                          <p className="text-sm font-semibold text-gray-900">
+                            {isOwner(contract) ? contract.tenant.full_name : contract.owner.full_name}
+                          </p>
+                          <p className="text-xs text-gray-600">
+                            {isOwner(contract) ? contract.tenant.email : contract.owner.email}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1">Signatures</p>
+                          <div className="flex items-center space-x-3">
+                            <div className="flex items-center space-x-1">
+                              {contract.owner_signed_at ? (
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <X className="w-4 h-4 text-red-600" />
+                              )}
+                              <span className="text-xs text-gray-600">Propriétaire</span>
+                            </div>
+                            <div className="flex items-center space-x-1">
+                              {contract.tenant_signed_at ? (
+                                <CheckCircle className="w-4 h-4 text-green-600" />
+                              ) : (
+                                <X className="w-4 h-4 text-red-600" />
+                              )}
+                              <span className="text-xs text-gray-600">Locataire</span>
                             </div>
                           </div>
                         </div>
                       </div>
+                    </div>
 
-                      <div className="flex flex-wrap gap-3">
+                    <div className="flex flex-wrap gap-3">
+                      <a
+                        href={`/contrat/${contract.id}`}
+                        className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition flex items-center space-x-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        <span>Voir le contrat</span>
+                      </a>
+
+                      {contract.status === 'brouillon' && isOwner(contract) && (
                         <a
-                          href={`/contrat/${contract.id}`}
-                          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition flex items-center space-x-2"
+                          href={`/contrat/${contract.id}/editer`}
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center space-x-2"
                         >
-                          <Eye className="w-4 h-4" />
-                          <span>Voir le contrat</span>
+                          <Edit className="w-4 h-4" />
+                          <span>Modifier</span>
                         </a>
-
-                        {contract.status === 'brouillon' && isOwner(contract) && (
-                          <a
-                            href={`/contrat/${contract.id}/editer`}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition flex items-center space-x-2"
-                          >
-                            <Edit className="w-4 h-4" />
-                            <span>Modifier</span>
-                          </a>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      <Footer />
-    </>
+    </div>
   );
 }

@@ -28,6 +28,27 @@ export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const hoverTimeouts = useRef<Record<string, ReturnType<typeof setTimeout> | null>>({});
+
+  const clearHoverTimeout = (menu: string) => {
+    if (hoverTimeouts.current[menu]) {
+      clearTimeout(hoverTimeouts.current[menu]!);
+      hoverTimeouts.current[menu] = null;
+    }
+  };
+
+  const handleMenuEnter = (menu: string, setter: (value: boolean) => void) => {
+    clearHoverTimeout(menu);
+    setter(true);
+  };
+
+  const handleMenuLeave = (menu: string, setter: (value: boolean) => void) => {
+    clearHoverTimeout(menu);
+    hoverTimeouts.current[menu] = setTimeout(() => {
+      setter(false);
+      hoverTimeouts.current[menu] = null;
+    }, 150);
+  };
 
   // Fonction pour vérifier si un lien est actif
   const isActive = (path: string) => {
@@ -58,6 +79,16 @@ export default function Header() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      Object.values(hoverTimeouts.current).forEach((timeoutId) => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      });
     };
   }, []);
 
@@ -138,10 +169,11 @@ export default function Header() {
             {user && (
               <>
                 {/* Menu Propriétés et Services */}
-                <div className="relative" onMouseLeave={() => setShowPropertyMenu(false)}>
+                <div className="relative">
                   <button
-                    onMouseEnter={() => setShowPropertyMenu(true)}
-                    onClick={() => setShowPropertyMenu(!showPropertyMenu)}
+                    onMouseEnter={() => handleMenuEnter('property', setShowPropertyMenu)}
+                    onMouseLeave={() => handleMenuLeave('property', setShowPropertyMenu)}
+                    onClick={() => setShowPropertyMenu((prev) => !prev)}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
                       isActive('/favoris') || isActive('/mes-visites') || isActive('/mes-contrats')
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
@@ -153,7 +185,11 @@ export default function Header() {
                     <ChevronDown className="h-4 w-4" />
                   </button>
                   {showPropertyMenu && (
-                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-purple-100 py-2 z-[60]">
+                    <div
+                      className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-purple-100 py-2 z-[60]"
+                      onMouseEnter={() => handleMenuEnter('property', setShowPropertyMenu)}
+                      onMouseLeave={() => handleMenuLeave('property', setShowPropertyMenu)}
+                    >
                       <div className="px-4 py-2 border-b border-purple-100">
                         <p className="text-xs font-bold text-purple-600 uppercase">Immobilier</p>
                       </div>
@@ -180,10 +216,11 @@ export default function Header() {
                 </div>
 
                 {/* Menu Services */}
-                <div className="relative" onMouseLeave={() => setShowServicesMenu(false)}>
+                <div className="relative">
                   <button
-                    onMouseEnter={() => setShowServicesMenu(true)}
-                    onClick={() => setShowServicesMenu(!showServicesMenu)}
+                    onMouseEnter={() => handleMenuEnter('services', setShowServicesMenu)}
+                    onMouseLeave={() => handleMenuLeave('services', setShowServicesMenu)}
+                    onClick={() => setShowServicesMenu((prev) => !prev)}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
                       isActive('/maintenance') || isActive('/score-locataire') || isActive('/effectuer-paiement')
                         ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
@@ -195,7 +232,11 @@ export default function Header() {
                     <ChevronDown className="h-4 w-4" />
                   </button>
                   {showServicesMenu && (
-                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 z-[60]">
+                    <div
+                      className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 z-[60]"
+                      onMouseEnter={() => handleMenuEnter('services', setShowServicesMenu)}
+                      onMouseLeave={() => handleMenuLeave('services', setShowServicesMenu)}
+                    >
                       <div className="px-4 py-2 border-b border-orange-100">
                         <p className="text-xs font-bold text-orange-600 uppercase">Services</p>
                       </div>
@@ -264,10 +305,11 @@ export default function Header() {
                 </a>
 
                 {/* Menu utilisateur */}
-                <div className="relative" onMouseLeave={() => setShowUserMenu(false)}>
+                <div className="relative">
                   <button
-                    onMouseEnter={() => setShowUserMenu(true)}
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    onMouseEnter={() => handleMenuEnter('user', setShowUserMenu)}
+                    onMouseLeave={() => handleMenuLeave('user', setShowUserMenu)}
+                    onClick={() => setShowUserMenu((prev) => !prev)}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 ${
                       isActive('/profil') || isActive('/notifications/preferences') || isActive('/recherches-sauvegardees')
                         ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-lg'
@@ -276,7 +318,11 @@ export default function Header() {
                   >
                   </button>
                   {showUserMenu && (
-                    <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-green-100 py-2 z-50">
+                    <div
+                      className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-green-100 py-2 z-50"
+                      onMouseEnter={() => handleMenuEnter('user', setShowUserMenu)}
+                      onMouseLeave={() => handleMenuLeave('user', setShowUserMenu)}
+                    >
                       <div className="px-4 py-2 border-b border-green-100">
                         <p className="text-xs font-bold text-green-600 uppercase">Mon espace</p>
                       </div>
@@ -302,10 +348,11 @@ export default function Header() {
 
                 {/* Menu Agence */}
                 {profile?.user_type === 'agence' && (
-                  <div className="relative" onMouseLeave={() => setShowAgencyMenu(false)}>
+                  <div className="relative">
                     <button
-                      onMouseEnter={() => setShowAgencyMenu(true)}
-                      onClick={() => setShowAgencyMenu(!showAgencyMenu)}
+                      onMouseEnter={() => handleMenuEnter('agency', setShowAgencyMenu)}
+                      onMouseLeave={() => handleMenuLeave('agency', setShowAgencyMenu)}
+                      onClick={() => setShowAgencyMenu((prev) => !prev)}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 border-2 ${
                         isActive('/agence')
                           ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg border-teal-300'
@@ -317,7 +364,11 @@ export default function Header() {
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAgencyMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-teal-100 py-2 z-[60]">
+                      <div
+                        className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-teal-100 py-2 z-[60]"
+                        onMouseEnter={() => handleMenuEnter('agency', setShowAgencyMenu)}
+                        onMouseLeave={() => handleMenuLeave('agency', setShowAgencyMenu)}
+                      >
                         <div className="px-4 py-2 border-b border-teal-100">
                           <p className="text-xs font-bold text-teal-600 uppercase">Espace Agence</p>
                         </div>
@@ -344,10 +395,11 @@ export default function Header() {
 
                 {/* Menu Admin */}
                 {(profile?.user_type === 'admin_ansut' || profile?.available_roles?.includes('admin')) && (
-                  <div className="relative" onMouseLeave={() => setShowAdminMenu(false)}>
+                  <div className="relative">
                     <button
-                      onMouseEnter={() => setShowAdminMenu(true)}
-                      onClick={() => setShowAdminMenu(!showAdminMenu)}
+                      onMouseEnter={() => handleMenuEnter('admin', setShowAdminMenu)}
+                      onMouseLeave={() => handleMenuLeave('admin', setShowAdminMenu)}
+                      onClick={() => setShowAdminMenu((prev) => !prev)}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 border-2 ${
                         isActive('/admin')
                           ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg border-red-300'
@@ -359,7 +411,11 @@ export default function Header() {
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAdminMenu && (
-                      <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border-2 border-red-100 py-2 z-[60] max-h-96 overflow-y-auto">
+                      <div
+                        className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border-2 border-red-100 py-2 z-[60] max-h-96 overflow-y-auto"
+                        onMouseEnter={() => handleMenuEnter('admin', setShowAdminMenu)}
+                        onMouseLeave={() => handleMenuLeave('admin', setShowAdminMenu)}
+                      >
                         <div className="px-4 py-2 border-b border-red-100">
                           <p className="text-xs font-bold text-red-600 uppercase">Administration ANSUT</p>
                         </div>
@@ -434,10 +490,11 @@ export default function Header() {
 
                 {/* Menu Trust Agent */}
                 {profile?.available_roles?.includes('trust_agent') && (
-                  <div className="relative" onMouseLeave={() => setShowTrustAgentMenu(false)}>
+                  <div className="relative">
                     <button
-                      onMouseEnter={() => setShowTrustAgentMenu(true)}
-                      onClick={() => setShowTrustAgentMenu(!showTrustAgentMenu)}
+                      onMouseEnter={() => handleMenuEnter('trustAgent', setShowTrustAgentMenu)}
+                      onMouseLeave={() => handleMenuLeave('trustAgent', setShowTrustAgentMenu)}
+                      onClick={() => setShowTrustAgentMenu((prev) => !prev)}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 font-semibold transform hover:scale-105 border-2 ${
                         isActive('/trust-agent')
                           ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-lg border-green-300'
@@ -449,7 +506,11 @@ export default function Header() {
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showTrustAgentMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-green-100 py-2 z-[60]">
+                      <div
+                        className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-green-100 py-2 z-[60]"
+                        onMouseEnter={() => handleMenuEnter('trustAgent', setShowTrustAgentMenu)}
+                        onMouseLeave={() => handleMenuLeave('trustAgent', setShowTrustAgentMenu)}
+                      >
                         <div className="px-4 py-2 border-b border-green-100">
                           <p className="text-xs font-bold text-green-600 uppercase">Espace Trust Agent</p>
                         </div>
