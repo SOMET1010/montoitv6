@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { ScoringService } from '../services/scoringService';
 import type { Database } from '../lib/database.types';
+import Breadcrumb from '../components/Breadcrumb';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Application = Database['public']['Tables']['rental_applications']['Row'];
@@ -177,6 +178,7 @@ export default function OwnerDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
             <div className="animate-slide-down">
+              <Breadcrumb items={[{ label: 'Tableau de Bord Propriétaire' }]} />
               <h1 className="text-4xl font-bold text-gradient flex items-center space-x-3">
                 <Home className="h-10 w-10 text-terracotta-500" />
                 <span>Tableau de bord</span>

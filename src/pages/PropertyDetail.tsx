@@ -3,6 +3,7 @@ import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, Arro
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { Database } from '../lib/database.types';
+import Breadcrumb from '../components/Breadcrumb';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -202,9 +203,16 @@ export default function PropertyDetail() {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-coral-50 custom-cursor">
       <div className="glass-card border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <Breadcrumb
+            items={[
+              { label: 'Recherche', href: '/recherche' },
+              { label: property.city || 'Ville', href: `/recherche?city=${property.city}` },
+              { label: property.title || 'Propriété' }
+            ]}
+          />
           <button
             onClick={() => window.history.back()}
-            className="flex items-center space-x-2 text-terracotta-600 hover:text-terracotta-700 transition-all duration-300 transform hover:scale-105 font-medium"
+            className="flex items-center space-x-2 text-terracotta-600 hover:text-terracotta-700 transition-all duration-300 transform hover:scale-105 font-medium focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 rounded px-2 py-1"
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Retour</span>

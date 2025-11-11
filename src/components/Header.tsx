@@ -79,14 +79,14 @@ export default function Header() {
           <nav className="hidden md:flex items-center space-x-2">
             <a
               href="/"
-              className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-terracotta-50 hover:to-coral-50 hover:text-terracotta-700 transition-all duration-300 font-semibold transform hover:scale-105"
+              className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-terracotta-50 hover:to-coral-50 hover:text-terracotta-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2"
             >
               <Home className="h-5 w-5" />
               <span>Accueil</span>
             </a>
             <a
               href="/recherche"
-              className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-cyan-100 hover:text-cyan-700 transition-all duration-300 font-semibold transform hover:scale-105"
+              className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-cyan-50 hover:to-cyan-100 hover:text-cyan-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
             >
               <Search className="h-5 w-5" />
               <span>Rechercher</span>
@@ -95,7 +95,7 @@ export default function Header() {
               <>
                 <a
                   href="/messages"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 relative"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span>Messages</span>
@@ -107,14 +107,14 @@ export default function Header() {
                 </a>
                 <a
                   href="/mes-visites"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-green-100 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                 >
                   <Calendar className="h-5 w-5" />
                   <span>Mes visites</span>
                 </a>
                 <a
                   href="/favoris"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
                   <Heart className="h-5 w-5" />
                   <span>Favoris</span>
@@ -123,7 +123,9 @@ export default function Header() {
                   <button
                     onMouseEnter={() => setShowNotifMenu(true)}
                     onClick={() => setShowNotifMenu(!showNotifMenu)}
-                    className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:text-orange-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                    className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50 hover:text-orange-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    aria-expanded={showNotifMenu}
+                    aria-haspopup="true"
                   >
                     <Bell className="h-5 w-5" />
                     <span>Alertes</span>
@@ -143,7 +145,7 @@ export default function Header() {
                 </div>
                 <a
                   href="/mes-contrats"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:text-purple-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 hover:text-purple-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
                 >
                   <FileText className="h-5 w-5" />
                   <span>Contrats</span>
@@ -154,7 +156,9 @@ export default function Header() {
                     <button
                       onMouseEnter={() => setShowMaintenanceMenu(true)}
                       onClick={() => setShowMaintenanceMenu(!showMaintenanceMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-orange-50 hover:text-red-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                      aria-expanded={showMaintenanceMenu}
+                      aria-haspopup="true"
                     >
                       <Wrench className="h-5 w-5" />
                       <span>Maintenance</span>
@@ -185,7 +189,7 @@ export default function Header() {
                 {profile?.user_type === 'locataire' && (
                   <a
                     href="/score-locataire"
-                    className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-amber-100 hover:text-yellow-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                    className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-amber-100 hover:text-yellow-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2"
                   >
                     <Award className="h-5 w-5" />
                     <span>Mon Score</span>
@@ -197,7 +201,9 @@ export default function Header() {
                     <button
                       onMouseEnter={() => setShowAgencyMenu(true)}
                       onClick={() => setShowAgencyMenu(!showAgencyMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-teal-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 hover:text-teal-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                      aria-expanded={showAgencyMenu}
+                      aria-haspopup="true"
                     >
                       <Building2 className="h-5 w-5" />
                       <span>Agence</span>
@@ -228,7 +234,7 @@ export default function Header() {
 
                 <a
                   href="/profil"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 hover:text-amber-700 transition-all duration-300 font-semibold transform hover:scale-105"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 hover:text-amber-700 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2"
                 >
                   <User className="h-5 w-5" />
                   <span>Profil</span>
@@ -239,7 +245,9 @@ export default function Header() {
                     <button
                       onMouseEnter={() => setShowAdminMenu(true)}
                       onClick={() => setShowAdminMenu(!showAdminMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-blue-200"
+                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      aria-expanded={showAdminMenu}
+                      aria-haspopup="true"
                     >
                       <Shield className="h-5 w-5" />
                       <span>Admin</span>
@@ -320,7 +328,9 @@ export default function Header() {
                     <button
                       onMouseEnter={() => setShowTrustAgentMenu(true)}
                       onClick={() => setShowTrustAgentMenu(!showTrustAgentMenu)}
-                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-green-200"
+                      className="flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 hover:text-green-700 transition-all duration-300 font-semibold transform hover:scale-105 border-2 border-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                      aria-expanded={showTrustAgentMenu}
+                      aria-haspopup="true"
                     >
                       <UserCheck className="h-5 w-5" />
                       <span>Trust Agent</span>
@@ -379,14 +389,16 @@ export default function Header() {
                 </div>
                 <button
                   onClick={() => signOut()}
-                  className="hidden md:flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 font-semibold transform hover:scale-105"
+                  className="hidden md:flex items-center space-x-2 px-4 py-2 rounded-2xl text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all duration-300 font-semibold transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
                   <LogOut className="h-5 w-5" />
                   <span>Déconnexion</span>
                 </button>
                 <button
                   onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+                  className="md:hidden p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2"
+                  aria-label="Menu de navigation"
+                  aria-expanded={showMobileMenu}
                 >
                   {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </button>
@@ -395,13 +407,13 @@ export default function Header() {
               <>
                 <a
                   href="/connexion"
-                  className="text-terracotta-600 hover:text-terracotta-700 font-bold transition-colors transform hover:scale-105 transition-all duration-300"
+                  className="text-terracotta-600 hover:text-terracotta-700 font-bold transition-colors transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 rounded px-2 py-1"
                 >
                   Connexion
                 </a>
                 <a
                   href="/inscription"
-                  className="btn-primary"
+                  className="btn-primary inline-block"
                 >
                   Inscription
                 </a>

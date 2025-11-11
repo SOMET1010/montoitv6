@@ -27,12 +27,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantClasses = {
       primary:
-        'bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 active:bg-indigo-800',
+        'bg-gradient-to-r from-terracotta-500 to-coral-500 text-white hover:from-terracotta-600 hover:to-coral-600 focus:ring-terracotta-500 active:from-terracotta-700 active:to-coral-700 shadow-md hover:shadow-lg',
       secondary:
-        'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-400 active:bg-gray-400',
+        'bg-white border-2 border-terracotta-500 text-terracotta-600 hover:bg-terracotta-50 focus:ring-terracotta-500 active:bg-terracotta-100',
       outline:
-        'border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-500 active:bg-indigo-100',
-      ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-300 active:bg-gray-200',
+        'border-2 border-terracotta-600 text-terracotta-600 hover:bg-terracotta-50 focus:ring-terracotta-500 active:bg-terracotta-100',
+      ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-terracotta-300 active:bg-gray-200',
       danger:
         'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 active:bg-red-800',
     };

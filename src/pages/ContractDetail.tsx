@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { ArrowLeft, FileText, Download, Edit, CheckCircle, X } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Breadcrumb from '../components/Breadcrumb';
 
 interface Contract {
   id: string;
@@ -307,9 +308,15 @@ Fait à ${contract.property.city}, le ${new Date(contract.created_at).toLocaleDa
       <Header />
       <div className="min-h-screen bg-gray-50 pt-20 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Breadcrumb
+            items={[
+              { label: 'Mes Contrats', href: '/mes-contrats' },
+              { label: `Contrat ${contract.contract_number}` }
+            ]}
+          />
           <button
             onClick={() => window.history.back()}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6"
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 mb-6 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:ring-offset-2 rounded px-2 py-1"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>Retour</span>

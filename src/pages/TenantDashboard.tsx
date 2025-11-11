@@ -3,6 +3,7 @@ import { Home, DollarSign, MessageSquare, Clock, Calendar, Heart, Search, AlertC
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { Database } from '../lib/database.types';
+import Breadcrumb from '../components/Breadcrumb';
 
 type Lease = Database['public']['Tables']['leases']['Row'];
 type Property = Database['public']['Tables']['properties']['Row'];
@@ -151,6 +152,7 @@ export default function TenantDashboard() {
       <div className="glass-card border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="animate-slide-down">
+            <Breadcrumb items={[{ label: 'Tableau de Bord Locataire' }]} />
             <h1 className="text-4xl font-bold text-gradient flex items-center space-x-3">
               <Home className="h-10 w-10 text-terracotta-500" />
               <span>Mon Tableau de Bord</span>
