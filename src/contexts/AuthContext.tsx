@@ -38,24 +38,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profileError, setProfileError] = useState<ProfileError | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        loadProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
+    supabase.auth.getSession()
+      .then(async ({ data: { session } }) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          await loadProfile(session.user.id);
+          try {
+            await loadProfile(session.user.id);
+          } catch (error) {
+            console.error('[AuthContext] Error loading profile on init:', error);
+          }
         } else {
-          setProfile(null);
+          setLoading(false);
+        }
+      })
+      .catch((error) => {
+        console.error('[AuthContext] Error getting session:', error);
+        setLoading(false);
+        setProfileError({
+          type: 'unknown',
+          message: 'Erreur de session',
+          details: error?.message || 'Impossible de récupérer la session'
+        });
+      });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      (async () => {
+        try {
+          setSession(session);
+          setUser(session?.user ?? null);
+          if (session?.user) {
+            await loadProfile(session.user.id);
+          } else {
+            setProfile(null);
+            setLoading(false);
+          }
+        } catch (error) {
+          console.error('[AuthContext] Error in auth state change:', error);
           setLoading(false);
         }
       })();
