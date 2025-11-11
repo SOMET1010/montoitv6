@@ -40,6 +40,12 @@ export default function Layout() {
   if (!shouldShowLayout) {
     return (
       <ErrorBoundary>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-terracotta-500 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracotta-600 focus:ring-offset-2"
+        >
+          Aller au contenu principal
+        </a>
         <Suspense
           fallback={
             <div className="min-h-screen flex items-center justify-center">
@@ -47,7 +53,9 @@ export default function Layout() {
             </div>
           }
         >
-          <Outlet />
+          <main id="main-content">
+            <Outlet />
+          </main>
           <Chatbot />
         </Suspense>
       </ErrorBoundary>
@@ -56,6 +64,12 @@ export default function Layout() {
 
   return (
     <ErrorBoundary>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 bg-terracotta-500 text-white px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-terracotta-600 focus:ring-offset-2"
+      >
+        Aller au contenu principal
+      </a>
       {shouldShowHeaderFooter && <Header />}
       <Suspense
         fallback={
@@ -64,7 +78,7 @@ export default function Layout() {
           </div>
         }
       >
-        <main className={shouldShowHeaderFooter ? 'min-h-screen' : ''}>
+        <main id="main-content" className={shouldShowHeaderFooter ? 'min-h-screen' : ''}>
           <Outlet />
         </main>
       </Suspense>

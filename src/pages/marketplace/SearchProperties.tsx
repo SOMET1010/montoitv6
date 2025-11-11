@@ -1,11 +1,13 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List, Star } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import type { Database } from '../../lib/database.types';
-import { recommendationService } from '../../services/ai/recommendationService';
-import { useAuth } from '../../contexts/AuthContext';
+import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List, Star, Navigation } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import type { Database } from '../lib/database.types';
+import { recommendationService } from '../services/ai/recommendationService';
+import { useAuth } from '../contexts/AuthContext';
+import { DistanceCalculator } from '../utils/distanceCalculator';
+import GeolocationButton from '../components/GeolocationButton';
 
-const MapboxMap = lazy(() => import('../../components/MapboxMap'));
+const MapboxMap = lazy(() => import('../components/MapboxMap'));
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type PropertyType = Database['public']['Tables']['properties']['Row']['property_type'];
@@ -29,12 +31,22 @@ export default function SearchProperties() {
   const [isFurnished, setIsFurnished] = useState<boolean | null>(null);
   const [hasParking, setHasParking] = useState<boolean | null>(null);
   const [hasAC, setHasAC] = useState<boolean | null>(null);
-  const [sortBy, setSortBy] = useState<'recent' | 'price_asc' | 'price_desc'>('recent');
+  const [sortBy, setSortBy] = useState<'recent' | 'price_asc' | 'price_desc' | 'distance'>('recent');
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const city = params.get('city');
     if (city) setSearchCity(city);
+
+    const lat = params.get('lat');
+    const lon = params.get('lon');
+    const nearby = params.get('nearby');
+
+    if (lat && lon && nearby === 'true') {
+      setUserLocation({ latitude: parseFloat(lat), longitude: parseFloat(lon) });
+      setSortBy('distance');
+    }
 
     loadProperties();
     if (user) {
@@ -50,7 +62,7 @@ export default function SearchProperties() {
       const recommended = await recommendationService.getPersonalizedRecommendations(user.id, 6);
       setRecommendedProperties(recommended);
     } catch (error) {
-      console.error('Error loading recommendations:', error);
+      // Recommendations are optional, fail silently
     } finally {
       setLoadingRecommendations(false);
     }
@@ -62,7 +74,7 @@ export default function SearchProperties() {
       let query = supabase
         .from('properties')
         .select('*')
-        .eq('status', 'disponible');
+        .eq('status', 'available');
 
       if (searchCity) {
         query = query.or(`city.ilike.%${searchCity}%,neighborhood.ilike.%${searchCity}%`);
@@ -106,14 +118,27 @@ export default function SearchProperties() {
         query = query.order('monthly_rent', { ascending: true });
       } else if (sortBy === 'price_desc') {
         query = query.order('monthly_rent', { ascending: false });
+      } else if (sortBy === 'distance' && !userLocation) {
+        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error } = await query;
 
       if (error) throw error;
-      setProperties(data || []);
+
+      let processedData = data || [];
+
+      if (sortBy === 'distance' && userLocation) {
+        processedData = DistanceCalculator.sortByDistance(
+          processedData,
+          userLocation.latitude,
+          userLocation.longitude
+        );
+      }
+
+      setProperties(processedData);
     } catch (error) {
-      console.error('Error loading properties:', error);
+      // Error loading properties, results will be empty
     } finally {
       setLoading(false);
     }
@@ -159,11 +184,20 @@ export default function SearchProperties() {
               <input
                 type="text"
                 placeholder="Où cherchez-vous ? (Cocody, Plateau, Yopougon...)"
-                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white/90 text-lg font-medium"
+                className="w-full pl-14 pr-4 py-4 border-2 border-gray-200 rounded-3xl focus:outline-none focus:ring-4 focus:ring-terracotta-300 focus:border-terracotta-500 focus:shadow-xl focus:bg-white transition-all duration-200 bg-white/90 text-lg font-medium hover:border-terracotta-300 hover:bg-white"
                 value={searchCity}
                 onChange={(e) => setSearchCity(e.target.value)}
+                aria-label="Rechercher une ville ou un quartier"
               />
             </div>
+            <GeolocationButton
+              onLocationFound={(latitude, longitude) => {
+                setUserLocation({ latitude, longitude });
+                setSortBy('distance');
+                loadProperties();
+              }}
+              className="w-full md:w-auto"
+            />
             <button
               type="submit"
               className="w-full md:w-auto btn-primary px-8 py-4 text-lg flex items-center justify-center space-x-2"
@@ -174,12 +208,14 @@ export default function SearchProperties() {
             <button
               type="button"
               onClick={() => setShowFilters(!showFilters)}
-              className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-4 border-2 border-terracotta-500 text-terracotta-600 rounded-3xl hover:bg-terracotta-50 transition-all font-bold transform hover:scale-105"
+              className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-4 border-2 border-terracotta-500 text-terracotta-600 rounded-3xl hover:bg-terracotta-50 transition-all font-bold transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:ring-offset-2"
+              aria-label="Afficher les filtres de recherche"
+              aria-expanded={showFilters}
             >
               <SlidersHorizontal className="h-6 w-6" />
               <span>Filtres</span>
               {activeFiltersCount > 0 && (
-                <span className="bg-gradient-to-r from-coral-500 to-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-glow">
+                <span className="bg-gradient-to-r from-coral-500 to-amber-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-glow" aria-label={`${activeFiltersCount} filtres actifs`}>
                   {activeFiltersCount}
                 </span>
               )}
@@ -215,7 +251,7 @@ export default function SearchProperties() {
                 <select
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value as PropertyType | '')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">🏘️ Tous les types</option>
                   <option value="appartement">🏢 Appartement</option>
@@ -236,7 +272,7 @@ export default function SearchProperties() {
                   placeholder="0 FCFA"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white font-medium hover:border-terracotta-300"
                 />
               </div>
 
@@ -249,7 +285,7 @@ export default function SearchProperties() {
                   placeholder="Illimité"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white font-medium hover:border-terracotta-300"
                 />
               </div>
 
@@ -260,7 +296,7 @@ export default function SearchProperties() {
                 <select
                   value={bedrooms}
                   onChange={(e) => setBedrooms(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="1">1+ chambres</option>
@@ -278,7 +314,7 @@ export default function SearchProperties() {
                 <select
                   value={bathrooms}
                   onChange={(e) => setBathrooms(e.target.value)}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="1">1+ salles de bain</option>
@@ -294,7 +330,7 @@ export default function SearchProperties() {
                 <select
                   value={isFurnished === null ? '' : isFurnished ? 'yes' : 'no'}
                   onChange={(e) => setIsFurnished(e.target.value === '' ? null : e.target.value === 'yes')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="yes">Meublé</option>
@@ -309,7 +345,7 @@ export default function SearchProperties() {
                 <select
                   value={hasParking === null ? '' : hasParking ? 'yes' : 'no'}
                   onChange={(e) => setHasParking(e.target.value === '' ? null : e.target.value === 'yes')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="yes">Avec parking</option>
@@ -324,7 +360,7 @@ export default function SearchProperties() {
                 <select
                   value={hasAC === null ? '' : hasAC ? 'yes' : 'no'}
                   onChange={(e) => setHasAC(e.target.value === '' ? null : e.target.value === 'yes')}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white appearance-none cursor-pointer font-medium"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
                 >
                   <option value="">Indifférent</option>
                   <option value="yes">Avec climatisation</option>
@@ -409,10 +445,25 @@ export default function SearchProperties() {
                         {property.title}
                       </h3>
 
-                      <p className="text-gray-600 flex items-center space-x-2 text-sm mb-3">
-                        <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
-                        <span className="line-clamp-1">{property.city}</span>
-                      </p>
+                      <div className="space-y-1 mb-3">
+                        <p className="text-gray-600 flex items-center space-x-2 text-sm">
+                          <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
+                          <span className="line-clamp-1">{property.city}</span>
+                        </p>
+                        {property.latitude && property.longitude && (
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-xs text-cyan-700 hover:text-cyan-800 font-mono bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-lg inline-flex items-center space-x-1 transition-colors"
+                            title="Ouvrir la localisation dans Maps"
+                          >
+                            <Navigation className="h-3 w-3" />
+                            <span>{property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
+                          </a>
+                        )}
+                      </div>
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3 text-sm text-gray-600">
@@ -450,7 +501,7 @@ export default function SearchProperties() {
             {properties.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
                 <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
-                  {properties.filter(p => p.status === 'disponible').length} disponibles
+                  {properties.filter(p => p.status === 'available').length} disponibles
                 </span>
                 {propertyType && (
                   <span className="text-xs bg-terracotta-100 text-terracotta-800 px-3 py-1 rounded-full font-semibold">
@@ -474,11 +525,15 @@ export default function SearchProperties() {
                 setSortBy(e.target.value as any);
                 loadProperties();
               }}
-              className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white cursor-pointer font-bold text-terracotta-600"
+              className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white cursor-pointer font-bold text-terracotta-600 hover:border-terracotta-300"
+              aria-label="Trier les propriétés"
             >
               <option value="recent">✨ Plus récent</option>
               <option value="price_asc">💰 Prix croissant</option>
               <option value="price_desc">💎 Prix décroissant</option>
+              {userLocation && (
+                <option value="distance">📍 Plus proche</option>
+              )}
             </select>
           </div>
         </div>
@@ -532,10 +587,33 @@ export default function SearchProperties() {
                     {property.title}
                   </h3>
 
-                  <p className="text-gray-600 flex items-center space-x-2 text-sm mb-4">
-                    <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
-                    <span className="line-clamp-1">{property.city}{property.neighborhood ? `, ${property.neighborhood}` : ''}</span>
-                  </p>
+                  <div className="space-y-2 mb-4">
+                    <p className="text-gray-600 flex items-center space-x-2 text-sm">
+                      <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
+                      <span className="line-clamp-1">{property.city}{property.neighborhood ? `, ${property.neighborhood}` : ''}</span>
+                    </p>
+                    {userLocation && sortBy === 'distance' && 'distance' in property && (
+                      <p className="text-olive-700 flex items-center space-x-2 text-sm font-bold">
+                        <Navigation className="h-4 w-4 flex-shrink-0" />
+                        <span>{DistanceCalculator.formatDistance((property as any).distance)}</span>
+                      </p>
+                    )}
+                    {property.latitude && property.longitude && (
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-cyan-700 hover:text-cyan-800 font-mono bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-lg flex items-center space-x-1 transition-colors"
+                          title="Ouvrir la localisation dans Maps"
+                        >
+                          <Navigation className="h-3 w-3" />
+                          <span>{property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
+                        </a>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="flex items-center justify-between text-sm text-gray-600 border-t border-gray-200 pt-4">
                     <div className="flex items-center space-x-1">

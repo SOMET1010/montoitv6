@@ -9,14 +9,27 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const errorParam = hashParams.get('error');
-      const errorDescription = hashParams.get('error_description');
+      const queryParams = new URLSearchParams(window.location.search);
+      const errorParam = hashParams.get('error') || queryParams.get('error');
+      const errorDescription = hashParams.get('error_description') || queryParams.get('error_description');
 
       if (errorParam) {
-        setError(errorDescription || 'Erreur lors de l\'authentification');
+        let userFriendlyError = errorDescription || 'Erreur lors de l\'authentification';
+
+        if (errorParam === 'access_denied') {
+          userFriendlyError = 'Accès refusé. Vous avez annulé la connexion ou l\'accès a été refusé.';
+        } else if (errorDescription?.includes('not configured')) {
+          userFriendlyError = 'Le fournisseur d\'authentification n\'est pas configuré. Veuillez utiliser l\'email/mot de passe.';
+        } else if (errorDescription?.includes('redirect_uri')) {
+          userFriendlyError = 'Erreur de configuration OAuth. Contactez l\'administrateur.';
+        } else if (errorDescription?.includes('invalid_client')) {
+          userFriendlyError = 'Configuration OAuth invalide. Contactez l\'administrateur.';
+        }
+
+        setError(userFriendlyError);
         setTimeout(() => {
           window.location.href = '/connexion';
-        }, 3000);
+        }, 5000);
         return;
       }
 

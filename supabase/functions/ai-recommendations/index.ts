@@ -55,7 +55,7 @@ Deno.serve(async (req: Request) => {
     const { data: properties, error: propertiesError } = await supabase
       .from("properties")
       .select("*")
-      .eq("status", "disponible")
+      .eq("status", "available")
       .limit(100);
 
     if (propertiesError) throw propertiesError;

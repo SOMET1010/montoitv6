@@ -101,7 +101,9 @@ export function useRealtimeMessages(conversationId: string | undefined) {
     });
 
     return () => {
-      subscription.then((sub) => sub.unsubscribe());
+      subscription
+        .then((sub) => sub.unsubscribe())
+        .catch((error) => console.error('Error unsubscribing from messages:', error));
     };
   }, [conversationId, queryClient]);
 }

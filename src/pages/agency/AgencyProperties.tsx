@@ -70,7 +70,7 @@ export default function AgencyProperties() {
         .from('properties')
         .select('*')
         .eq('owner_id', user.id)
-        .eq('status', 'disponible');
+        .eq('status', 'available');
 
       setAvailableProperties(propertiesData || []);
 

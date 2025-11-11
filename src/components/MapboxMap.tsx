@@ -58,9 +58,9 @@ export default function MapboxMap({
   const MAPBOX_TOKEN = import.meta.env['VITE_MAPBOX_PUBLIC_TOKEN'] || 'pk.eyJ1IjoicHNvbWV0IiwiYSI6ImNtYTgwZ2xmMzEzdWcyaXM2ZG45d3A4NmEifQ.MYXzdc5CREmcvtBLvfV0Lg';
 
   const getMarkerColor = (property: Property) => {
-    if (property.status === 'disponible') return '#10B981';
-    if (property.status === 'loue') return '#EF4444';
-    if (property.status === 'en_attente') return '#F59E0B';
+    if (property.status === 'available') return '#10B981';
+    if (property.status === 'rented') return '#EF4444';
+    if (property.status === 'pending') return '#F59E0B';
     return '#FF6B35';
   };
 
@@ -88,6 +88,11 @@ export default function MapboxMap({
     mapboxWithTelemetry.setTelemetryDisabled?.(true); // Prevent blocked event calls on privacy tools
 
     try {
+      if (!MAPBOX_TOKEN || MAPBOX_TOKEN === 'undefined') {
+        console.error('Mapbox token is not configured');
+        return;
+      }
+
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/streets-v12',
@@ -231,8 +236,8 @@ export default function MapboxMap({
               : ''}
             <p style="color: #ff6b35; font-weight: bold; font-size: 18px; margin-bottom: 8px;">${property.monthly_rent.toLocaleString()} FCFA/mois</p>
             ${property.status ?
-              `<span style="background: ${property.status === 'disponible' ? '#10B981' : '#EF4444'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
-                ${property.status === 'disponible' ? 'Disponible' : property.status === 'loue' ? 'Loué' : 'En attente'}
+              `<span style="background: ${property.status === 'available' ? '#10B981' : '#EF4444'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">
+                ${property.status === 'available' ? 'Disponible' : property.status === 'rented' ? 'Loué' : 'En attente'}
               </span>`
               : ''}
           </div>

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Plus, Home, Eye, Calendar, TrendingUp, Edit, ExternalLink, Award, Filter, DollarSign, MessageSquare, Users, Clock, BarChart3, TrendingDown, Wrench, FileText } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
-import { ScoringService } from '../../services/scoringService';
-import type { Database } from '../../lib/database.types';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import { ScoringService } from '../services/scoringService';
+import type { Database } from '../lib/database.types';
+import Breadcrumb from '../components/Breadcrumb';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Application = Database['public']['Tables']['rental_applications']['Row'];
@@ -57,8 +58,8 @@ export default function OwnerDashboard() {
       setProperties(propsData || []);
 
       const totalViews = (propsData || []).reduce((sum, prop) => sum + prop.view_count, 0);
-      const activeProps = (propsData || []).filter(p => p.status === 'disponible').length;
-      const rentedProps = (propsData || []).filter(p => p.status === 'loue').length;
+      const activeProps = (propsData || []).filter(p => p.status === 'available').length;
+      const rentedProps = (propsData || []).filter(p => p.status === 'rented').length;
 
       const propertyIds = (propsData || []).map(p => p.id);
 
@@ -177,6 +178,7 @@ export default function OwnerDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-4 md:space-y-0">
             <div className="animate-slide-down">
+              <Breadcrumb items={[{ label: 'Tableau de Bord Propriétaire' }]} />
               <h1 className="text-4xl font-bold text-gradient flex items-center space-x-3">
                 <Home className="h-10 w-10 text-terracotta-500" />
                 <span>Tableau de bord</span>
@@ -316,13 +318,13 @@ export default function OwnerDashboard() {
                           <div className="flex items-center flex-wrap gap-3 mb-3">
                             <h3 className="text-xl font-bold text-gray-900">{property.title}</h3>
                             <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                              property.status === 'disponible'
+                              property.status === 'available'
                                 ? 'bg-gradient-to-r from-olive-100 to-green-100 text-olive-800 border border-olive-300'
-                                : property.status === 'loue'
+                                : property.status === 'rented'
                                 ? 'bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-800 border border-cyan-300'
                                 : 'bg-gray-100 text-gray-800 border border-gray-300'
                             }`}>
-                              {property.status}
+                              {property.status === 'available' ? 'Disponible' : property.status === 'rented' ? 'Loué' : property.status}
                             </span>
                           </div>
                           <p className="text-gray-600 mb-3 flex items-center space-x-1">

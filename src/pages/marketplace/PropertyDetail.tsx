@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
-import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, ArrowLeft, Send, Heart, X, ChevronLeft, ChevronRight, Maximize2, Shield, CheckCircle, MessageCircle, Clock } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
-import type { Database } from '../../lib/database.types';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import { MapPin, Bed, Bath, Home, ParkingCircle, Wind, Sofa, Calendar, Eye, ArrowLeft, Send, Heart, X, ChevronLeft, ChevronRight, Maximize2, Shield, CheckCircle, MessageCircle, Clock, Navigation, ExternalLink } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
+import type { Database } from '../lib/database.types';
+import Breadcrumb from '../components/Breadcrumb';
+
+const MapboxMap = lazy(() => import('../components/MapboxMap'));
 
 type Property = Database['public']['Tables']['properties']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
@@ -193,18 +196,26 @@ export default function PropertyDetail() {
   if (!property) return null;
 
   const images = property.main_image
-    ? [property.main_image, ...property.images.filter(img => img !== property.main_image)]
-    : property.images.length > 0
-    ? property.images
+    ? [property.main_image, ...(property.images || []).filter(img => img !== property.main_image)]
+    : (property.images || []).length > 0
+    ? property.images || []
     : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-coral-50 custom-cursor">
       <div className="glass-card border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <button
+          <Breadcrumb
+            items={[
+              { label: 'Recherche', href: '/recherche' },
+              { label: property.city || 'Ville', href: `/recherche?city=${property.city}` },
+              { label: property.title || 'Propriété' }
+            ]}
+          />
+<button
             onClick={() => window.history.back()}
-            className="flex items-center space-x-2 text-terracotta-600 hover:text-terracotta-700 transition-all duration-300 transform hover:scale-105 font-medium"
+            className="flex items-center space-x-2 text-terracotta-600 hover:text-terracotta-700 transition-all duration-300 transform hover:scale-105 font-medium focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:ring-offset-2 rounded-lg px-3 py-2"
+            aria-label="Retourner à la page précédente"
           >
             <ArrowLeft className="h-5 w-5" />
             <span>Retour</span>
@@ -241,11 +252,13 @@ export default function PropertyDetail() {
                         <button
                           key={index}
                           onClick={() => setSelectedImage(index)}
-                          className={`relative h-20 rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-105 ${
+                          className={`relative h-20 rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-terracotta-400 focus:ring-offset-2 ${
                             selectedImage === index ? 'ring-4 ring-terracotta-500 shadow-glow' : 'opacity-70 hover:opacity-100'
                           }`}
+                          aria-label={`Voir l'image ${index + 1}`}
+                          aria-current={selectedImage === index ? 'true' : 'false'}
                         >
-                          <img src={img} alt={`Image ${index + 1}`} className="w-full h-full object-cover" />
+                          <img src={img} alt={`${property.title} - Photo ${index + 1}`} className="w-full h-full object-cover" />
                         </button>
                       ))}
                       {images.length > 10 && (
@@ -278,12 +291,14 @@ export default function PropertyDetail() {
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={toggleFavorite}
-                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 ${
+                    className={`p-3 rounded-full transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-offset-2 ${
                       isFavorite
-                        ? 'bg-red-500 text-white shadow-lg'
-                        : 'bg-white text-gray-400 hover:text-red-500 border-2 border-gray-200'
+                        ? 'bg-red-500 text-white shadow-lg focus:ring-red-300'
+                        : 'bg-white text-gray-400 hover:text-red-500 border-2 border-gray-200 focus:ring-terracotta-300'
                     }`}
                     title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                    aria-label={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                    aria-pressed={isFavorite}
                   >
                     <Heart className={`h-6 w-6 ${isFavorite ? 'fill-current' : ''}`} />
                   </button>
@@ -384,6 +399,82 @@ export default function PropertyDetail() {
                 </div>
               </div>
 
+{(property.latitude && property.longitude) && (
+                <div className="border-t pt-6 mt-6">
+                  <h2 className="text-2xl font-bold text-gradient mb-4 flex items-center space-x-2">
+                    <MapPin className="h-6 w-6 text-terracotta-500" />
+                    <span>Localisation</span>
+                  </h2>
+
+                  <div className="bg-gradient-to-br from-olive-50 to-green-50 border-2 border-olive-200 rounded-2xl p-6 mb-4">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-gray-700 mb-2">Coordonnées GPS</p>
+                        <div className="flex items-center space-x-2 text-gray-900 font-mono">
+                          <Navigation className="h-5 w-5 text-olive-600" />
+                          <span className="text-lg font-bold">
+                            {property.latitude.toFixed(6)}, {property.longitude.toFixed(6)}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">Latitude, Longitude</p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-primary px-4 py-3 text-sm flex items-center justify-center space-x-2 focus:ring-4 focus:ring-terracotta-300 focus:ring-offset-2"
+                          aria-label="Ouvrir la localisation dans Maps"
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          <span>Ouvrir dans Maps</span>
+                        </a>
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${property.latitude},${property.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-secondary px-4 py-3 text-sm flex items-center justify-center space-x-2 focus:ring-4 focus:ring-terracotta-300 focus:ring-offset-2"
+                          aria-label="Obtenir l'itinéraire"
+                        >
+                          <Navigation className="h-4 w-4" />
+                          <span>Itinéraire</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-gray-200">
+                    <Suspense fallback={
+                      <div className="w-full h-[400px] bg-gray-100 flex items-center justify-center">
+                        <div className="text-center">
+                          <MapPin className="h-12 w-12 text-terracotta-500 mx-auto mb-3 animate-pulse" />
+                          <p className="text-gray-600">Chargement de la carte...</p>
+                        </div>
+                      </div>
+                    }>
+                      <MapboxMap
+                        center={[property.longitude, property.latitude]}
+                        zoom={15}
+                        properties={[{
+                          id: property.id,
+                          title: property.title,
+                          monthly_rent: property.monthly_rent,
+                          longitude: property.longitude,
+                          latitude: property.latitude,
+                          status: property.status,
+                          images: property.images as string[],
+                          city: property.city,
+                          neighborhood: property.neighborhood,
+                        }]}
+                        height="400px"
+                        singleMarker={true}
+                      />
+                    </Suspense>
+                  </div>
+                </div>
+              )}
+
               <div className="border-t pt-6 mt-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Garanties et Sécurité</h2>
                 <div className="space-y-3">
@@ -454,14 +545,16 @@ export default function PropertyDetail() {
                 <div className="space-y-3">
                   <button
                     onClick={handleApply}
-                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2"
+                    aria-label="Postuler pour cette propriété"
                   >
                     <Calendar className="h-5 w-5" />
                     <span>Postuler maintenant</span>
                   </button>
                   <a
                     href={`/visiter/${property.id}`}
-                    className="w-full bg-gradient-to-r from-orange-500 to-coral-500 text-white py-3 rounded-xl hover:from-orange-600 hover:to-coral-600 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="w-full bg-gradient-to-r from-orange-500 to-coral-500 text-white py-3 rounded-xl hover:from-orange-600 hover:to-coral-600 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-orange-300 focus:ring-offset-2"
+                    aria-label="Planifier une visite de la propriété"
                   >
                     <Calendar className="h-5 w-5" />
                     <span>Planifier une visite</span>
@@ -470,14 +563,17 @@ export default function PropertyDetail() {
                     href={`https://wa.me/?text=${encodeURIComponent(`Bonjour, je suis intéressé par la propriété: ${property.title} - ${property.monthly_rent.toLocaleString()} FCFA/mois. Lien: ${window.location.href}`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all font-bold flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300 focus:ring-offset-2"
+                    aria-label="Contacter via WhatsApp"
                   >
                     <MessageCircle className="h-5 w-5" />
                     <span>WhatsApp</span>
                   </a>
-                  <button
+<button
                     onClick={() => setShowContactForm(!showContactForm)}
-                    className="w-full bg-white border-2 border-terracotta-500 text-terracotta-600 py-3 rounded-xl hover:bg-terracotta-50 transition-all font-bold flex items-center justify-center space-x-2 transform hover:scale-105"
+                    className="w-full bg-white border-2 border-terracotta-500 text-terracotta-600 py-3 rounded-xl hover:bg-terracotta-50 transition-all font-bold flex items-center justify-center space-x-2 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-terracotta-300 focus:ring-offset-2"
+                    aria-label="Envoyer un message au propriétaire"
+                    aria-expanded={showContactForm}
                   >
                     <Send className="h-5 w-5" />
                     <span>Envoyer un message</span>
@@ -503,10 +599,11 @@ export default function PropertyDetail() {
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-2"
                       />
-                      <button
+<button
                         type="submit"
                         disabled={sending || !user}
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-gray-400"
+                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium disabled:bg-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 disabled:cursor-not-allowed"
+                        aria-label="Envoyer le message"
                       >
                         {sending ? 'Envoi...' : 'Envoyer'}
                       </button>
@@ -556,23 +653,26 @@ export default function PropertyDetail() {
 
       {showFullscreenGallery && (
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-fade-in">
-          <button
+<button
             onClick={() => setShowFullscreenGallery(false)}
-            className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50"
+            className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+            aria-label="Fermer la galerie plein écran"
           >
             <X className="h-6 w-6" />
           </button>
 
-          <button
+<button
             onClick={() => setFullscreenImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
-            className="absolute left-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50"
+            className="absolute left-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+            aria-label="Image précédente"
           >
             <ChevronLeft className="h-8 w-8" />
           </button>
 
-          <button
+<button
             onClick={() => setFullscreenImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
-            className="absolute right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50"
+            className="absolute right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-3 transition-all z-50 focus:outline-none focus:ring-4 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+            aria-label="Image suivante"
           >
             <ChevronRight className="h-8 w-8" />
           </button>

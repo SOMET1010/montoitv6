@@ -105,7 +105,7 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
             <select
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white appearance-none cursor-pointer font-medium"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
             >
               {cities.map((c) => (
                 <option key={c} value={c}>
@@ -123,7 +123,7 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
             <select
               value={propertyType}
               onChange={(e) => setPropertyType(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white appearance-none cursor-pointer font-medium"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white appearance-none cursor-pointer font-medium hover:border-terracotta-300"
             >
               {propertyTypes.map((type) => (
                 <option key={type} value={type}>
@@ -143,7 +143,7 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
               value={maxBudget}
               onChange={(e) => setMaxBudget(e.target.value)}
               placeholder="Ex: 200000"
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white font-medium"
+              className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg transition-all duration-300 bg-white font-medium hover:border-terracotta-300"
             />
           </div>
 

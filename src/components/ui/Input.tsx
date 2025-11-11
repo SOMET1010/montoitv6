@@ -26,9 +26,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const inputClasses = `
       block px-3 py-2 border rounded-lg text-gray-900 placeholder-gray-400
-      focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+      focus:outline-none focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 focus:shadow-lg
+      hover:border-terracotta-300
       disabled:bg-gray-100 disabled:cursor-not-allowed
-      ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300'}
+      transition-all duration-300
+      ${error ? 'border-red-500 focus:ring-red-200 focus:border-red-500' : 'border-gray-300'}
       ${widthClass}
       ${className}
     `.trim();
