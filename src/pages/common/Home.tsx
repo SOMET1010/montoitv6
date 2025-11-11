@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Search, MapPin, Shield, FileSignature, Smartphone, TrendingUp, Building2, Sparkles, Home as HomeIcon, Users, Map, Plus } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import type { Database } from '../lib/database.types';
-import QuickSearch from '../components/QuickSearch';
-import { FormatService } from '../services/format/formatService';
-import MapWrapper from '../components/MapWrapper';
-import ErrorDisplay from '../components/ErrorDisplay';
-import SEOHead from '../components/SEOHead';
-import GeolocationButton from '../components/GeolocationButton';
+import { supabase } from '../../lib/supabase';
+import type { Database } from '../../lib/database.types';
+import QuickSearch from '../../components/QuickSearch';
+import { FormatService } from '../../services/format/formatService';
+import MapWrapper from '../../components/MapWrapper';
+import ErrorDisplay from '../../components/ErrorDisplay';
+import SEOHead from '../../components/SEOHead';
+import GeolocationButton from '../../components/GeolocationButton';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
