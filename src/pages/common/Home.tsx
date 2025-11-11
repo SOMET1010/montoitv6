@@ -7,6 +7,99 @@ import { FormatService } from '../../services/format/formatService';
 import MapWrapper from '../../components/MapWrapper';
 
 type Property = Database['public']['Tables']['properties']['Row'];
+const ENABLE_MOCK_DATA = import.meta.env.VITE_ENABLE_MOCK_DATA === 'true';
+const FALLBACK_PROPERTIES: Property[] = [
+  {
+    id: 'mock-plateau-01',
+    owner_id: 'mock-owner-01',
+    title: 'Appartement premium au Plateau',
+    description: 'Vue panoramique sur la baie d’Abidjan, 3 chambres, cuisine équipée et domotique intégrée.',
+    address: 'Avenue Noguès, Plateau',
+    city: 'Abidjan',
+    neighborhood: 'Plateau',
+    latitude: 5.320357,
+    longitude: -4.016107,
+    property_type: 'appartement',
+    status: 'disponible',
+    bedrooms: 3,
+    bathrooms: 2,
+    surface_area: 140,
+    has_parking: true,
+    has_garden: false,
+    is_furnished: true,
+    has_ac: true,
+    monthly_rent: 750000,
+    deposit_amount: 1500000,
+    charges_amount: 50000,
+    images: [
+      'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    ],
+    main_image: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    view_count: 128,
+    created_at: '2024-01-10T08:00:00Z',
+    updated_at: '2024-01-10T08:00:00Z',
+  },
+  {
+    id: 'mock-cocody-02',
+    owner_id: 'mock-owner-02',
+    title: 'Villa moderne à Cocody Riviera 3',
+    description: 'Villa 4 chambres avec piscine, jardin paysager et sécurité 24/7.',
+    address: 'Rue des Jardins, Cocody Riviera',
+    city: 'Abidjan',
+    neighborhood: 'Cocody',
+    latitude: 5.349673,
+    longitude: -3.981782,
+    property_type: 'villa',
+    status: 'disponible',
+    bedrooms: 4,
+    bathrooms: 3,
+    surface_area: 280,
+    has_parking: true,
+    has_garden: true,
+    is_furnished: false,
+    has_ac: true,
+    monthly_rent: 950000,
+    deposit_amount: 1900000,
+    charges_amount: 80000,
+    images: [
+      'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    ],
+    main_image: 'https://images.pexels.com/photos/106399/pexels-photo-106399.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    view_count: 204,
+    created_at: '2024-01-08T10:00:00Z',
+    updated_at: '2024-01-15T12:00:00Z',
+  },
+  {
+    id: 'mock-yopougon-03',
+    owner_id: 'mock-owner-03',
+    title: 'Studio cosy à Yopougon Sideci',
+    description: 'Idéal pour un premier logement, proche des commerces et transports.',
+    address: 'Rue des Jardins, Yopougon Sideci',
+    city: 'Abidjan',
+    neighborhood: 'Yopougon',
+    latitude: 5.336995,
+    longitude: -4.067932,
+    property_type: 'studio',
+    status: 'disponible',
+    bedrooms: 1,
+    bathrooms: 1,
+    surface_area: 46,
+    has_parking: false,
+    has_garden: false,
+    is_furnished: true,
+    has_ac: false,
+    monthly_rent: 180000,
+    deposit_amount: 180000,
+    charges_amount: 20000,
+    images: [
+      'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    ],
+    main_image: 'https://images.pexels.com/photos/276724/pexels-photo-276724.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    view_count: 86,
+    created_at: '2023-12-01T09:45:00Z',
+    updated_at: '2024-01-11T09:45:00Z',
+  },
+];
 
 export default function Home() {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -56,6 +149,17 @@ export default function Home() {
   }, []);
 
   const loadProperties = async () => {
+    const applyFallbackProperties = () => {
+      if (ENABLE_MOCK_DATA) {
+        console.warn('ℹ️ Utilisation des propriétés de démonstration (VITE_ENABLE_MOCK_DATA=true)');
+        setProperties(FALLBACK_PROPERTIES);
+        setTotalProperties(FALLBACK_PROPERTIES.length);
+      } else {
+        setProperties([]);
+        setTotalProperties(0);
+      }
+    };
+
     try {
       const { data, error } = await supabase
         .from('properties')
@@ -64,17 +168,38 @@ export default function Home() {
         .order('created_at', { ascending: false })
         .limit(6);
 
-      if (error) throw error;
-      setProperties(data || []);
+      if (error) {
+        console.error('❌ Erreur lors du chargement des propriétés:', error);
+        throw error;
+      }
+      if (!data || data.length === 0) {
+        applyFallbackProperties();
+        return;
+      }
 
-      const { count } = await supabase
+      setProperties(data);
+
+      const { count, error: countError } = await supabase
         .from('properties')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'disponible');
 
-      setTotalProperties(count || 0);
+      if (countError) {
+        console.warn('⚠️ Erreur lors du comptage des propriétés:', countError);
+        setTotalProperties(data?.length || 0);
+      } else {
+        setTotalProperties(count || 0);
+      }
     } catch (error) {
-      console.error('Error loading properties:', error);
+      console.error('❌ Erreur critique lors du chargement des propriétés:', error);
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          console.warn('⚠️ Problème de réseau - vérifiez votre connexion');
+        } else if (error.message.includes('name_not_resolved')) {
+          console.warn('⚠️ Erreur DNS - vérifiez la configuration Supabase dans .env.local');
+        }
+      }
+      applyFallbackProperties();
     } finally {
       setLoading(false);
     }
@@ -376,11 +501,11 @@ export default function Home() {
                     monthly_rent: p.monthly_rent,
                     longitude: p.longitude!,
                     latitude: p.latitude!,
-                  status: p.status,
-                  images: p.images as string[],
-                  city: p.city,
-                  neighborhood: p.neighborhood,
-                }))}
+                    status: p.status,
+                    images: p.images as string[],
+                    city: p.city,
+                    neighborhood: p.neighborhood || undefined,
+                  }))}
                 zoom={12}
                 height="500px"
                 fitBounds={properties.length > 0}

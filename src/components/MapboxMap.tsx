@@ -68,6 +68,10 @@ export default function MapboxMap({
     if (!mapContainer.current || map.current) return;
 
     mapboxgl.accessToken = MAPBOX_TOKEN;
+    const mapboxWithTelemetry = mapboxgl as typeof mapboxgl & {
+      setTelemetryDisabled?: (state: boolean) => void;
+    };
+    mapboxWithTelemetry.setTelemetryDisabled?.(true); // Prevent blocked event calls on privacy tools
 
     try {
       map.current = new mapboxgl.Map({
