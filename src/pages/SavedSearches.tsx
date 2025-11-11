@@ -207,7 +207,7 @@ export default function SavedSearches() {
                     <Trash2 className="w-4 h-4" />
                   </button>
                   <div className="mb-3">
-                    {alert.properties.images[0] && (
+                    {alert.properties.images && alert.properties.images[0] && (
                       <img
                         src={alert.properties.images[0]}
                         alt={alert.properties.title}

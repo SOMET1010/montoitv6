@@ -193,9 +193,9 @@ export default function PropertyDetail() {
   if (!property) return null;
 
   const images = property.main_image
-    ? [property.main_image, ...property.images.filter(img => img !== property.main_image)]
-    : property.images.length > 0
-    ? property.images
+    ? [property.main_image, ...(property.images || []).filter(img => img !== property.main_image)]
+    : (property.images || []).length > 0
+    ? property.images || []
     : [];
 
   return (
