@@ -1,9 +1,11 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List, Star } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, Building2, Home, Bed, Bath, X, Sparkles, Map as MapIcon, List, Star, Navigation } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
 import { recommendationService } from '../services/ai/recommendationService';
 import { useAuth } from '../contexts/AuthContext';
+import { DistanceCalculator } from '../utils/distanceCalculator';
+import GeolocationButton from '../components/GeolocationButton';
 
 const MapboxMap = lazy(() => import('../components/MapboxMap'));
 
@@ -29,12 +31,22 @@ export default function SearchProperties() {
   const [isFurnished, setIsFurnished] = useState<boolean | null>(null);
   const [hasParking, setHasParking] = useState<boolean | null>(null);
   const [hasAC, setHasAC] = useState<boolean | null>(null);
-  const [sortBy, setSortBy] = useState<'recent' | 'price_asc' | 'price_desc'>('recent');
+  const [sortBy, setSortBy] = useState<'recent' | 'price_asc' | 'price_desc' | 'distance'>('recent');
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const city = params.get('city');
     if (city) setSearchCity(city);
+
+    const lat = params.get('lat');
+    const lon = params.get('lon');
+    const nearby = params.get('nearby');
+
+    if (lat && lon && nearby === 'true') {
+      setUserLocation({ latitude: parseFloat(lat), longitude: parseFloat(lon) });
+      setSortBy('distance');
+    }
 
     loadProperties();
     if (user) {
@@ -50,7 +62,7 @@ export default function SearchProperties() {
       const recommended = await recommendationService.getPersonalizedRecommendations(user.id, 6);
       setRecommendedProperties(recommended);
     } catch (error) {
-      console.error('Error loading recommendations:', error);
+      // Recommendations are optional, fail silently
     } finally {
       setLoadingRecommendations(false);
     }
@@ -106,14 +118,27 @@ export default function SearchProperties() {
         query = query.order('monthly_rent', { ascending: true });
       } else if (sortBy === 'price_desc') {
         query = query.order('monthly_rent', { ascending: false });
+      } else if (sortBy === 'distance' && !userLocation) {
+        query = query.order('created_at', { ascending: false });
       }
 
       const { data, error } = await query;
 
       if (error) throw error;
-      setProperties(data || []);
+
+      let processedData = data || [];
+
+      if (sortBy === 'distance' && userLocation) {
+        processedData = DistanceCalculator.sortByDistance(
+          processedData,
+          userLocation.latitude,
+          userLocation.longitude
+        );
+      }
+
+      setProperties(processedData);
     } catch (error) {
-      console.error('Error loading properties:', error);
+      // Error loading properties, results will be empty
     } finally {
       setLoading(false);
     }
@@ -165,6 +190,14 @@ export default function SearchProperties() {
                 aria-label="Rechercher une ville ou un quartier"
               />
             </div>
+            <GeolocationButton
+              onLocationFound={(latitude, longitude) => {
+                setUserLocation({ latitude, longitude });
+                setSortBy('distance');
+                loadProperties();
+              }}
+              className="w-full md:w-auto"
+            />
             <button
               type="submit"
               className="w-full md:w-auto btn-primary px-8 py-4 text-lg flex items-center justify-center space-x-2"
@@ -478,10 +511,14 @@ export default function SearchProperties() {
                 loadProperties();
               }}
               className="px-4 py-2 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 bg-white cursor-pointer font-bold text-terracotta-600"
+              aria-label="Trier les propriétés"
             >
               <option value="recent">✨ Plus récent</option>
               <option value="price_asc">💰 Prix croissant</option>
               <option value="price_desc">💎 Prix décroissant</option>
+              {userLocation && (
+                <option value="distance">📍 Plus proche</option>
+              )}
             </select>
           </div>
         </div>
@@ -535,10 +572,18 @@ export default function SearchProperties() {
                     {property.title}
                   </h3>
 
-                  <p className="text-gray-600 flex items-center space-x-2 text-sm mb-4">
-                    <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
-                    <span className="line-clamp-1">{property.city}{property.neighborhood ? `, ${property.neighborhood}` : ''}</span>
-                  </p>
+                  <div className="space-y-2 mb-4">
+                    <p className="text-gray-600 flex items-center space-x-2 text-sm">
+                      <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
+                      <span className="line-clamp-1">{property.city}{property.neighborhood ? `, ${property.neighborhood}` : ''}</span>
+                    </p>
+                    {userLocation && sortBy === 'distance' && 'distance' in property && (
+                      <p className="text-olive-700 flex items-center space-x-2 text-sm font-bold">
+                        <Navigation className="h-4 w-4 flex-shrink-0" />
+                        <span>{DistanceCalculator.formatDistance((property as any).distance)}</span>
+                      </p>
+                    )}
+                  </div>
 
                   <div className="flex items-center justify-between text-sm text-gray-600 border-t border-gray-200 pt-4">
                     <div className="flex items-center space-x-1">

@@ -7,6 +7,7 @@ import { FormatService } from '../services/format/formatService';
 import MapWrapper from '../components/MapWrapper';
 import ErrorDisplay from '../components/ErrorDisplay';
 import SEOHead from '../components/SEOHead';
+import GeolocationButton from '../components/GeolocationButton';
 
 type Property = Database['public']['Tables']['properties']['Row'];
 
@@ -78,7 +79,6 @@ export default function Home() {
 
       setTotalProperties(count || 0);
     } catch (error: any) {
-      console.error('Error loading properties:', error);
       setError(
         error?.message ||
         'Impossible de charger les propriétés. Veuillez vérifier votre connexion internet et réessayer.'
@@ -97,6 +97,10 @@ export default function Home() {
     }
   };
 
+  const handleLocationFound = (latitude: number, longitude: number) => {
+    window.location.href = `/recherche?lat=${latitude}&lon=${longitude}&nearby=true`;
+  };
+
   return (
     <>
       <SEOHead
@@ -105,7 +109,7 @@ export default function Home() {
         keywords="location immobilière côte d'ivoire, appartement abidjan, maison cocody, villa plateau, location sécurisée, ansut, signature électronique, mobile money"
       />
       <div className="min-h-screen custom-cursor">
-      <section className="relative overflow-hidden bg-gradient-to-br from-terracotta-500 via-coral-500 to-amber-500 text-white py-32">
+      <section className="relative overflow-hidden bg-gradient-to-br from-terracotta-500 via-coral-500 to-amber-500 text-white py-32" aria-label="Bannière principale et recherche de logements">
         <div className="absolute inset-0">
           {slides.map((slide, index) => (
             <div
@@ -169,6 +173,10 @@ export default function Home() {
                   aria-label="Rechercher une ville ou un quartier"
                 />
               </div>
+              <GeolocationButton
+                onLocationFound={handleLocationFound}
+                className="w-full md:w-auto"
+              />
               <button
                 type="submit"
                 className="w-full md:w-auto btn-primary flex items-center justify-center space-x-2"
@@ -203,13 +211,13 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-12 bg-amber-50 relative">
+      <section className="py-12 bg-amber-50 relative" aria-label="Recherche rapide">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <QuickSearch />
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-amber-50 to-white relative">
+      <section className="py-20 bg-gradient-to-b from-amber-50 to-white relative" aria-label="Avantages de la plateforme Mon Toit">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
           <div className="absolute top-20 left-10 text-terracotta-200 opacity-50 transform -rotate-12 text-9xl font-bold">★</div>
           <div className="absolute bottom-20 right-20 text-coral-200 opacity-50 transform rotate-12 text-7xl font-bold">♥</div>
@@ -266,7 +274,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-white relative overflow-hidden">
+      <section className="py-20 bg-white relative overflow-hidden" aria-label="Propriétés récentes disponibles">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-terracotta-300 rounded-full blur-3xl" />
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-300 rounded-full blur-3xl" />
@@ -389,7 +397,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-br from-amber-50 to-coral-50">
+      <section className="py-20 bg-gradient-to-br from-amber-50 to-coral-50" aria-label="Carte interactive des propriétés par quartier">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
