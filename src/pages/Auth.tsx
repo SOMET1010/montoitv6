@@ -5,6 +5,7 @@ import { Building2, Mail, Lock, User, UserCircle, Sparkles, Shield, CheckCircle,
 export default function Auth() {
   const currentPath = window.location.pathname;
   const [isLogin, setIsLogin] = useState(currentPath === '/connexion');
+  const socialAuthEnabled = import.meta.env.VITE_ENABLE_SOCIAL_AUTH === 'true';
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -317,38 +318,42 @@ export default function Auth() {
 
               {!isForgotPassword && (
                 <div className="mt-8">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t-2 border-gray-200"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-white text-gray-500 font-medium">ou continuer avec</span>
-                    </div>
-                  </div>
+                  {socialAuthEnabled && (
+                    <>
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t-2 border-gray-200"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-4 bg-white text-gray-500 font-medium">ou continuer avec</span>
+                        </div>
+                      </div>
 
-                  <div className="mt-6 grid grid-cols-2 gap-4">
-                    <button
-                      type="button"
-                      onClick={() => handleSocialLogin('google')}
-                      disabled={loading}
-                      className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-gray-700"
-                    >
-                      <Chrome className="w-5 h-5" />
-                      <span>Google</span>
-                    </button>
+                      <div className="mt-6 grid grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => handleSocialLogin('google')}
+                          disabled={loading}
+                          className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-gray-700"
+                        >
+                          <Chrome className="w-5 h-5" />
+                          <span>Google</span>
+                        </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleSocialLogin('facebook')}
-                      disabled={loading}
-                      className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-gray-700"
-                    >
-                      <Facebook className="w-5 h-5" />
-                      <span>Facebook</span>
-                    </button>
-                  </div>
+                        <button
+                          type="button"
+                          onClick={() => handleSocialLogin('facebook')}
+                          disabled={loading}
+                          className="flex items-center justify-center space-x-2 px-4 py-3 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-gray-700"
+                        >
+                          <Facebook className="w-5 h-5" />
+                          <span>Facebook</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
 
-                  <div className="mt-6 text-center">
+                  <div className={socialAuthEnabled ? "mt-6 text-center" : "mt-2 text-center"}>
                     <a
                       href={isLogin ? '/inscription' : '/connexion'}
                       className="text-terracotta-600 hover:text-terracotta-700 font-bold text-sm transform hover:scale-105 transition-all inline-block"
