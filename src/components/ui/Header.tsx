@@ -1,4 +1,4 @@
-import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X, Shield, Database, Activity, Cog, TestTube, Zap, UserCheck, CheckCircle, FileCheck, MapPin, CreditCard, HelpCircle, FileSignature, HomeIcon, FolderOpen, TrendingUp, Lock, Globe, Phone, Mail, Plus } from 'lucide-react';
+import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X, Shield, Database, Activity, Cog, TestTube, Zap, UserCheck, CheckCircle, FileCheck, CreditCard, Plus, FolderOpen } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMessageNotifications } from '../../hooks/useMessageNotifications';
 import { useLocation } from 'react-router-dom';
@@ -109,7 +109,7 @@ export default function Header() {
             </div>
           </a>
 
-          <nav className="hidden md:flex items-center space-x-1">
+          <nav className="hidden md:flex flex-1 min-w-0 items-center space-x-1 overflow-x-auto overflow-y-visible lg:overflow-visible relative z-40">
             {/* Navigation principale - toujours visible */}
             <a
               href="/"
@@ -153,7 +153,7 @@ export default function Header() {
                     <ChevronDown className="h-4 w-4" />
                   </button>
                   {showPropertyMenu && (
-                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-purple-100 py-2 z-50">
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-purple-100 py-2 z-[60]">
                       <div className="px-4 py-2 border-b border-purple-100">
                         <p className="text-xs font-bold text-purple-600 uppercase">Immobilier</p>
                       </div>
@@ -195,7 +195,7 @@ export default function Header() {
                     <ChevronDown className="h-4 w-4" />
                   </button>
                   {showServicesMenu && (
-                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 z-50">
+                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border-2 border-orange-100 py-2 z-[60]">
                       <div className="px-4 py-2 border-b border-orange-100">
                         <p className="text-xs font-bold text-orange-600 uppercase">Services</p>
                       </div>
@@ -274,9 +274,6 @@ export default function Header() {
                         : 'text-gray-700 hover:bg-gradient-to-r hover:from-green-50 hover:to-teal-50 hover:text-green-700'
                     }`}
                   >
-                    <User className="h-5 w-5" />
-                    <span>Mon espace</span>
-                    <ChevronDown className="h-4 w-4" />
                   </button>
                   {showUserMenu && (
                     <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-green-100 py-2 z-50">
@@ -320,7 +317,7 @@ export default function Header() {
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAgencyMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-teal-100 py-2 z-50">
+                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border-2 border-teal-100 py-2 z-[60]">
                         <div className="px-4 py-2 border-b border-teal-100">
                           <p className="text-xs font-bold text-teal-600 uppercase">Espace Agence</p>
                         </div>
@@ -362,7 +359,7 @@ export default function Header() {
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showAdminMenu && (
-                      <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border-2 border-red-100 py-2 z-50 max-h-96 overflow-y-auto">
+                      <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border-2 border-red-100 py-2 z-[60] max-h-96 overflow-y-auto">
                         <div className="px-4 py-2 border-b border-red-100">
                           <p className="text-xs font-bold text-red-600 uppercase">Administration ANSUT</p>
                         </div>
@@ -452,7 +449,7 @@ export default function Header() {
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     {showTrustAgentMenu && (
-                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-green-100 py-2 z-50">
+                      <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border-2 border-green-100 py-2 z-[60]">
                         <div className="px-4 py-2 border-b border-green-100">
                           <p className="text-xs font-bold text-green-600 uppercase">Espace Trust Agent</p>
                         </div>
