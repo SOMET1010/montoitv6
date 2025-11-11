@@ -445,10 +445,25 @@ export default function SearchProperties() {
                         {property.title}
                       </h3>
 
-                      <p className="text-gray-600 flex items-center space-x-2 text-sm mb-3">
-                        <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
-                        <span className="line-clamp-1">{property.city}</span>
-                      </p>
+                      <div className="space-y-1 mb-3">
+                        <p className="text-gray-600 flex items-center space-x-2 text-sm">
+                          <MapPin className="h-4 w-4 text-terracotta-500 flex-shrink-0" />
+                          <span className="line-clamp-1">{property.city}</span>
+                        </p>
+                        {property.latitude && property.longitude && (
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-xs text-cyan-700 hover:text-cyan-800 font-mono bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-lg inline-flex items-center space-x-1 transition-colors"
+                            title="Ouvrir dans Google Maps"
+                          >
+                            <Navigation className="h-3 w-3" />
+                            <span>{property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
+                          </a>
+                        )}
+                      </div>
 
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3 text-sm text-gray-600">
@@ -582,6 +597,21 @@ export default function SearchProperties() {
                         <Navigation className="h-4 w-4 flex-shrink-0" />
                         <span>{DistanceCalculator.formatDistance((property as any).distance)}</span>
                       </p>
+                    )}
+                    {property.latitude && property.longitude && (
+                      <div className="flex items-center space-x-2">
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${property.latitude},${property.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-cyan-700 hover:text-cyan-800 font-mono bg-cyan-50 hover:bg-cyan-100 px-2 py-1 rounded-lg flex items-center space-x-1 transition-colors"
+                          title="Ouvrir dans Google Maps"
+                        >
+                          <Navigation className="h-3 w-3" />
+                          <span>{property.latitude.toFixed(4)}, {property.longitude.toFixed(4)}</span>
+                        </a>
+                      </div>
                     )}
                   </div>
 
