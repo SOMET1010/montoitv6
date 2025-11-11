@@ -170,7 +170,18 @@ export default function MapboxMap({
         el.style.color = 'white';
         el.style.fontSize = '16px';
         el.style.fontWeight = 'bold';
+        el.style.pointerEvents = 'auto';
+        el.tabIndex = 0;
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-label', `Voir ${property.title}`);
         el.innerHTML = '🏠';
+
+        const stopEvent = (event: MouseEvent | TouchEvent) => {
+          event.stopPropagation();
+        };
+
+        el.addEventListener('mousedown', stopEvent);
+        el.addEventListener('touchstart', stopEvent);
 
         el.addEventListener('mouseenter', () => {
           el.style.transform = 'scale(1.2)';
@@ -214,11 +225,19 @@ export default function MapboxMap({
           .setPopup(popup)
           .addTo(map.current!);
 
-        el.addEventListener('click', () => {
+        const handleNavigate = () => {
           if (onMarkerClick) {
             onMarkerClick(property);
           }
           marker.togglePopup();
+        };
+
+        el.addEventListener('click', handleNavigate);
+        el.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleNavigate();
+          }
         });
 
         markers.current[property.id] = marker;
