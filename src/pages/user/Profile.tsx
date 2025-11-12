@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Mail, Phone, MapPin, Shield, Save, Camera, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Shield, Save, Camera, CheckCircle, AlertCircle, ArrowRight, FileText, Heart } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import ScoreSection from '../../components/ScoreSection';
@@ -7,6 +7,9 @@ import AnsutBadge from '../../components/AnsutBadge';
 import AchievementBadges from '../../components/AchievementBadges';
 import VerificationBadge from '../../components/VerificationBadge';
 import RoleSwitcher from '../../components/ui/RoleSwitcher';
+import ANSUTVerificationForm from '../../components/verification/ANSUTVerificationForm';
+import ONECIVerificationForm from '../../components/verification/ONECIVerificationForm';
+import CNAMVerificationForm from '../../components/verification/CNAMVerificationForm';
 
 export default function Profile() {
   const { user, profile, refreshProfile } = useAuth();
@@ -23,6 +26,7 @@ export default function Profile() {
   });
 
   const [verificationData, setVerificationData] = useState<any>(null);
+  const [verificationError, setVerificationError] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -141,6 +145,19 @@ export default function Profile() {
     return score;
   };
 
+  const handleVerificationSuccess = async () => {
+    setVerificationError('');
+    // Rafraîchir le profil et les données de vérification
+    await refreshProfile();
+    await loadVerificationData();
+  };
+
+  const handleVerificationError = (error: string) => {
+    setVerificationError(error);
+    // Auto-clear l'erreur après 5 secondes
+    setTimeout(() => setVerificationError(''), 5000);
+  };
+
   if (!profile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 to-coral-50 flex items-center justify-center">
@@ -173,6 +190,13 @@ export default function Profile() {
           <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-red-700 animate-shake flex items-center space-x-3">
             <AlertCircle className="h-6 w-6" />
             <span className="font-medium">{error}</span>
+          </div>
+        )}
+
+        {verificationError && (
+          <div className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-red-700 animate-shake flex items-center space-x-3">
+            <AlertCircle className="h-6 w-6" />
+            <span className="font-medium">{verificationError}</span>
           </div>
         )}
 
@@ -404,117 +428,89 @@ export default function Profile() {
               </form>
             </div>
 
-            <div className="card-scrapbook p-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gradient mb-6 flex items-center space-x-2">
                 <Shield className="h-7 w-7 text-terracotta-500" />
-                <span>Vérifications ANSUT</span>
+                <span>Vérifications et Certifications</span>
               </h2>
 
-              <div className="space-y-4">
-                <div className={`p-6 rounded-2xl border-2 ${
-                  profile.is_verified
-                    ? 'bg-gradient-to-br from-olive-50 to-green-50 border-olive-300'
-                    : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-300'
-                }`}>
+              {/* Vérification ANSUT */}
+              {profile.is_verified ? (
+                <div className="p-6 rounded-2xl border-2 bg-gradient-to-br from-olive-50 to-green-50 border-olive-300">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 text-lg mb-2">
-                        Vérification ANSUT
+                      <h3 className="font-bold text-gray-900 text-lg mb-2 flex items-center space-x-2">
+                        <Shield className="h-5 w-5 text-olive-600" />
+                        <span>Certification ANSUT</span>
                       </h3>
-                      <p className="text-gray-700 text-sm mb-4">
-                        Vérification de base de votre identité par l'ANSUT. Augmente votre crédibilité auprès des propriétaires.
+                      <p className="text-gray-700 text-sm">
+                        Votre profil est certifié officiellement par l'ANSUT.
                       </p>
                     </div>
-                    {profile.is_verified ? (
-                      <div className="ml-4">
-                        <CheckCircle className="h-8 w-8 text-olive-600" />
-                      </div>
-                    ) : (
-                      <div className="ml-4">
-                        <AlertCircle className="h-8 w-8 text-gray-400" />
-                      </div>
-                    )}
+                    <div className="ml-4">
+                      <CheckCircle className="h-8 w-8 text-olive-600" />
+                    </div>
                   </div>
-                  {!profile.is_verified && (
-                    <button
-                      onClick={() => alert('La vérification ANSUT sera disponible prochainement')}
-                      className="btn-primary px-6 py-2"
-                    >
-                      Vérifier maintenant
-                    </button>
-                  )}
                 </div>
+              ) : (
+                <ANSUTVerificationForm
+                  onVerified={handleVerificationSuccess}
+                  onError={handleVerificationError}
+                />
+              )}
 
-                <div className={`p-6 rounded-2xl border-2 ${
-                  profile.oneci_verified
-                    ? 'bg-gradient-to-br from-olive-50 to-green-50 border-olive-300'
-                    : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-300'
-                }`}>
+              {/* Vérification ONECI */}
+              {profile.oneci_verified ? (
+                <div className="p-6 rounded-2xl border-2 bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-300">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 text-lg mb-2">
-                        Vérification ONECI
+                      <h3 className="font-bold text-gray-900 text-lg mb-2 flex items-center space-x-2">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                        <span>Vérification ONECI</span>
                       </h3>
-                      <p className="text-gray-700 text-sm mb-4">
-                        Vérification de votre pièce d'identité nationale auprès de l'ONECI. Indispensable pour les locations.
+                      <p className="text-gray-700 text-sm">
+                        Votre identité a été vérifiée auprès de l'ONECI.
                       </p>
                     </div>
-                    {profile.oneci_verified ? (
-                      <div className="ml-4">
-                        <CheckCircle className="h-8 w-8 text-olive-600" />
-                      </div>
-                    ) : (
-                      <div className="ml-4">
-                        <AlertCircle className="h-8 w-8 text-gray-400" />
-                      </div>
-                    )}
+                    <div className="ml-4">
+                      <CheckCircle className="h-8 w-8 text-blue-600" />
+                    </div>
                   </div>
-                  {!profile.oneci_verified && (
-                    <button
-                      onClick={() => alert('La vérification ONECI sera disponible prochainement')}
-                      className="btn-primary px-6 py-2"
-                    >
-                      Vérifier maintenant
-                    </button>
-                  )}
                 </div>
+              ) : (
+                <ONECIVerificationForm
+                  onVerified={handleVerificationSuccess}
+                  onError={handleVerificationError}
+                />
+              )}
 
-                <div className={`p-6 rounded-2xl border-2 ${
-                  profile.cnam_verified
-                    ? 'bg-gradient-to-br from-olive-50 to-green-50 border-olive-300'
-                    : 'bg-gradient-to-br from-gray-50 to-gray-100 border-gray-300'
-                }`}>
+              {/* Vérification CNAM */}
+              {profile.cnam_verified ? (
+                <div className="p-6 rounded-2xl border-2 bg-gradient-to-br from-green-50 to-emerald-50 border-green-300">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="font-bold text-gray-900 text-lg mb-2">
-                        Vérification CNAM
+                      <h3 className="font-bold text-gray-900 text-lg mb-2 flex items-center space-x-2">
+                        <Heart className="h-5 w-5 text-green-600" />
+                        <span>Vérification CNAM</span>
                       </h3>
-                      <p className="text-gray-700 text-sm mb-4">
-                        Vérification de votre affiliation à la CNAM. Prouve votre solvabilité et sérieux professionnel.
+                      <p className="text-gray-700 text-sm">
+                        Votre affiliation à la CNAM a été confirmée.
                       </p>
                     </div>
-                    {profile.cnam_verified ? (
-                      <div className="ml-4">
-                        <CheckCircle className="h-8 w-8 text-olive-600" />
-                      </div>
-                    ) : (
-                      <div className="ml-4">
-                        <AlertCircle className="h-8 w-8 text-gray-400" />
-                      </div>
-                    )}
+                    <div className="ml-4">
+                      <CheckCircle className="h-8 w-8 text-green-600" />
+                    </div>
                   </div>
-                  {!profile.cnam_verified && (
-                    <button
-                      onClick={() => alert('La vérification CNAM sera disponible prochainement')}
-                      className="btn-primary px-6 py-2"
-                    >
-                      Vérifier maintenant
-                    </button>
-                  )}
                 </div>
-              </div>
+              ) : (
+                <CNAMVerificationForm
+                  onVerified={handleVerificationSuccess}
+                  onError={handleVerificationError}
+                />
+              )}
 
-              <div className="mt-6 glass-card rounded-2xl p-6 bg-gradient-to-br from-amber-100 to-yellow-100 border-2 border-amber-300">
+              {/* Section informative */}
+              <div className="glass-card rounded-2xl p-6 bg-gradient-to-br from-amber-100 to-yellow-100 border-2 border-amber-300">
                 <h4 className="font-bold text-amber-900 mb-2 flex items-center space-x-2">
                   <span>💡</span>
                   <span>Pourquoi se vérifier?</span>
