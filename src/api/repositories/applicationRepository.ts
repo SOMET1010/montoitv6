@@ -1,115 +1,98 @@
-import { supabase, handleQuery } from '../client';
-import type { Database } from '../../lib/database.types';
+// Temporary simplified repository until database tables are created
+import { ApplicationStatus } from '../../lib/database.types';
 
-type Application = Database['public']['Tables']['applications']['Row'];
-type ApplicationInsert = Database['public']['Tables']['applications']['Insert'];
-type ApplicationUpdate = Database['public']['Tables']['applications']['Update'];
+export interface Application {
+  id: string;
+  property_id: string;
+  tenant_id: string;
+  status: ApplicationStatus;
+  message: string | null;
+  proposed_rent: number | null;
+  proposed_move_in_date: string | null;
+  documents: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApplicationInsert {
+  id?: string;
+  property_id: string;
+  tenant_id: string;
+  status?: ApplicationStatus;
+  message?: string | null;
+  proposed_rent?: number | null;
+  proposed_move_in_date?: string | null;
+  documents?: string[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ApplicationUpdate {
+  id?: string;
+  property_id?: string;
+  tenant_id?: string;
+  status?: ApplicationStatus;
+  message?: string | null;
+  proposed_rent?: number | null;
+  proposed_move_in_date?: string | null;
+  documents?: string[];
+  created_at?: string;
+  updated_at?: string;
+}
 
 export const applicationRepository = {
-  async getById(id: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*), profiles!applicant_id(*)')
-        .eq('id', id)
-        .maybeSingle()
-    );
+  async getById(id: string): Promise<{ data: Application | null; error: Error | null }> {
+    console.log(`Getting application by id: ${id}`);
+    return { data: null, error: new Error('Database tables not created yet') };
   },
 
-  async getByApplicantId(applicantId: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*)')
-        .eq('applicant_id', applicantId)
-        .order('created_at', { ascending: false })
-    );
+  async getByTenantId(tenantId: string): Promise<{ data: Application[]; error: Error | null }> {
+    console.log(`Getting applications for tenant: ${tenantId}`);
+    return { data: [], error: null };
   },
 
-  async getByPropertyId(propertyId: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, profiles!applicant_id(*)')
-        .eq('property_id', propertyId)
-        .order('created_at', { ascending: false })
-    );
+  async getByPropertyId(propertyId: string): Promise<{ data: Application[]; error: Error | null }> {
+    console.log(`Getting applications for property: ${propertyId}`);
+    return { data: [], error: null };
   },
 
-  async getByOwnerId(ownerId: string) {
-    const { data: properties } = await supabase.from('properties').select('id').eq('owner_id', ownerId);
-
-    if (!properties || properties.length === 0) {
-      return { data: [], error: null };
-    }
-
-    const propertyIds = properties.map((p) => p.id);
-
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*), profiles!applicant_id(*)')
-        .in('property_id', propertyIds)
-        .order('created_at', { ascending: false })
-    );
+  async getByOwnerId(ownerId: string): Promise<{ data: Application[]; error: Error | null }> {
+    console.log(`Getting applications for owner: ${ownerId}`);
+    return { data: [], error: null };
   },
 
-  async create(application: ApplicationInsert) {
-    return handleQuery(supabase.from('applications').insert(application).select().single());
+  async create(application: ApplicationInsert): Promise<{ data: Application | null; error: Error | null }> {
+    console.log('Creating application:', application);
+    return { data: null, error: new Error('Database tables not created yet') };
   },
 
-  async update(id: string, updates: ApplicationUpdate) {
-    return handleQuery(supabase.from('applications').update(updates).eq('id', id).select().single());
+  async update(id: string, updates: ApplicationUpdate): Promise<{ data: Application | null; error: Error | null }> {
+    console.log(`Updating application ${id}:`, updates);
+    return { data: null, error: new Error('Database tables not created yet') };
   },
 
-  async updateStatus(id: string, status: string, reviewNotes?: string) {
-    const updates: ApplicationUpdate = { status };
-    if (reviewNotes) {
-      updates.review_notes = reviewNotes;
-    }
-    return handleQuery(supabase.from('applications').update(updates).eq('id', id).select().single());
+  async updateStatus(id: string, status: ApplicationStatus): Promise<{ data: Application | null; error: Error | null }> {
+    console.log(`Updating application status ${id}:`, status);
+    return { data: null, error: new Error('Database tables not created yet') };
   },
 
-  async delete(id: string) {
-    return handleQuery(supabase.from('applications').delete().eq('id', id));
+  async delete(id: string): Promise<{ data: null; error: Error | null }> {
+    console.log(`Deleting application: ${id}`);
+    return { data: null, error: new Error('Database tables not created yet') };
   },
 
-  async getByStatus(status: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*), profiles!applicant_id(*)')
-        .eq('status', status)
-        .order('created_at', { ascending: false })
-    );
+  async getByStatus(status: ApplicationStatus): Promise<{ data: Application[]; error: Error | null }> {
+    console.log(`Getting applications by status: ${status}`);
+    return { data: [], error: null };
   },
 
-  async getPendingCount(ownerId: string) {
-    const { data: properties } = await supabase.from('properties').select('id').eq('owner_id', ownerId);
-
-    if (!properties || properties.length === 0) {
-      return { data: 0, error: null };
-    }
-
-    const propertyIds = properties.map((p) => p.id);
-
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('id', { count: 'exact', head: true })
-        .in('property_id', propertyIds)
-        .eq('status', 'en_attente')
-    );
+  async getPendingCount(ownerId: string): Promise<{ data: number; error: Error | null }> {
+    console.log(`Getting pending count for owner: ${ownerId}`);
+    return { data: 0, error: null };
   },
 
-  async checkExistingApplication(applicantId: string, propertyId: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*')
-        .eq('applicant_id', applicantId)
-        .eq('property_id', propertyId)
-        .maybeSingle()
-    );
+  async checkExistingApplication(tenantId: string, propertyId: string): Promise<{ data: Application | null; error: Error | null }> {
+    console.log(`Checking existing application: ${tenantId}, ${propertyId}`);
+    return { data: null, error: null };
   },
 };

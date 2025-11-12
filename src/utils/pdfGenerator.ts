@@ -256,7 +256,6 @@ export const generateLeasePDF = (leaseData: LeaseData): jsPDF => {
 
   addLine(`Fait électroniquement via la plateforme Mon Toit - ${new Date().toLocaleDateString('fr-FR')}`, { size: 10, spacing: 15 });
 
-  const signatureY = yPosition;
   addPageIfNeeded(40);
 
   doc.setFontSize(10);
@@ -291,7 +290,7 @@ export const uploadPDFToStorage = async (
   const pdfBlob = pdf.output('blob');
   const fileName = `leases/${leaseId}/contract_${Date.now()}.pdf`;
 
-  const { data, error } = await supabase.storage
+  const { error } = await supabase.storage
     .from('contracts')
     .upload(fileName, pdfBlob, {
       contentType: 'application/pdf',

@@ -38,9 +38,10 @@ export async function handleQuery<T>(
       data: null,
       error: {
         message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error,
+        details: error instanceof Error ? error.stack || '' : String(error),
         hint: '',
         code: 'UNKNOWN_ERROR',
+      name: 'UnknownError',
       },
     };
   }
@@ -73,9 +74,10 @@ export async function handlePaginatedQuery<T>(
       count: null,
       error: {
         message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error,
+        details: error instanceof Error ? error.stack || '' : String(error),
         hint: '',
         code: 'UNKNOWN_ERROR',
+      name: 'UnknownError',
       },
     };
   }
@@ -151,7 +153,7 @@ export async function callEdgeFunction<TRequest = unknown, TResponse = unknown>(
 ): Promise<{ data: TResponse | null; error: Error | null }> {
   try {
     const { data, error } = await supabase.functions.invoke<TResponse>(functionName, {
-      body,
+      body: body as Record<string, any>,
     });
 
     if (error) {

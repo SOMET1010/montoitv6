@@ -31,7 +31,7 @@ export async function performHealthCheck(): Promise<HealthCheckResult> {
     );
     const queryPromise = supabase.from('profiles').select('count').limit(1).maybeSingle();
 
-    const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
+    const { error } = await Promise.race([queryPromise, timeoutPromise]) as any;
 
     if (error) {
       result.errors.push(`Database: ${error.message}`);
@@ -43,7 +43,7 @@ export async function performHealthCheck(): Promise<HealthCheckResult> {
   }
 
   try {
-    const { data, error } = await supabase.auth.getSession();
+    const { error } = await supabase.auth.getSession();
     if (error) {
       result.errors.push(`Auth: ${error.message}`);
     } else {
@@ -54,7 +54,7 @@ export async function performHealthCheck(): Promise<HealthCheckResult> {
   }
 
   try {
-    const { data, error } = await supabase.storage.listBuckets();
+    const { error } = await supabase.storage.listBuckets();
     if (error) {
       result.errors.push(`Storage: ${error.message}`);
     } else {
@@ -126,7 +126,7 @@ export async function testProfileAccess(userId: string): Promise<{ success: bool
 
 export async function testAuthConnection(): Promise<{ success: boolean; message: string }> {
   try {
-    const { data, error } = await supabase.auth.getSession();
+    const { error } = await supabase.auth.getSession();
     if (error) {
       return { success: false, message: error.message };
     }
