@@ -7,8 +7,10 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     // Configuration pour le live reload en développement
-    url: process.env.NODE_ENV === 'development' ? 'http://20.86.60.204/' : 'http://20.86.60.204/',
-    cleartext: true
+    url: process.env.NODE_ENV === 'development' ? 'http://172.18.0.142:5173' : undefined,
+    cleartext: true,
+    // Permettre les connexions depuis n'importe quelle source en développement
+    allowNavigation: ['*']
   },
   android: {
     allowMixedContent: true,
