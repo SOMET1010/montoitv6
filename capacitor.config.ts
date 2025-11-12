@@ -5,9 +5,9 @@ const config: CapacitorConfig = {
   appName: 'Mon Toit',
   webDir: 'dist',
   server: {
-    androidScheme: 'https',
+    androidScheme: 'http',
     // Configuration pour le live reload en développement
-    url: process.env.NODE_ENV === 'development' ? 'http://172.18.0.142:5173' : undefined,
+    url: process.env.NODE_ENV === 'development' ? 'http://20.86.60.204/' : undefined,
     cleartext: true,
     // Permettre les connexions depuis n'importe quelle source en développement
     allowNavigation: ['*']
