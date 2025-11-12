@@ -118,7 +118,7 @@ export class RecommendationEngine {
       reasons.push(`Excellente notation (${property.rating}/5)`);
     }
 
-    if (property.status === 'available') {
+    if (property.status === 'disponible') {
       score += 5;
       reasons.push('Disponible immédiatement');
     }
@@ -144,7 +144,7 @@ export class RecommendationEngine {
     let query = supabase
       .from('properties')
       .select('*')
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .order('created_at', { ascending: false })
       .limit(50);
 
@@ -184,7 +184,7 @@ export class RecommendationEngine {
       .neq('id', propertyId)
       .gte('monthly_rent', targetProperty.monthly_rent * 0.8)
       .lte('monthly_rent', targetProperty.monthly_rent * 1.2)
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .limit(limit);
 
     return similarProperties || [];
@@ -197,7 +197,7 @@ export class RecommendationEngine {
     const { data: properties } = await supabase
       .from('properties')
       .select('*')
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .gte('created_at', thirtyDaysAgo.toISOString())
       .order('views_count', { ascending: false })
       .limit(limit);
@@ -209,7 +209,7 @@ export class RecommendationEngine {
     const { data: properties } = await supabase
       .from('properties')
       .select('*')
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .order('created_at', { ascending: false })
       .limit(limit);
 

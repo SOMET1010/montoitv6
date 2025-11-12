@@ -50,7 +50,7 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export type PropertyStatus = 'available' | 'rented' | 'maintenance' | 'unavailable';
+export type PropertyStatus = Database['public']['Tables']['properties']['Row']['status'];
 export type LeaseStatus = 'draft' | 'pending' | 'active' | 'expired' | 'terminated';
 export type PaymentStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
 export type VerificationStatus = 'pending' | 'verified' | 'rejected';

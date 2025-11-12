@@ -11,7 +11,7 @@
 CREATE TABLE IF NOT EXISTS role_change_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users ON DELETE CASCADE NOT NULL,
-  current_role text NOT NULL CHECK (current_role IN ('locataire', 'proprietaire', 'agence', 'admin_ansut')),
+  current_user_role text NOT NULL CHECK (current_user_role IN ('locataire', 'proprietaire', 'agence', 'admin_ansut')),
   requested_role text NOT NULL CHECK (requested_role IN ('locataire', 'proprietaire', 'agence', 'admin_ansut')),
   reason text,
   documents_url text[], -- URLs des documents uploadés

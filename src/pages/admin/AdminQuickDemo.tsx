@@ -49,7 +49,7 @@ export default function AdminQuickDemo() {
             monthly_rent: property.monthly_rent,
             surface_area: property.surface_area,
             rooms: property.rooms,
-            status: 'available',
+            status: 'disponible',
             amenities: property.amenities,
             nearby_places: property.nearby_places,
             latitude: 5.3599517 + (Math.random() - 0.5) * 0.1,

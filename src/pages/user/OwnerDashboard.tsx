@@ -58,8 +58,8 @@ export default function OwnerDashboard() {
       setProperties(propsData || []);
 
       const totalViews = (propsData || []).reduce((sum, prop) => sum + prop.view_count, 0);
-      const activeProps = (propsData || []).filter(p => p.status === 'available').length;
-      const rentedProps = (propsData || []).filter(p => p.status === 'rented').length;
+      const activeProps = (propsData || []).filter(p => p.status === 'disponible').length;
+      const rentedProps = (propsData || []).filter(p => p.status === 'loue').length;
 
       const propertyIds = (propsData || []).map(p => p.id);
 
@@ -318,13 +318,21 @@ export default function OwnerDashboard() {
                           <div className="flex items-center flex-wrap gap-3 mb-3">
                             <h3 className="text-xl font-bold text-gray-900">{property.title}</h3>
                             <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                              property.status === 'available'
+                              property.status === 'disponible'
                                 ? 'bg-gradient-to-r from-olive-100 to-green-100 text-olive-800 border border-olive-300'
-                                : property.status === 'rented'
+                                : property.status === 'loue'
                                 ? 'bg-gradient-to-r from-cyan-100 to-blue-100 text-cyan-800 border border-cyan-300'
+                                : property.status === 'en_attente'
+                                ? 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-800 border border-amber-200'
                                 : 'bg-gray-100 text-gray-800 border border-gray-300'
                             }`}>
-                              {property.status === 'available' ? 'Disponible' : property.status === 'rented' ? 'Loué' : property.status}
+                              {property.status === 'disponible'
+                                ? 'Disponible'
+                                : property.status === 'loue'
+                                ? 'Loué'
+                                : property.status === 'en_attente'
+                                ? 'En attente'
+                                : 'Retiré'}
                             </span>
                           </div>
                           <p className="text-gray-600 mb-3 flex items-center space-x-1">

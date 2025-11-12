@@ -59,7 +59,7 @@ export default function Recommendations() {
             <span>{Math.round(score)}% match</span>
           </div>
         )}
-        {property.status === 'available' && (
+        {property.status === 'disponible' && (
           <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
             Disponible
           </div>

@@ -65,7 +65,7 @@ export default function Home() {
       const { data, error } = await supabase
         .from('properties')
         .select('*')
-        .eq('status', 'available')
+        .eq('status', 'disponible')
         .order('created_at', { ascending: false })
         .limit(6);
 
@@ -75,7 +75,7 @@ export default function Home() {
       const { count } = await supabase
         .from('properties')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'available');
+        .eq('status', 'disponible');
 
       setTotalProperties(count || 0);
     } catch (error: any) {

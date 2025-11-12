@@ -218,7 +218,7 @@ Réponds uniquement avec le JSON, sans texte supplémentaire.`,
       let query = supabase
         .from('properties')
         .select('*')
-        .eq('status', 'available');
+        .eq('status', 'disponible');
 
       if (criteria.city) {
         query = query.ilike('city', `%${criteria.city}%`);

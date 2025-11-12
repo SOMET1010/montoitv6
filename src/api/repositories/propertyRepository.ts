@@ -14,7 +14,7 @@ export const propertyRepository = {
     let query = supabase
       .from('properties')
       .select('*, profiles!owner_id(full_name, user_type)', { count: 'exact' })
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .order('created_at', { ascending: false });
 
     if (filters?.propertyType) {
@@ -131,7 +131,7 @@ export const propertyRepository = {
       .from('properties')
       .select('*')
       .eq('city', city)
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .order('created_at', { ascending: false });
 
     return handleQuery<Property[]>(query);
@@ -144,7 +144,7 @@ export const propertyRepository = {
     const query = supabase
       .from('properties')
       .select('*, profiles!owner_id(full_name, user_type)')
-      .eq('status', 'available')
+      .eq('status', 'disponible')
       .order('views', { ascending: false })
       .limit(limit);
 

@@ -1,5 +1,5 @@
 /*
-  # Fix Security and Performance Issues
+  # Fix Security and Performance Issues - Corrected Version
 
   1. Foreign Key Indexes
     - Add index on `photo_shares.shared_by` foreign key
@@ -19,6 +19,9 @@
 
   5. Function Search Path Security
     - Fix search_path for all functions to prevent security vulnerabilities
+
+  6. Fix Function Dependencies
+    - Properly handle function recreation without breaking triggers
 */
 
 -- =============================================================================
@@ -216,10 +219,9 @@ CREATE POLICY "Users can update visits"
 -- 7. OPTIMIZE RLS POLICIES - PROPERTY_FAVORITES TABLE
 -- =============================================================================
 
--- Drop existing policies
+-- Drop existing policies (only if they exist)
 DROP POLICY IF EXISTS "Users can view own favorites" ON public.property_favorites;
 DROP POLICY IF EXISTS "Users can add favorites" ON public.property_favorites;
-DROP POLICY IF EXISTS "Users can remove favorites" ON public.property_favorites;
 
 -- Recreate optimized policies
 CREATE POLICY "Users can view own favorites"
@@ -232,10 +234,20 @@ CREATE POLICY "Users can add favorites"
   TO authenticated
   WITH CHECK (user_id = (select auth.uid()));
 
-CREATE POLICY "Users can remove favorites"
-  ON public.property_favorites FOR DELETE
-  TO authenticated
-  USING (user_id = (select auth.uid()));
+-- Create the "Users can remove favorites" policy only if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'property_favorites'
+    AND policyname = 'Users can remove favorites'
+  ) THEN
+    CREATE POLICY "Users can remove favorites"
+      ON public.property_favorites FOR DELETE
+      TO authenticated
+      USING (user_id = (select auth.uid()));
+  END IF;
+END $$;
 
 -- =============================================================================
 -- 8. OPTIMIZE RLS POLICIES - ALBUMS TABLE (if exists)
@@ -377,8 +389,7 @@ BEGIN
 END;
 $$;
 
--- Fix update_updated_at_column function
-DROP FUNCTION IF EXISTS public.update_updated_at_column();
+-- Fix update_updated_at_column function - ONLY CREATE OR REPLACE, DON'T DROP
 CREATE OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS trigger
 LANGUAGE plpgsql
