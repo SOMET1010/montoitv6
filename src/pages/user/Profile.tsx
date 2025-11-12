@@ -230,7 +230,7 @@ export default function Profile() {
                   className="inline-flex items-center space-x-2 bg-gradient-to-r from-olive-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-olive-600 hover:to-cyan-600 transition-all transform hover:scale-105 shadow-lg"
                 >
                   <User className="h-5 w-5" />
-                  <span>Demander un nouveau rôle</span>
+                  <span>Demander un autree</span>
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </div>

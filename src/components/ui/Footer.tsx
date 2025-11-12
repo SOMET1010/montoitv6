@@ -111,7 +111,7 @@ export default function Footer() {
             <div className="flex items-center space-x-2 text-sm">
               <span className="text-gray-400">Fait avec</span>
               <Heart className="h-4 w-4 text-coral-500 animate-pulse" />
-              <span className="text-gray-400">pour l'accès universel au logement</span>
+              <span className="text-gray-400">pour l'accès universel au logement (version 6.1.0)</span>
             </div>
           </div>
         </div>
