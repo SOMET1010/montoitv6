@@ -1,0 +1,10 @@
+{
+  "appId": "mon.toit.app",
+  "appName": "montoit",
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
+  }
+}
