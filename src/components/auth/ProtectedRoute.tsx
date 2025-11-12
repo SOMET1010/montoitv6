@@ -182,8 +182,38 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   }
 
   if (allowedRoles && allowedRoles.length > 0) {
-    const userRole = profile.active_role || profile.user_type;
-    if (!allowedRoles.includes(userRole)) {
+    const normalizeRole = (role?: string | null) => {
+      if (!role) return '';
+      return role
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+    };
+
+    const normalizedAllowedRoles = allowedRoles.map(normalizeRole);
+    const normalizedActiveRole = normalizeRole(profile.active_role);
+    const normalizedPrimaryRole = normalizeRole(profile.user_type);
+    const availableRoles =
+      profile.available_roles && profile.available_roles.length > 0
+        ? profile.available_roles
+        : [profile.user_type];
+
+    const uniqueAvailableRoles = Array.from(
+      new Set(
+        availableRoles
+          .map(normalizeRole)
+          .filter(Boolean)
+      )
+    );
+
+    const isMultiRoleUser = uniqueAvailableRoles.length > 1;
+    const hasActiveRoleAccess =
+      Boolean(normalizedActiveRole) && normalizedAllowedRoles.includes(normalizedActiveRole);
+    const hasSingleRoleFallbackAccess =
+      !isMultiRoleUser && normalizedAllowedRoles.includes(normalizedPrimaryRole);
+
+    if (!hasActiveRoleAccess && !hasSingleRoleFallbackAccess) {
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">

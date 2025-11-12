@@ -73,13 +73,17 @@ export default function ProfileSelection() {
     setError('');
 
     try {
+      const updates = {
+        user_type: selectedType,
+        active_role: selectedType,
+        available_roles: [selectedType],
+        profile_setup_completed: true,
+        updated_at: new Date().toISOString()
+      };
+
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({
-          user_type: selectedType,
-          profile_setup_completed: true,
-          updated_at: new Date().toISOString()
-        })
+        .update(updates)
         .eq('id', user.id);
 
       if (updateError) throw updateError;
