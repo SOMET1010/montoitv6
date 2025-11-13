@@ -344,6 +344,14 @@ export const routes: RouteObject[] = [
         ),
       },
       {
+        path: 'add-property',
+        element: (
+          <ProtectedRoute allowedRoles={['proprietaire', 'agence']}>
+            <AddProperty />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: 'dashboard/propriete/:id/stats',
         element: (
           <ProtectedRoute allowedRoles={['proprietaire', 'agence']}>

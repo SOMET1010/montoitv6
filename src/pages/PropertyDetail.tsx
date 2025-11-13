@@ -357,28 +357,43 @@ export default function PropertyDetail() {
               <div className="border-t pt-6 mt-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Informations financières</h2>
                 <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Loyer mensuel</span>
-                    <span className="font-semibold text-gray-900">{property.monthly_rent.toLocaleString()} FCFA</span>
+                  <div className="bg-terracotta-50 p-4 rounded-xl border-2 border-terracotta-200 mb-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-900 font-bold">Loyer mensuel</span>
+                      <span className="font-bold text-2xl text-terracotta-600">{property.monthly_rent.toLocaleString()} FCFA</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">À payer chaque mois</p>
                   </div>
+
                   {property.deposit_amount && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Dépôt de garantie</span>
+                    <div className="flex justify-between py-2">
+                      <div>
+                        <span className="text-gray-700 font-medium">Dépôt de garantie</span>
+                        <p className="text-xs text-gray-500">Paiement unique (restituable)</p>
+                      </div>
                       <span className="font-semibold text-gray-900">{property.deposit_amount.toLocaleString()} FCFA</span>
                     </div>
                   )}
                   {property.charges_amount > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Charges mensuelles</span>
+                    <div className="flex justify-between py-2">
+                      <div>
+                        <span className="text-gray-700 font-medium">Charges mensuelles</span>
+                        <p className="text-xs text-gray-500">Eau, électricité, entretien</p>
+                      </div>
                       <span className="font-semibold text-gray-900">{property.charges_amount.toLocaleString()} FCFA</span>
                     </div>
                   )}
-                  <div className="pt-3 border-t border-gray-200">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span className="text-gray-900">Total estimé (1er mois)</span>
-                      <span className="text-terracotta-600">
-                        {(property.monthly_rent + (property.deposit_amount || 0) + (property.charges_amount || 0)).toLocaleString()} FCFA
-                      </span>
+                  <div className="pt-4 mt-4 border-t-2 border-gray-200">
+                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-xl border-2 border-amber-300">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-900 font-bold text-lg">Total à la signature</span>
+                        <span className="text-2xl font-bold text-amber-700">
+                          {(property.monthly_rent + (property.deposit_amount || 0) + (property.charges_amount || 0)).toLocaleString()} FCFA
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-700">
+                        Inclut: premier loyer + caution{property.charges_amount > 0 ? ' + charges' : ''}
+                      </p>
                     </div>
                   </div>
                 </div>

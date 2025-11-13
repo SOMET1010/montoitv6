@@ -198,15 +198,23 @@ export default function ApplicationForm() {
                   <Shield className="h-8 w-8 text-amber-700" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-amber-900 font-bold text-lg mb-2">Améliorez votre candidature</p>
-                  <p className="text-amber-800 mb-4">
-                    Vérifiez votre identité avec ANSUT pour augmenter vos chances d'être accepté. Les propriétaires privilégient les locataires vérifiés.
+                  <p className="font-bold text-amber-900 text-lg mb-2">⚠️ Vérification d'identité recommandée</p>
+                  <p className="text-amber-800 mb-3">
+                    Pour augmenter vos chances d'être accepté, complétez la vérification de votre identité. Les propriétaires privilégient fortement les locataires vérifiés.
                   </p>
+                  <p className="text-amber-700 text-sm mb-4">
+                    <strong>Votre candidature sera plus crédible avec:</strong>
+                  </p>
+                  <ul className="text-amber-700 text-sm space-y-1 mb-4 ml-4 list-disc">
+                    <li>Vérification CNI via ONECI</li>
+                    <li>Reconnaissance faciale biométrique</li>
+                    <li>Validation de vos informations</li>
+                  </ul>
                   <a
                     href="/profil"
-                    className="inline-block btn-primary"
+                    className="inline-block px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all font-bold shadow-lg"
                   >
-                    Vérifier mon identité
+                    Compléter ma vérification
                   </a>
                 </div>
               </div>

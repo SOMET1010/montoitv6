@@ -160,6 +160,7 @@ export default function MapboxMap({
         el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
         el.style.cursor = 'pointer';
         el.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+        el.style.transformOrigin = 'center center';
         el.style.display = 'flex';
         el.style.alignItems = 'center';
         el.style.justifyContent = 'center';

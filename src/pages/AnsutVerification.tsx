@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase';
 import { Shield, Upload, CheckCircle, AlertCircle, FileText, Camera, Loader, X } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import CertificationProgress from '../components/CertificationProgress';
 import VerificationBadge from '../components/VerificationBadge';
 import AnsutBadge from '../components/AnsutBadge';
 import SmilelessVerification from '../components/SmilelessVerification';
@@ -839,15 +838,6 @@ export default function AnsutVerification() {
                 )}
               </div>
 
-              <div className="lg:col-span-1">
-                <div className="sticky top-24">
-                  <CertificationProgress
-                    oneciStatus={verification?.oneci_status || 'en_attente'}
-                    cnamStatus={verification?.cnam_status || 'en_attente'}
-                    faceStatus={verification?.face_verification_status || 'en_attente'}
-                  />
-                </div>
-              </div>
             </div>
           )}
         </div>
