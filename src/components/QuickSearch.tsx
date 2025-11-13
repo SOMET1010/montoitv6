@@ -13,7 +13,7 @@ interface SearchFilters {
 }
 
 export default function QuickSearch({ onSearch }: QuickSearchProps) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [city, setCity] = useState('');
   const [propertyType, setPropertyType] = useState('');
   const [maxBudget, setMaxBudget] = useState('');
@@ -61,7 +61,7 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
       if (propertyType && propertyType !== 'Tous les types') params.append('type', propertyType);
       if (maxBudget) params.append('max_price', maxBudget);
 
-      window.location.href = `/search?${params.toString()}`;
+      window.location.href = `/recherche?${params.toString()}`;
     }
   };
 
@@ -87,7 +87,7 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
             </div>
           </div>
 
-          {user && (
+          {user && profile?.user_type === 'proprietaire' && (
             <button
               onClick={handlePublish}
               className="hidden md:flex items-center space-x-2 px-6 py-3 bg-terracotta-600 text-white rounded-xl hover:bg-terracotta-700 transition-all hover:scale-105 shadow-lg font-medium"
@@ -160,7 +160,7 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
           </div>
         </div>
 
-        {user && (
+        {user && profile?.user_type === 'proprietaire' && (
           <button
             onClick={handlePublish}
             className="md:hidden mt-4 w-full flex items-center justify-center space-x-2 px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-xl hover:bg-terracotta-50 transition-all font-medium"

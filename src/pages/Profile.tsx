@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Shield, Save, Camera, CheckCircle, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import ScoreSection from '../components/ScoreSection';
 import AnsutBadge from '../components/AnsutBadge';
 import AchievementBadges from '../components/AchievementBadges';
-import VerificationBadge from '../components/VerificationBadge';
 import RoleSwitcher from '../components/RoleSwitcher';
 
 export default function Profile() {
@@ -133,13 +131,6 @@ export default function Profile() {
     }
   };
 
-  const getVerificationScore = () => {
-    let score = 0;
-    if (profile?.is_verified) score += 33;
-    if (profile?.oneci_verified) score += 33;
-    if (profile?.cnam_verified) score += 34;
-    return score;
-  };
 
   if (!profile) {
     return (
@@ -148,8 +139,6 @@ export default function Profile() {
       </div>
     );
   }
-
-  const verificationScore = getVerificationScore();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-coral-50 custom-cursor">
@@ -223,44 +212,8 @@ export default function Profile() {
                 <RoleSwitcher />
               </div>
 
-              {verificationData && (
-                <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                  {verificationData.oneci_status && (
-                    <VerificationBadge type="oneci" status={verificationData.oneci_status} size="small" />
-                  )}
-                  {verificationData.cnam_status && verificationData.cnam_status !== 'en_attente' && (
-                    <VerificationBadge type="cnam" status={verificationData.cnam_status} size="small" />
-                  )}
-                  {verificationData.face_verification_status && (
-                    <VerificationBadge type="face" status={verificationData.face_verification_status} size="small" />
-                  )}
-                </div>
-              )}
             </div>
 
-            <div className="card-scrapbook p-6 animate-scale-in" style={{ animationDelay: '0.1s' }}>
-              <h3 className="font-bold text-gradient text-xl mb-4 flex items-center space-x-2">
-                <Shield className="h-6 w-6 text-terracotta-500" />
-                <span>Score de vérification</span>
-              </h3>
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-700 font-medium">Progression</span>
-                  <span className="text-2xl font-bold text-gradient">{verificationScore}%</span>
-                </div>
-                <div className="bg-white rounded-full h-4 overflow-hidden shadow-inner">
-                  <div
-                    className="bg-gradient-to-r from-terracotta-500 to-coral-500 h-full transition-all duration-500 shadow-glow"
-                    style={{ width: `${verificationScore}%` }}
-                  />
-                </div>
-              </div>
-              <p className="text-sm text-gray-700">
-                {verificationScore === 100
-                  ? 'Votre profil est entièrement vérifié!'
-                  : 'Complétez vos vérifications pour augmenter votre crédibilité.'}
-              </p>
-            </div>
 
             <div className="card-scrapbook p-6 animate-scale-in" style={{ animationDelay: '0.2s' }}>
               <h3 className="font-bold text-gradient text-xl mb-4">Liens rapides</h3>

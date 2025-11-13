@@ -46,7 +46,7 @@ export default function AnsutBadge({
         onMouseLeave={() => showTooltip && setShowInfo(false)}
       >
         <Shield className={iconSizes[size]} />
-        <span>Certifié ANSUT</span>
+        <span>Certifié par ANSUT</span>
         <CheckCircle className={iconSizes[size]} />
       </div>
 
@@ -56,7 +56,7 @@ export default function AnsutBadge({
             <div className="flex items-start space-x-2 mb-2">
               <Info className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-green-400 mb-1">Certification ANSUT</p>
+                <p className="font-bold text-green-400 mb-1">Certifié par ANSUT</p>
                 <p className="text-gray-300 leading-relaxed">
                   Cet utilisateur a été vérifié par l'Agence Nationale de Soutien au Transport Urbain.
                   Identité confirmée via ONECI et vérification biométrique.
