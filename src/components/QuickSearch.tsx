@@ -87,13 +87,15 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
             </div>
           </div>
 
-          <button
-            onClick={handlePublish}
-            className="hidden md:flex items-center space-x-2 px-6 py-3 bg-terracotta-600 text-white rounded-xl hover:bg-terracotta-700 transition-all hover:scale-105 shadow-lg font-medium"
-          >
-            <Plus className="w-5 h-5" />
-            <span>Publier une annonce</span>
-          </button>
+          {user && (
+            <button
+              onClick={handlePublish}
+              className="hidden md:flex items-center space-x-2 px-6 py-3 bg-terracotta-600 text-white rounded-xl hover:bg-terracotta-700 transition-all hover:scale-105 shadow-lg font-medium"
+            >
+              <Plus className="w-5 h-5" />
+              <span>Publier une annonce</span>
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -158,18 +160,20 @@ export default function QuickSearch({ onSearch }: QuickSearchProps) {
           </div>
         </div>
 
-        <button
-          onClick={handlePublish}
-          className="md:hidden mt-4 w-full flex items-center justify-center space-x-2 px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-xl hover:bg-terracotta-50 transition-all font-medium"
-        >
-          <Plus className="w-5 h-5" />
-          <span>Publier une annonce</span>
-        </button>
+        {user && (
+          <button
+            onClick={handlePublish}
+            className="md:hidden mt-4 w-full flex items-center justify-center space-x-2 px-6 py-3 border-2 border-terracotta-600 text-terracotta-600 rounded-xl hover:bg-terracotta-50 transition-all font-medium"
+          >
+            <Plus className="w-5 h-5" />
+            <span>Publier une annonce</span>
+          </button>
+        )}
 
         <div className="mt-6 flex items-center justify-center space-x-2 text-sm">
           <CheckCircle className="w-4 h-4 text-green-600" />
           <span className="text-gray-700 font-medium">
-            100% gratuit • Sécurisé • Certifié ANSUT
+            100% gratuit • Sécurisé
           </span>
           <Shield className="w-4 h-4 text-olive-600" />
         </div>

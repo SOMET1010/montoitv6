@@ -19,12 +19,8 @@ export default function Footer() {
               <span className="text-3xl font-bold text-gradient">Mon Toit</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
-              Plateforme immobilière certifiée ANSUT pour un accès universel au logement en Côte d'Ivoire.
+              Plateforme immobilière pour un accès universel au logement en Côte d'Ivoire.
             </p>
-            <div className="inline-flex items-center space-x-2 bg-olive-900/50 backdrop-blur-sm px-3 py-2 rounded-full border border-olive-700">
-              <Shield className="h-4 w-4 text-olive-400" />
-              <span className="text-xs font-bold text-olive-300">ANSUT Certifié</span>
-            </div>
           </div>
 
           <div>

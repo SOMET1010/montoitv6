@@ -1,7 +1,6 @@
 import { Home, Search, User, LogOut, Building2, Sparkles, MessageCircle, Calendar, FileText, Heart, Bell, Key, Award, Wrench, Users, BarChart, ChevronDown, Settings, Menu, X, Shield, Database, Activity, Cog, TestTube, Zap, UserCheck, CheckCircle, FileCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useMessageNotifications } from '../hooks/useMessageNotifications';
-import CertificationReminder from './CertificationReminder';
 import LanguageSelector from './LanguageSelector';
 import RoleSwitcher from './RoleSwitcher';
 import { useState, useEffect } from 'react';
@@ -49,16 +48,7 @@ export default function Header() {
   };
 
   return (
-    <>
-      {user && profile && (
-        <CertificationReminder
-          userType={profile.user_type}
-          oneciVerified={verificationStatus.oneciVerified}
-          faceVerified={verificationStatus.faceVerified}
-          ansutCertified={verificationStatus.ansutCertified}
-        />
-      )}
-      <header className="bg-white/80 backdrop-blur-xl shadow-lg border-b-2 border-terracotta-100 sticky top-0 z-50">
+    <header className="bg-white/80 backdrop-blur-xl shadow-lg border-b-2 border-terracotta-100 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <a href="/" className="flex items-center space-x-3 group">
@@ -68,11 +58,6 @@ export default function Header() {
             </div>
             <div>
               <span className="text-3xl font-bold text-gradient">Mon Toit</span>
-              <div className="flex items-center space-x-1">
-                <span className="text-xs bg-gradient-to-r from-olive-100 to-olive-200 text-olive-800 px-2 py-0.5 rounded-full font-bold">
-                  ANSUT Certifié
-                </span>
-              </div>
             </div>
           </a>
 
@@ -570,6 +555,5 @@ export default function Header() {
         )}
       </div>
     </header>
-    </>
   );
 }

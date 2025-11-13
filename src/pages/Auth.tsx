@@ -116,8 +116,8 @@ export default function Auth() {
                   <Shield className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg">Certification ANSUT</h3>
-                  <p className="text-amber-100 text-sm">Vérification ONECI & CNAM</p>
+                  <h3 className="font-bold text-lg">Sécurité et Protection</h3>
+                  <p className="text-amber-100 text-sm">Vos données sont protégées</p>
                 </div>
               </div>
 
@@ -155,7 +155,7 @@ export default function Auth() {
               <div className="text-center mb-8">
                 <div className="inline-flex items-center space-x-2 mb-4 bg-gradient-to-r from-terracotta-100 to-coral-100 px-4 py-2 rounded-full">
                   <Sparkles className="h-4 w-4 text-terracotta-600" />
-                  <span className="text-sm font-semibold text-terracotta-700">Plateforme ANSUT</span>
+                  <span className="text-sm font-semibold text-terracotta-700">Plateforme immobilière</span>
                 </div>
 
                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
@@ -339,12 +339,6 @@ export default function Auth() {
               )}
             </div>
 
-            <div className="mt-6 text-center text-sm">
-              <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-                <Shield className="h-4 w-4 text-olive-600" />
-                <span className="text-gray-700 font-medium">Plateforme certifiée ANSUT</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>

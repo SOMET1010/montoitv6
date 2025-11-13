@@ -124,11 +124,6 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12 animate-slide-down">
-            <div className="inline-flex items-center space-x-2 mb-6 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <Sparkles className="h-5 w-5 text-amber-300" />
-              <span className="text-sm font-medium">Plateforme certifiée ANSUT</span>
-            </div>
-
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               <span className="inline-block animate-scale-in">Trouvez votre </span>
               <span className="inline-block animate-scale-in text-amber-200" style={{ animationDelay: '0.1s' }}>logement idéal</span>
@@ -212,12 +207,12 @@ export default function Home() {
               <div className="w-20 h-20 bg-gradient-to-br from-olive-400 to-olive-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-6 hover:rotate-0 transition-transform duration-300">
                 <Shield className="h-10 w-10 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-gray-900">Certification ANSUT</h3>
+              <h3 className="text-2xl font-bold mb-3 text-gray-900">Sécurité et Protection</h3>
               <p className="text-gray-700 leading-relaxed">
-                Vérification d'identité ONECI et CNAM pour une sécurité maximale de tous nos utilisateurs
+                Plateforme sécurisée avec vérification des utilisateurs pour votre tranquillité
               </p>
               <div className="mt-4 inline-block bg-olive-100 text-olive-800 px-4 py-2 rounded-full text-sm font-semibold transform rotate-2">
-                100% Vérifié
+                100% Sécurisé
               </div>
             </div>
 
