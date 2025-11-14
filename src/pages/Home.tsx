@@ -126,10 +126,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-12 animate-slide-down">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-              <span className="inline-block animate-scale-in">Trouvez votre </span>
+              <span className="inline-block animate-scale-in">Trouvez votre</span>{' '}
               <span className="inline-block animate-scale-in text-amber-200" style={{ animationDelay: '0.1s' }}>logement idéal</span>
               <br />
-              <span className="inline-block animate-scale-in" style={{ animationDelay: '0.2s' }}>en toute </span>
+              <span className="inline-block animate-scale-in" style={{ animationDelay: '0.2s' }}>en toute</span>{' '}
               <span className="inline-block animate-scale-in text-cyan-200" style={{ animationDelay: '0.3s' }}>confiance</span>
             </h1>
 
