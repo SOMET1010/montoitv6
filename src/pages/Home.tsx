@@ -75,6 +75,7 @@ export default function Home() {
       setTotalProperties(count || 0);
     } catch (error) {
       console.error('Error loading properties:', error);
+      setProperties([]);
     } finally {
       setLoading(false);
     }
