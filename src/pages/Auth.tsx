@@ -97,9 +97,13 @@ export default function Auth() {
       <div className="max-w-6xl w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="hidden lg:block text-white space-y-8 animate-slide-down">
-            <div className="flex items-center space-x-3">
-              <Building2 className="h-16 w-16" />
-              <span className="text-5xl font-bold">Mon Toit</span>
+            <div className="flex items-center space-x-4">
+              <img
+                src="/logo.png"
+                alt="Mon Toit Logo"
+                className="h-24 w-24 object-contain drop-shadow-2xl"
+              />
+              <span className="text-5xl font-bold">MON TOIT</span>
             </div>
 
             <h1 className="text-5xl font-bold leading-tight">
@@ -146,9 +150,13 @@ export default function Auth() {
           <div className="animate-scale-in">
             <div className="glass-card rounded-3xl p-8 md:p-10 shadow-2xl transform hover:scale-105 transition-all duration-300">
               <div className="lg:hidden flex justify-center mb-6">
-                <div className="flex items-center space-x-2 text-terracotta-600">
-                  <Building2 className="h-10 w-10" />
-                  <span className="text-3xl font-bold">Mon Toit</span>
+                <div className="flex items-center space-x-3">
+                  <img
+                    src="/logo.png"
+                    alt="Mon Toit Logo"
+                    className="h-14 w-14 object-contain"
+                  />
+                  <span className="text-3xl font-bold" style={{ color: '#1e3a8a' }}>MON TOIT</span>
                 </div>
               </div>
 

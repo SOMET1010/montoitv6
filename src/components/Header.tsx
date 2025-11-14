@@ -53,11 +53,14 @@ export default function Header() {
         <div className="flex justify-between items-center h-20">
           <a href="/" className="flex items-center space-x-3 group">
             <div className="relative">
-              <Building2 className="h-10 w-10 text-terracotta-600 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
-              <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-amber-400 animate-pulse" />
+              <img
+                src="/logo.png"
+                alt="Mon Toit Logo"
+                className="h-12 w-12 transform group-hover:scale-110 transition-all duration-300 object-contain"
+              />
             </div>
             <div>
-              <span className="text-3xl font-bold text-gradient">Mon Toit</span>
+              <span className="text-3xl font-bold" style={{ color: '#1e3a8a' }}>MON TOIT</span>
             </div>
           </a>
 

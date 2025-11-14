@@ -12,11 +12,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
             <div className="flex items-center space-x-3 mb-6 group">
-              <div className="relative">
-                <Building2 className="h-10 w-10 text-terracotta-400 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300" />
-                <Sparkles className="absolute -top-1 -right-1 h-4 w-4 text-amber-400 animate-pulse" />
-              </div>
-              <span className="text-3xl font-bold text-gradient">Mon Toit</span>
+              <img
+                src="/logo.png"
+                alt="Mon Toit Logo"
+                className="h-16 w-16 object-contain group-hover:scale-110 transition-all duration-300"
+              />
+              <span className="text-3xl font-bold text-white">MON TOIT</span>
             </div>
             <p className="text-sm text-gray-400 leading-relaxed mb-4">
               Plateforme immobilière pour un accès universel au logement en Côte d'Ivoire.
