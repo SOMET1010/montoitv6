@@ -238,7 +238,7 @@ export default function ContractPreview({ contractData }: ContractPreviewProps) 
           <p className="text-sm text-yellow-900">
             <span className="font-semibold">Note importante:</span> Ce contrat est conforme au modèle officiel
             de la Côte d'Ivoire et respecte toutes les dispositions du Code Civil Ivoirien. Il sera signé
-            électroniquement avec certification ANSUT et horodatage sécurisé par CryptoNeo.
+            électroniquement avec vérification Mon Toit et horodatage sécurisé par CryptoNeo.
           </p>
         </div>
       </div>

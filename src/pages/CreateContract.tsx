@@ -138,7 +138,7 @@ export default function CreateContract() {
         setFormData(prev => ({ ...prev, tenant_id: data.id }));
 
         if (!tenantData.ansut_verified) {
-          alert('⚠️ Attention: Ce locataire n\'est pas certifié ANSUT. Il devra compléter sa certification avant de pouvoir signer le contrat.');
+          alert('⚠️ Attention: Ce locataire n\'est pas vérifié Mon Toit. Il devra compléter sa certification avant de pouvoir signer le contrat.');
         }
       } else {
         alert('Aucun locataire trouvé avec cet email');
@@ -348,7 +348,7 @@ export default function CreateContract() {
                 <div className={`mt-3 p-3 rounded-lg border ${tenants[0].ansut_verified ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
                   <p className={`text-sm font-semibold ${tenants[0].ansut_verified ? 'text-green-800' : 'text-yellow-800'}`}>
                     Locataire trouvé :
-                    {tenants[0].ansut_verified ? ' ✓ Certifié ANSUT' : ' ⚠️ Non certifié ANSUT'}
+                    {tenants[0].ansut_verified ? ' ✓ Vérifié Mon Toit' : ' ⚠️ Non vérifié Mon Toit'}
                   </p>
                   <p className={`text-sm ${tenants[0].ansut_verified ? 'text-green-700' : 'text-yellow-700'}`}>
                     {tenants[0].full_name} - {tenants[0].email}
@@ -363,7 +363,7 @@ export default function CreateContract() {
                   )}
                   {!tenants[0].ansut_verified && (
                     <p className="text-xs text-yellow-700 mt-2">
-                      Le locataire devra compléter sa certification ANSUT avant de pouvoir signer le contrat.
+                      Le locataire devra compléter sa vérification Mon Toit avant de pouvoir signer le contrat.
                     </p>
                   )}
                 </div>

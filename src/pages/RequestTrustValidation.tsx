@@ -150,17 +150,17 @@ export default function RequestTrustValidation() {
                   <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-semibold text-yellow-900 mb-2">
-                      Certification ANSUT requise
+                      Vérification Mon Toit requise
                     </h3>
                     <p className="text-yellow-800 mb-4">
-                      Vous devez d'abord obtenir la certification ANSUT (vérification automatique)
+                      Vous devez d'abord obtenir la vérification Mon Toit (vérification automatique)
                       avant de pouvoir demander la validation manuelle par le Tiers de Confiance.
                     </p>
                     <a
                       href="/ansut-verification"
                       className="inline-flex items-center gap-2 bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors"
                     >
-                      Obtenir la certification ANSUT
+                      Obtenir la vérification Mon Toit
                     </a>
                   </div>
                 </div>
@@ -188,7 +188,7 @@ export default function RequestTrustValidation() {
                         1
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">Certification ANSUT</p>
+                        <p className="font-medium text-gray-900">Vérification Mon Toit</p>
                         <p className="text-sm text-gray-600">
                           Vérification automatique (ONECI + CNAM + Smile ID)
                         </p>

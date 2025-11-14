@@ -346,7 +346,7 @@ function RequestCard({ request, onView }: { request: any; onView: () => void }) 
             )}
             {profile?.ansut_verified && (
               <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-medium">
-                Certifié ANSUT
+                Vérifié Mon Toit
               </span>
             )}
           </div>
@@ -443,8 +443,8 @@ function ValidationRequestDetail({ request, onBack }: { request: any; onBack: ()
               </InfoGrid>
             </Section>
 
-            {/* Section 2: Certification ANSUT */}
-            <Section title="Certification ANSUT">
+            {/* Section 2: Vérification Mon Toit */}
+            <Section title="Vérification Mon Toit">
               <div className="space-y-3">
                 <VerificationStatus
                   label="ONECI"

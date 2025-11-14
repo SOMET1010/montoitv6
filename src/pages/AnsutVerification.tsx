@@ -400,7 +400,7 @@ export default function AnsutVerification() {
               Connexion requise
             </h2>
             <p className="text-gray-600">
-              Veuillez vous connecter pour accéder à la certification ANSUT
+              Veuillez vous connecter pour accéder à la vérification Mon Toit
             </p>
           </div>
         </div>
@@ -418,7 +418,7 @@ export default function AnsutVerification() {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
                 <Shield className="w-10 h-10 text-terracotta-600" />
-                <h1 className="text-4xl font-bold text-gradient">Certification ANSUT</h1>
+                <h1 className="text-4xl font-bold text-gradient">Vérification Mon Toit</h1>
               </div>
               {verification?.ansut_certified && (
                 <AnsutBadge certified={true} size="large" />

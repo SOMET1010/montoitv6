@@ -155,7 +155,7 @@ export default function TrustIndicator({
                 <AlertCircle className={`${sizeClasses.icon} text-gray-400`} />
               )}
               <span className={verificationStatus.ansut_certified ? 'text-gray-900 font-medium' : 'text-gray-500'}>
-                Certification ANSUT
+                Vérification Mon Toit
               </span>
             </div>
             {verificationStatus.ansut_certified && (

@@ -113,7 +113,7 @@ export default function SignLease() {
 
   const requestOTP = async () => {
     if (!profile?.ansut_certified) {
-      setError('Vous devez être certifié ANSUT pour signer un bail');
+      setError('Vous devez être vérifié Mon Toit pour signer un bail');
       return;
     }
 
@@ -354,7 +354,7 @@ export default function SignLease() {
               <h1 className="text-4xl font-bold text-gradient">Signature Électronique du Bail</h1>
             </div>
             <p className="text-gray-600 text-lg">
-              Signature sécurisée avec certification ANSUT et horodatage CryptoNeo
+              Signature sécurisée avec vérification Mon Toit et horodatage CryptoNeo
             </p>
           </div>
 
@@ -377,9 +377,9 @@ export default function SignLease() {
               <div className="flex items-start space-x-4">
                 <Shield className="w-8 h-8 text-amber-600 flex-shrink-0" />
                 <div>
-                  <h3 className="font-bold text-amber-900 mb-2">Certification ANSUT requise</h3>
+                  <h3 className="font-bold text-amber-900 mb-2">Vérification Mon Toit requise</h3>
                   <p className="text-amber-800 mb-4">
-                    Vous devez être certifié ANSUT pour signer électroniquement un bail.
+                    Vous devez être vérifié Mon Toit pour signer électroniquement un bail.
                   </p>
                   <a
                     href="/certification-ansut"

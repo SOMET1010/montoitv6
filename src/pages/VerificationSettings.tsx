@@ -74,7 +74,7 @@ export default function VerificationSettings() {
     },
     {
       id: 'enable_ansut_certification',
-      name: 'Certification ANSUT',
+      name: 'Vérification Mon Toit',
       description: 'Certification officielle ANSUT - Agence Nationale de Soutien à l\'Urbanisme et aux Territoires',
       benefits: [
         'Certification gouvernementale',

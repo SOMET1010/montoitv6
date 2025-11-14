@@ -67,7 +67,7 @@ export const trustValidationService = {
     }
 
     if (!profile.ansut_verified) {
-      throw new Error('Certification ANSUT requise avant demande de validation');
+      throw new Error('Vérification Mon Toit requise avant demande de validation');
     }
 
     if (profile.trust_verified) {

@@ -277,7 +277,7 @@ export const generateLeasePDF = (leaseData: LeaseData): jsPDF => {
   doc.setFontSize(7);
   doc.setTextColor(100);
   const footerY = pageHeight - 10;
-  doc.text('Document certifié par la plateforme Mon Toit - Certification ANSUT - Horodatage sécurisé CryptoNeo', pageWidth / 2, footerY, { align: 'center' });
+  doc.text('Document certifié par la plateforme Mon Toit - Vérification Mon Toit - Horodatage sécurisé CryptoNeo', pageWidth / 2, footerY, { align: 'center' });
   doc.text(`Référence: ${leaseData.contractNumber}`, pageWidth / 2, footerY + 4, { align: 'center' });
 
   return doc;
