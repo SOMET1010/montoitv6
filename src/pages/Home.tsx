@@ -480,7 +480,7 @@ export default function Home() {
 
           <div className="card-scrapbook overflow-hidden">
               <MapWrapper
-                properties={properties
+                properties={(properties || [])
                   .filter(p => p.longitude && p.latitude)
                   .map(p => ({
                     id: p.id,
