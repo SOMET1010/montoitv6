@@ -337,7 +337,7 @@ class ContractorService {
 
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('user_type, active_role')
       .eq('id', currentUser.user.id)
       .single();
 
@@ -347,7 +347,7 @@ class ContractorService {
         {
           ...reviewData,
           reviewer_id: currentUser.user.id,
-          reviewer_role: profile?.role || 'tenant',
+          reviewer_role: profile?.active_role || profile?.user_type || 'tenant',
         },
       ])
       .select()

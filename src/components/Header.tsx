@@ -222,7 +222,7 @@ export default function Header() {
                   <span>Profil</span>
                 </a>
 
-                {(profile?.user_type === 'admin_ansut' || profile?.role?.includes('admin')) && (
+                {(profile?.user_type === 'admin_ansut' || profile?.available_roles?.includes('admin') || profile?.active_role === 'admin') && (
                   <div className="relative" onMouseLeave={() => setShowAdminMenu(false)}>
                     <button
                       onMouseEnter={() => setShowAdminMenu(true)}
@@ -303,7 +303,7 @@ export default function Header() {
                   </div>
                 )}
 
-                {profile?.role?.includes('trust_agent') && (
+                {(profile?.available_roles?.includes('trust_agent') || profile?.active_role === 'trust_agent') && (
                   <div className="relative" onMouseLeave={() => setShowTrustAgentMenu(false)}>
                     <button
                       onMouseEnter={() => setShowTrustAgentMenu(true)}
@@ -471,7 +471,7 @@ export default function Header() {
                 </>
               )}
 
-              {(profile?.user_type === 'admin_ansut' || profile?.role?.includes('admin')) && (
+              {(profile?.user_type === 'admin_ansut' || profile?.available_roles?.includes('admin') || profile?.active_role === 'admin') && (
                 <>
                   <div className="py-2 px-4 border-b border-gray-200">
                     <p className="text-xs font-bold text-blue-600 uppercase">Administration</p>
@@ -507,7 +507,7 @@ export default function Header() {
                 </>
               )}
 
-              {profile?.role?.includes('trust_agent') && (
+              {(profile?.available_roles?.includes('trust_agent') || profile?.active_role === 'trust_agent') && (
                 <>
                   <div className="py-2 px-4 border-b border-t border-gray-200 mt-2">
                     <p className="text-xs font-bold text-green-600 uppercase">Trust Agent</p>

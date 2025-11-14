@@ -42,7 +42,7 @@ export default function TrustAgentModeration() {
     approved: queue.filter(q => q.status === 'approved').length
   };
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile || (!profile.available_roles?.includes('trust_agent') && profile.active_role !== 'trust_agent')) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

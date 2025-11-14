@@ -31,7 +31,7 @@ export default function AdminTrustAgents() {
     }
   };
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile || (profile.user_type !== 'admin_ansut' && !profile.available_roles?.includes('admin') && profile.active_role !== 'admin')) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

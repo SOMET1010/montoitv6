@@ -54,7 +54,7 @@ export default function TrustAgentMediation() {
     resolved: disputes.filter(d => d.status === 'resolved').length
   };
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile || (!profile.available_roles?.includes('trust_agent') && profile.active_role !== 'trust_agent')) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
