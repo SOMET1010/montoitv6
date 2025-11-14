@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Building2, Mail, Lock, User, UserCircle, Sparkles, Shield, CheckCircle, Chrome, Facebook, KeyRound, ArrowLeft } from 'lucide-react';
+import { Building2, Mail, Lock, User, UserCircle, Sparkles, Shield, CheckCircle, Chrome, Facebook, KeyRound, ArrowLeft, Phone } from 'lucide-react';
 
 export default function Auth() {
   const currentPath = window.location.pathname;
@@ -9,6 +9,7 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -44,7 +45,7 @@ export default function Auth() {
         if (error) throw error;
         window.location.href = '/';
       } else {
-        const { error } = await signUp(email, password, { full_name: fullName });
+        const { error } = await signUp(email, password, { full_name: fullName, phone });
         if (error) {
           console.error('Signup error:', error);
           if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
@@ -56,10 +57,10 @@ export default function Auth() {
           }
           return;
         }
-        setSuccess('Inscription réussie ! Redirection en cours...');
+        setSuccess('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
         setTimeout(() => {
           window.location.href = '/choix-profil';
-        }, 1500);
+        }, 2000);
       }
     } catch (err: any) {
       console.error('Auth error:', err);
@@ -193,25 +194,47 @@ export default function Auth() {
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 {!isLogin && !isForgotPassword && (
-                  <div className="animate-slide-down">
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      Nom complet
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-terracotta-500" />
-                      <input
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white/70"
-                        placeholder="Votre nom complet"
-                      />
+                  <>
+                    <div className="animate-slide-down">
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Nom complet
+                      </label>
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-terracotta-500" />
+                        <input
+                          type="text"
+                          required
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white/70"
+                          placeholder="Votre nom complet"
+                        />
+                      </div>
                     </div>
-                  </div>
+
+                    <div className="animate-slide-down" style={{ animationDelay: '0.05s' }}>
+                      <label className="block text-sm font-bold text-gray-700 mb-2">
+                        Numéro de téléphone
+                      </label>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-terracotta-500" />
+                        <input
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-terracotta-200 focus:border-terracotta-500 transition-all bg-white/70"
+                          placeholder="+225 XX XX XX XX XX"
+                          pattern="[+]?[0-9\s]+"
+                          title="Numéro de téléphone valide requis"
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-gray-600">Format: +225 XX XX XX XX XX</p>
+                    </div>
+                  </>
                 )}
 
-                <div className="animate-slide-down" style={{ animationDelay: isLogin ? '0s' : '0.1s' }}>
+                <div className="animate-slide-down" style={{ animationDelay: isLogin ? '0s' : '0.15s' }}>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
                     Email
                   </label>

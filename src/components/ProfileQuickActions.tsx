@@ -206,10 +206,10 @@ export default function ProfileQuickActions() {
             <Bell className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h4 className="font-bold text-gray-900 text-sm mb-1">
-                Complétez votre certification ANSUT
+                Complétez votre vérification d'identité
               </h4>
               <p className="text-gray-600 text-xs mb-3">
-                Débloquez toutes les fonctionnalités et gagnez la confiance des {profile?.user_type === 'locataire' ? 'propriétaires' : 'locataires'}.
+                Vérifiez votre identité via ONECI pour débloquer toutes les fonctionnalités et gagner la confiance des {profile?.user_type === 'locataire' ? 'propriétaires' : 'locataires'}.
               </p>
               <a
                 href="/verification"

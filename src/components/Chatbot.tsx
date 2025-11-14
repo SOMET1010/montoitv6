@@ -67,7 +67,7 @@ const quickActions: QuickAction[] = [
 ];
 
 const suggestionPrompts = [
-  'Comment fonctionne la vérification ANSUT ?',
+  'Comment fonctionne la vérification d\'identité ?',
   'Quels sont les prix moyens à Abidjan ?',
   'Comment améliorer mon score locataire ?',
   'Que faire en cas de problème de maintenance ?',

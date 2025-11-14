@@ -19,7 +19,7 @@ interface AuthContextType {
   loading: boolean;
   profileError: ProfileError | null;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signUp: (email: string, password: string, userData: { full_name: string; user_type?: string }) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, userData: { full_name: string; user_type?: string; phone?: string }) => Promise<{ error: AuthError | null }>;
   signInWithProvider: (provider: Provider) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
@@ -209,7 +209,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error };
   };
 
-  const signUp = async (email: string, password: string, userData: { full_name: string; user_type?: string }) => {
+  const signUp = async (email: string, password: string, userData: { full_name: string; user_type?: string; phone?: string }) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -218,6 +218,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           data: {
             full_name: userData.full_name,
             user_type: userData.user_type || 'locataire',
+            phone: userData.phone || '',
           },
           emailRedirectTo: `${window.location.origin}/auth/callback`,
         },

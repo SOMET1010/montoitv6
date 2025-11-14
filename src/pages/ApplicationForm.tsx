@@ -192,29 +192,29 @@ export default function ApplicationForm() {
           )}
 
           {!profile?.is_verified && (
-            <div className="mb-6 p-6 glass-card rounded-3xl bg-gradient-to-br from-amber-100 to-yellow-100 border-2 border-amber-300 animate-slide-up">
+            <div className="mb-6 p-6 glass-card rounded-3xl bg-gradient-to-br from-red-100 to-orange-100 border-2 border-red-400 animate-slide-up">
               <div className="flex items-start space-x-4">
-                <div className="bg-gradient-to-br from-amber-200 to-yellow-200 p-3 rounded-2xl">
-                  <Shield className="h-8 w-8 text-amber-700" />
+                <div className="bg-gradient-to-br from-red-200 to-orange-200 p-3 rounded-2xl">
+                  <Shield className="h-8 w-8 text-red-700" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-amber-900 text-lg mb-2">⚠️ Vérification d'identité recommandée</p>
-                  <p className="text-amber-800 mb-3">
-                    Pour augmenter vos chances d'être accepté, complétez la vérification de votre identité. Les propriétaires privilégient fortement les locataires vérifiés.
+                  <p className="font-bold text-red-900 text-lg mb-2">🚫 Vérification d'identité OBLIGATOIRE</p>
+                  <p className="text-red-800 mb-3 font-semibold">
+                    Vous devez compléter la vérification de votre identité avant de postuler. Les candidatures non vérifiées ne sont pas acceptées par les propriétaires.
                   </p>
-                  <p className="text-amber-700 text-sm mb-4">
-                    <strong>Votre candidature sera plus crédible avec:</strong>
+                  <p className="text-red-700 text-sm mb-4">
+                    <strong>Étapes de vérification requises:</strong>
                   </p>
-                  <ul className="text-amber-700 text-sm space-y-1 mb-4 ml-4 list-disc">
-                    <li>Vérification CNI via ONECI</li>
-                    <li>Reconnaissance faciale biométrique</li>
-                    <li>Validation de vos informations</li>
+                  <ul className="text-red-700 text-sm space-y-1 mb-4 ml-4 list-disc">
+                    <li>✓ Vérification CNI via ONECI (obligatoire)</li>
+                    <li>✓ Reconnaissance faciale biométrique (obligatoire)</li>
+                    <li>✓ Validation de vos informations personnelles</li>
                   </ul>
                   <a
                     href="/profil"
-                    className="inline-block px-6 py-3 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-all font-bold shadow-lg"
+                    className="inline-block px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-bold shadow-lg"
                   >
-                    Compléter ma vérification
+                    Compléter ma vérification maintenant →
                   </a>
                 </div>
               </div>
@@ -366,12 +366,23 @@ Quelques points à mentionner:
 
               <button
                 type="submit"
-                disabled={submitting || !!error}
+                disabled={submitting || !!error || !profile?.is_verified}
                 className="w-full btn-primary py-4 text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
               >
                 <FileText className="h-6 w-6" />
-                <span>{submitting ? 'Envoi en cours...' : 'Envoyer ma candidature'}</span>
+                <span>
+                  {!profile?.is_verified
+                    ? '🔒 Vérification requise pour postuler'
+                    : submitting
+                    ? 'Envoi en cours...'
+                    : 'Envoyer ma candidature'}
+                </span>
               </button>
+              {!profile?.is_verified && (
+                <p className="text-center text-red-600 font-semibold text-sm mt-2">
+                  Complétez d'abord votre vérification d'identité pour activer le bouton
+                </p>
+              )}
             </div>
           </form>
         </div>

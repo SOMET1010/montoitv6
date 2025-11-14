@@ -1,19 +1,21 @@
 import { Shield, CheckCircle, Info } from 'lucide-react';
 import { useState } from 'react';
 
-interface AnsutBadgeProps {
-  certified: boolean;
+interface VerifiedBadgeProps {
+  verified: boolean;
   size?: 'small' | 'medium' | 'large';
   showTooltip?: boolean;
   className?: string;
+  type?: 'full' | 'oneci' | 'cnam' | 'biometric';
 }
 
-export default function AnsutBadge({
-  certified,
+export default function VerifiedBadge({
+  verified,
   size = 'medium',
   showTooltip = true,
-  className = ''
-}: AnsutBadgeProps) {
+  className = '',
+  type = 'full'
+}: VerifiedBadgeProps) {
   const [showInfo, setShowInfo] = useState(false);
 
   const sizeClasses = {
@@ -28,9 +30,41 @@ export default function AnsutBadge({
     large: 'w-5 h-5'
   };
 
-  if (!certified) {
+  const badgeLabels = {
+    full: 'Vérifié Mon Toit',
+    oneci: 'CNI Vérifiée',
+    cnam: 'CNAM Vérifié',
+    biometric: 'Biométrie OK'
+  };
+
+  const tooltipContent = {
+    full: {
+      title: 'Utilisateur vérifié',
+      description: 'Identité confirmée via ONECI (CNI) et vérification biométrique. Badge de confiance Mon Toit.',
+      checks: '✓ CNI vérifiée (ONECI) • ✓ Vérification biométrique • ✓ Profil complet'
+    },
+    oneci: {
+      title: 'CNI vérifiée',
+      description: 'Carte Nationale d\'Identité vérifiée auprès de l\'ONECI (Office National d\'État Civil et d\'Identification).',
+      checks: '✓ Document officiel • ✓ Données validées'
+    },
+    cnam: {
+      title: 'CNAM vérifié',
+      description: 'Numéro CNAM vérifié auprès de la Caisse Nationale d\'Assurance Maladie.',
+      checks: '✓ Couverture médicale validée'
+    },
+    biometric: {
+      title: 'Biométrie validée',
+      description: 'Reconnaissance faciale effectuée avec succès pour confirmer l\'identité.',
+      checks: '✓ Visage vérifié • ✓ Vivacité confirmée'
+    }
+  };
+
+  if (!verified) {
     return null;
   }
+
+  const content = tooltipContent[type];
 
   return (
     <div className={`relative inline-flex ${className}`}>
@@ -46,7 +80,7 @@ export default function AnsutBadge({
         onMouseLeave={() => showTooltip && setShowInfo(false)}
       >
         <Shield className={iconSizes[size]} />
-        <span>Vérifié Mon Toit</span>
+        <span>{badgeLabels[type]}</span>
         <CheckCircle className={iconSizes[size]} />
       </div>
 
@@ -56,16 +90,15 @@ export default function AnsutBadge({
             <div className="flex items-start space-x-2 mb-2">
               <Info className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-green-400 mb-1">Utilisateur vérifié</p>
+                <p className="font-bold text-green-400 mb-1">{content.title}</p>
                 <p className="text-gray-300 leading-relaxed">
-                  Identité confirmée via ONECI (CNI) et vérification biométrique.
-                  Badge de confiance Mon Toit.
+                  {content.description}
                 </p>
               </div>
             </div>
             <div className="border-t border-gray-700 mt-2 pt-2">
               <p className="text-gray-400 text-xs">
-                ✓ CNI vérifiée (ONECI) • ✓ Vérification biométrique • ✓ Profil complet
+                {content.checks}
               </p>
             </div>
           </div>
