@@ -188,57 +188,174 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-amber-50 to-white relative">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 text-terracotta-200 opacity-50 transform -rotate-12 text-9xl font-bold">★</div>
-          <div className="absolute bottom-20 right-20 text-coral-200 opacity-50 transform rotate-12 text-7xl font-bold">♥</div>
+      <section className="py-24 bg-gradient-to-b from-amber-50 via-white to-cyan-50 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grid)" className="text-terracotta-300"/>
+          </svg>
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Pourquoi <span className="text-gradient">Mon Toit</span> ?
+          <div className="text-center mb-16 animate-slide-down">
+            <div className="inline-block mb-4 px-4 py-2 bg-gradient-to-r from-terracotta-100 to-coral-100 rounded-full">
+              <span className="text-terracotta-700 font-bold text-sm">L'IMMOBILIER RÉINVENTÉ</span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+              Une plateforme <span className="text-gradient">complète</span>
+              <br />
+              pour <span className="text-gradient">tous vos besoins</span>
             </h2>
-            <p className="text-xl text-gray-600">Un logement pour tous, accessible et sécurisé</p>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              De la recherche au paiement, en passant par la signature électronique, tout est pensé pour simplifier votre parcours immobilier
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="card-scrapbook p-8 text-center bg-gradient-to-br from-white to-olive-50 border-4 border-olive-200/50">
-              <div className="w-20 h-20 bg-gradient-to-br from-olive-400 to-olive-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-6 hover:rotate-0 transition-transform duration-300">
-                <Shield className="h-10 w-10 text-white" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div className="space-y-6 animate-slide-right">
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-terracotta-400 to-coral-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+                <div className="relative bg-white rounded-2xl p-8 border-2 border-terracotta-100">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-terracotta-500 to-coral-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <Shield className="h-7 w-7 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">Vérification d'identité ONECI</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        Vérification officielle via le système ONECI + reconnaissance faciale biométrique. Tous les utilisateurs sont authentifiés pour votre sécurité.
+                      </p>
+                      <div className="mt-4 flex items-center space-x-2">
+                        <div className="flex -space-x-2">
+                          <div className="w-8 h-8 rounded-full bg-olive-400 border-2 border-white"></div>
+                          <div className="w-8 h-8 rounded-full bg-cyan-400 border-2 border-white"></div>
+                          <div className="w-8 h-8 rounded-full bg-coral-400 border-2 border-white"></div>
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700">+ {totalProperties} utilisateurs vérifiés</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-gray-900">Sécurité et Protection</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Plateforme sécurisée avec vérification des utilisateurs pour votre tranquillité
-              </p>
-              <div className="mt-4 inline-block bg-olive-100 text-olive-800 px-4 py-2 rounded-full text-sm font-semibold transform rotate-2">
-                100% Sécurisé
+
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+                <div className="relative bg-white rounded-2xl p-8 border-2 border-cyan-100">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <FileSignature className="h-7 w-7 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">Signature électronique légale</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        Contrats 100% digitaux avec CryptoNeo, conformes à la réglementation ivoirienne. Plus besoin de déplacement, signez depuis chez vous.
+                      </p>
+                      <div className="mt-4 inline-flex items-center space-x-2 px-4 py-2 bg-cyan-50 rounded-full">
+                        <Sparkles className="h-4 w-4 text-cyan-600" />
+                        <span className="text-sm font-semibold text-cyan-700">Valeur juridique garantie</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative">
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-400 to-orange-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-300"></div>
+                <div className="relative bg-white rounded-2xl p-8 border-2 border-amber-100">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <Smartphone className="h-7 w-7 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">Paiement Mobile Money</h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        Orange Money, MTN Money, Moov Money et Carte bancaire. Paiements instantanés et sécurisés avec notifications en temps réel.
+                      </p>
+                      <div className="mt-4 grid grid-cols-3 gap-2">
+                        <div className="px-3 py-2 bg-orange-50 rounded-lg text-center">
+                          <span className="text-xs font-bold text-orange-700">Orange</span>
+                        </div>
+                        <div className="px-3 py-2 bg-yellow-50 rounded-lg text-center">
+                          <span className="text-xs font-bold text-yellow-700">MTN</span>
+                        </div>
+                        <div className="px-3 py-2 bg-blue-50 rounded-lg text-center">
+                          <span className="text-xs font-bold text-blue-700">Moov</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="card-scrapbook p-8 text-center bg-gradient-to-br from-white to-cyan-50 border-4 border-cyan-200/50">
-              <div className="w-20 h-20 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg transform rotate-6 hover:rotate-0 transition-transform duration-300">
-                <FileSignature className="h-10 w-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-3 text-gray-900">Signature électronique</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Signez vos contrats de location en ligne via CryptoNeo, simple et rapide
-              </p>
-              <div className="mt-4 inline-block bg-cyan-100 text-cyan-800 px-4 py-2 rounded-full text-sm font-semibold transform -rotate-2">
-                100% Digital
-              </div>
-            </div>
+            <div className="relative animate-slide-left">
+              <div className="sticky top-24">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-br from-terracotta-400 to-coral-400 rounded-3xl transform rotate-3"></div>
+                  <div className="relative bg-white rounded-3xl p-8 border-4 border-white shadow-2xl">
+                    <div className="mb-6">
+                      <h3 className="text-3xl font-bold text-gray-900 mb-2">L'innovation au service de l'immobilier</h3>
+                      <p className="text-gray-600">Technologie ivoirienne, pour les Ivoiriens</p>
+                    </div>
 
-            <div className="card-scrapbook p-8 text-center bg-gradient-to-br from-white to-coral-50 border-4 border-coral-200/50">
-              <div className="w-20 h-20 bg-gradient-to-br from-coral-400 to-coral-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg transform -rotate-6 hover:rotate-0 transition-transform duration-300">
-                <Smartphone className="h-10 w-10 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-3 text-gray-900">Paiement Mobile Money</h3>
-              <p className="text-gray-700 leading-relaxed">
-                Payez facilement avec Orange Money, MTN Money et Moov Money
-              </p>
-              <div className="mt-4 inline-block bg-coral-100 text-coral-800 px-4 py-2 rounded-full text-sm font-semibold transform rotate-2">
-                Facile & Rapide
+                    <div className="space-y-6">
+                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-olive-50 to-green-50 rounded-xl border-2 border-olive-200">
+                        <div className="flex-shrink-0 w-12 h-12 bg-olive-500 rounded-full flex items-center justify-center">
+                          <Shield className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-2xl font-bold text-gray-900">100%</div>
+                          <div className="text-sm text-gray-600">Utilisateurs vérifiés</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl border-2 border-cyan-200">
+                        <div className="flex-shrink-0 w-12 h-12 bg-cyan-500 rounded-full flex items-center justify-center">
+                          <FileSignature className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-2xl font-bold text-gray-900">100%</div>
+                          <div className="text-sm text-gray-600">Digital & Sans papier</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border-2 border-amber-200">
+                        <div className="flex-shrink-0 w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center">
+                          <TrendingUp className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-2xl font-bold text-gray-900">{totalProperties}+</div>
+                          <div className="text-sm text-gray-600">Propriétés disponibles</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-coral-50 to-pink-50 rounded-xl border-2 border-coral-200">
+                        <div className="flex-shrink-0 w-12 h-12 bg-coral-500 rounded-full flex items-center justify-center">
+                          <Users className="h-6 w-6 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-2xl font-bold text-gray-900">24/7</div>
+                          <div className="text-sm text-gray-600">Support disponible</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 p-6 bg-gradient-to-br from-terracotta-500 to-coral-500 rounded-2xl text-white">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <Sparkles className="h-6 w-6" />
+                        <span className="font-bold text-lg">Prêt à commencer ?</span>
+                      </div>
+                      <p className="text-white/90 mb-4">Rejoignez des milliers d'utilisateurs qui ont trouvé leur logement idéal</p>
+                      <a href="/recherche" className="block w-full text-center bg-white text-terracotta-600 font-bold py-3 px-6 rounded-xl hover:bg-amber-50 transition-colors">
+                        Découvrir les logements
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -393,6 +510,145 @@ export default function Home() {
               <Map className="h-5 w-5" />
               <span>Explorer toutes les propriétés</span>
             </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-gradient-to-br from-terracotta-500 via-coral-500 to-amber-500 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-full h-full" style={{
+            backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16 animate-slide-down">
+            <div className="inline-block mb-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
+              <span className="text-white font-bold text-sm">SIMPLE ET RAPIDE</span>
+            </div>
+            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Comment ça marche ?
+            </h2>
+            <p className="text-xl text-white/90 max-w-3xl mx-auto">
+              En 4 étapes simples, trouvez votre logement et signez votre contrat
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="group relative">
+              <div className="absolute -inset-1 bg-white/30 rounded-3xl blur"></div>
+              <div className="relative bg-white rounded-3xl p-8 shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-terracotta-400 to-coral-400 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl transform rotate-12 group-hover:rotate-0 transition-transform">
+                  1
+                </div>
+                <div className="mt-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-olive-100 to-olive-200 rounded-2xl flex items-center justify-center mb-6">
+                    <Search className="h-8 w-8 text-olive-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Recherchez</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Parcourez nos milliers d'annonces vérifiées et trouvez le logement qui vous correspond
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group relative">
+              <div className="absolute -inset-1 bg-white/30 rounded-3xl blur"></div>
+              <div className="relative bg-white rounded-3xl p-8 shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl transform rotate-12 group-hover:rotate-0 transition-transform">
+                  2
+                </div>
+                <div className="mt-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-cyan-100 to-cyan-200 rounded-2xl flex items-center justify-center mb-6">
+                    <Shield className="h-8 w-8 text-cyan-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Vérifiez</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Complétez votre vérification d'identité ONECI + biométrie pour gagner la confiance
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group relative">
+              <div className="absolute -inset-1 bg-white/30 rounded-3xl blur"></div>
+              <div className="relative bg-white rounded-3xl p-8 shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-400 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl transform rotate-12 group-hover:rotate-0 transition-transform">
+                  3
+                </div>
+                <div className="mt-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center mb-6">
+                    <FileSignature className="h-8 w-8 text-amber-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Signez</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Signature électronique légale avec CryptoNeo. Tout se fait en ligne, sans déplacement
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="group relative">
+              <div className="absolute -inset-1 bg-white/30 rounded-3xl blur"></div>
+              <div className="relative bg-white rounded-3xl p-8 shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-400 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-xl transform rotate-12 group-hover:rotate-0 transition-transform">
+                  4
+                </div>
+                <div className="mt-6">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mb-6">
+                    <HomeIcon className="h-8 w-8 text-green-600" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">Emménagez</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Payez via Mobile Money et emménagez dans votre nouveau logement en toute sérénité
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center animate-slide-up">
+            <div className="inline-block bg-white rounded-3xl p-10 shadow-2xl max-w-2xl">
+              <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                Prêt à trouver votre logement idéal ?
+              </h3>
+              <p className="text-gray-600 mb-6 text-lg">
+                Rejoignez des milliers d'Ivoiriens qui ont déjà trouvé leur bonheur
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/inscription" className="btn-primary px-8 py-4 text-lg">
+                  Créer mon compte gratuitement
+                </a>
+                <a href="/recherche" className="bg-white border-3 border-terracotta-500 text-terracotta-600 font-bold px-8 py-4 rounded-2xl hover:bg-terracotta-50 transition-all text-lg">
+                  Parcourir les annonces
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-terracotta-400">{totalProperties}+</div>
+              <div className="text-gray-400">Propriétés</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-cyan-400">100%</div>
+              <div className="text-gray-400">Vérifiés</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-amber-400">24/7</div>
+              <div className="text-gray-400">Support</div>
+            </div>
+            <div className="space-y-2">
+              <div className="text-4xl font-bold text-green-400">100%</div>
+              <div className="text-gray-400">Digital</div>
+            </div>
           </div>
         </div>
       </section>
