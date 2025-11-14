@@ -47,6 +47,8 @@ export default function LanguageSelector({
     }
 
     setTranslating(true);
+    setIsOpen(false);
+
     try {
       setCurrentLanguage(languageCode);
       localStorage.setItem('preferred_language', languageCode);
@@ -57,14 +59,38 @@ export default function LanguageSelector({
 
       await azureTranslatorService.setTargetLanguage(languageCode);
 
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-xl z-50 flex items-center space-x-2 animate-slide-down';
+      notification.innerHTML = `
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        <span>Langue changée avec succès!</span>
+      `;
+      document.body.appendChild(notification);
+
       setTimeout(() => {
-        window.location.reload();
-      }, 500);
+        notification.style.transition = 'opacity 0.3s, transform 0.3s';
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+          notification.remove();
+          const needsReload = import.meta.env['VITE_AZURE_TRANSLATOR_ENABLED'] === 'true';
+          if (needsReload) {
+            window.location.reload();
+          }
+        }, 300);
+      }, 2000);
     } catch (error) {
       console.error('Error changing language:', error);
+      const errorNotif = document.createElement('div');
+      errorNotif.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-xl z-50';
+      errorNotif.textContent = 'Erreur lors du changement de langue';
+      document.body.appendChild(errorNotif);
+      setTimeout(() => errorNotif.remove(), 3000);
+      setCurrentLanguage(currentLanguage);
     } finally {
       setTranslating(false);
-      setIsOpen(false);
     }
   };
 
