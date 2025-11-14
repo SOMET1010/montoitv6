@@ -325,7 +325,7 @@ export default function Auth() {
                 </div>
               )}
 
-              {!isForgotPassword && (
+              {!isForgotPassword && import.meta.env.VITE_ENABLE_SOCIAL_AUTH === 'true' && (
                 <div className="mt-8">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">

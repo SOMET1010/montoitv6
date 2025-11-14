@@ -267,7 +267,7 @@ Si tu ne connais pas une réponse, dis-le honnêtement et propose de contacter l
     }
 
     if (lowerMessage.includes('recherche') || lowerMessage.includes('propriété')) {
-      return "🏠 **Pour rechercher une propriété SÉCURISÉE** :\n\n1. Utilisez la barre de recherche rapide\n2. Filtrez par ville, type, budget\n3. ✅ Vérifiez le badge ANSUT du propriétaire\n4. 📍 Confirmez l'adresse sur la carte\n5. 📸 Regardez les photos (multiples = bon signe)\n6. 💬 Planifiez une visite AVANT tout paiement\n\n⚠️ **Rappel sécurité** : Ne payez JAMAIS avant d'avoir visité !";
+      return "🏠 **Pour rechercher une propriété SÉCURISÉE** :\n\n1. Utilisez la barre de recherche rapide\n2. Filtrez par ville, type, budget\n3. ✅ Vérifiez le badge de vérification du propriétaire\n4. 📍 Confirmez l'adresse sur la carte\n5. 📸 Regardez les photos (multiples = bon signe)\n6. 💬 Planifiez une visite AVANT tout paiement\n\n⚠️ **Rappel sécurité** : Ne payez JAMAIS avant d'avoir visité !";
     }
 
     if (lowerMessage.includes('paiement') || lowerMessage.includes('money') || lowerMessage.includes('payer')) {
@@ -275,7 +275,7 @@ Si tu ne connais pas une réponse, dis-le honnêtement et propose de contacter l
     }
 
     if (lowerMessage.includes('visite')) {
-      return "🗓️ **Planifier une visite EN TOUTE SÉCURITÉ** :\n\n1. Trouvez la propriété\n2. Vérifiez le badge ANSUT du propriétaire ✅\n3. Cliquez 'Planifier une visite'\n4. Choisissez date et heure\n5. Le propriétaire confirme (24-48h)\n6. Recevez notification + rappel\n\n⚠️ **Conseils sécurité pour la visite** :\n• Venez accompagné si possible\n• Vérifiez l'identité du propriétaire\n• Prenez photos/vidéos\n• Posez TOUTES vos questions\n• ❌ Ne payez RIEN lors de la visite\n• Signez le bail sur Mon Toit APRÈS la visite";
+      return "🗓️ **Planifier une visite EN TOUTE SÉCURITÉ** :\n\n1. Trouvez la propriété\n2. Vérifiez le badge de vérification du propriétaire ✅\n3. Cliquez 'Planifier une visite'\n4. Choisissez date et heure\n5. Le propriétaire confirme (24-48h)\n6. Recevez notification + rappel\n\n⚠️ **Conseils sécurité pour la visite** :\n• Venez accompagné si possible\n• Vérifiez l'identité du propriétaire\n• Prenez photos/vidéos\n• Posez TOUTES vos questions\n• ❌ Ne payez RIEN lors de la visite\n• Signez le bail sur Mon Toit APRÈS la visite";
     }
 
     if (lowerMessage.includes('score') || lowerMessage.includes('notation')) {
@@ -287,7 +287,7 @@ Si tu ne connais pas une réponse, dis-le honnêtement et propose de contacter l
     }
 
     if (lowerMessage.includes('ansut') || lowerMessage.includes('certification') || lowerMessage.includes('vérification')) {
-      return "🛡️ **Certification ANSUT - Votre Garantie de Sécurité** :\n\n✅ **Qu'est-ce que ANSUT ?**\nVérification multi-niveaux OBLIGATOIRE pour tous les propriétaires :\n• 🆔 Vérification ONECI (identité officielle)\n• 🏥 Vérification CNAM (légalité)\n• 👤 Biométrie faciale (anti-fraude)\n• 📄 Documents propriété\n\n📋 **Pour obtenir ANSUT (propriétaires)** :\n1. 'Vérification ANSUT'\n2. Remplir le formulaire complet\n3. Télécharger CNI + justificatifs\n4. Photo biométrique\n5. Validation 24-48h\n\n🎯 **Badge ANSUT = Propriétaire de CONFIANCE**\n\n⚠️ Locataires : Ne louez JAMAIS sans badge ANSUT vérifié !";
+      return "🛡️ **Vérification d'Identité - Votre Garantie de Sécurité** :\n\n✅ **Vérification Mon Toit**\nVérification multi-niveaux OBLIGATOIRE pour tous les propriétaires :\n• 🆔 Vérification ONECI (CNI officielle)\n• 🏥 Vérification CNAM (couverture médicale)\n• 👤 Biométrie faciale (anti-fraude)\n• 📄 Documents propriété\n\n📋 **Pour obtenir la vérification (propriétaires)** :\n1. Accédez à 'Vérification d'identité'\n2. Remplir le formulaire complet\n3. Télécharger CNI + justificatifs\n4. Photo biométrique\n5. Validation 24-48h\n\n🎯 **Badge Vérifié = Propriétaire de CONFIANCE**\n\n⚠️ Locataires : Ne louez JAMAIS sans badge de vérification !";
     }
 
     if (lowerMessage.includes('contrat') || lowerMessage.includes('bail')) {
