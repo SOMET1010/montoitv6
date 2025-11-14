@@ -7,33 +7,30 @@ type MaintenanceRequestUpdate = Database['public']['Tables']['maintenance_reques
 
 export const maintenanceRepository = {
   async getById(id: string) {
-    return handleQuery(
-      supabase
-        .from('maintenance_requests')
-        .select('*, properties(*), profiles!tenant_id(*)')
-        .eq('id', id)
-        .maybeSingle()
-    );
+    const query = supabase
+      .from('maintenance_requests')
+      .select('*, properties(*), profiles!tenant_id(*)')
+      .eq('id', id)
+      .maybeSingle();
+    return handleQuery(query);
   },
 
   async getByTenantId(tenantId: string) {
-    return handleQuery(
-      supabase
-        .from('maintenance_requests')
-        .select('*, properties(*)')
-        .eq('tenant_id', tenantId)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('maintenance_requests')
+      .select('*, properties(*)')
+      .eq('tenant_id', tenantId)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async getByPropertyId(propertyId: string) {
-    return handleQuery(
-      supabase
-        .from('maintenance_requests')
-        .select('*, profiles!tenant_id(*)')
-        .eq('property_id', propertyId)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('maintenance_requests')
+      .select('*, profiles!tenant_id(*)')
+      .eq('property_id', propertyId)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async getByOwnerId(ownerId: string) {
@@ -45,31 +42,32 @@ export const maintenanceRepository = {
 
     const propertyIds = properties.map((p) => p.id);
 
-    return handleQuery(
-      supabase
-        .from('maintenance_requests')
-        .select('*, properties(*), profiles!tenant_id(*)')
-        .in('property_id', propertyIds)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('maintenance_requests')
+      .select('*, properties(*), profiles!tenant_id(*)')
+      .in('property_id', propertyIds)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async create(request: MaintenanceRequestInsert) {
-    return handleQuery(supabase.from('maintenance_requests').insert(request).select().single());
+    const query = supabase.from('maintenance_requests').insert(request).select().single();
+    return handleQuery(query);
   },
 
   async update(id: string, updates: MaintenanceRequestUpdate) {
-    return handleQuery(supabase.from('maintenance_requests').update(updates).eq('id', id).select().single());
+    const query = supabase.from('maintenance_requests').update(updates).eq('id', id).select().single();
+    return handleQuery(query);
   },
 
   async updateStatus(id: string, status: string) {
-    return handleQuery(
-      supabase.from('maintenance_requests').update({ status }).eq('id', id).select().single()
-    );
+    const query = supabase.from('maintenance_requests').update({ status }).eq('id', id).select().single();
+    return handleQuery(query);
   },
 
   async delete(id: string) {
-    return handleQuery(supabase.from('maintenance_requests').delete().eq('id', id));
+    const query = supabase.from('maintenance_requests').delete().eq('id', id);
+    return handleQuery(query);
   },
 
   async getByStatus(status: string, userId?: string, userType?: string) {
@@ -88,7 +86,8 @@ export const maintenanceRepository = {
       }
     }
 
-    return handleQuery(query.order('created_at', { ascending: false }));
+    const finalQuery = query.order('created_at', { ascending: false });
+    return handleQuery(finalQuery);
   },
 
   async getPendingCount(userId: string, userType: string) {

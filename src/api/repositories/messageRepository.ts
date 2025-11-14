@@ -8,54 +8,54 @@ type ConversationInsert = Database['public']['Tables']['conversations']['Insert'
 
 export const messageRepository = {
   async getConversationsByUserId(userId: string) {
-    return handleQuery(
-      supabase
-        .from('conversations')
-        .select('*, properties(*), profiles!owner_id(*), profiles!tenant_id(*)')
-        .or(`owner_id.eq.${userId},tenant_id.eq.${userId}`)
-        .order('updated_at', { ascending: false })
-    );
+    const query = supabase
+      .from('conversations')
+      .select('*, properties(*), profiles!owner_id(*), profiles!tenant_id(*)')
+      .or(`owner_id.eq.${userId},tenant_id.eq.${userId}`)
+      .order('updated_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async getConversationById(conversationId: string) {
-    return handleQuery(
-      supabase
-        .from('conversations')
-        .select('*, properties(*), profiles!owner_id(*), profiles!tenant_id(*)')
-        .eq('id', conversationId)
-        .maybeSingle()
-    );
+    const query = supabase
+      .from('conversations')
+      .select('*, properties(*), profiles!owner_id(*), profiles!tenant_id(*)')
+      .eq('id', conversationId)
+      .maybeSingle();
+    return handleQuery(query);
   },
 
   async getMessagesByConversationId(conversationId: string) {
-    return handleQuery(
-      supabase
-        .from('messages')
-        .select('*, profiles(*)')
-        .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true })
-    );
+    const query = supabase
+      .from('messages')
+      .select('*, profiles(*)')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+    return handleQuery(query);
   },
 
   async createConversation(conversation: ConversationInsert) {
-    return handleQuery(supabase.from('conversations').insert(conversation).select().single());
+    const query = supabase.from('conversations').insert(conversation).select().single();
+    return handleQuery(query);
   },
 
   async sendMessage(message: MessageInsert) {
-    const result = await handleQuery(supabase.from('messages').insert(message).select().single());
+    const query = supabase.from('messages').insert(message).select().single();
+    const result = await handleQuery(query);
 
-    if (result.data && message.conversation_id) {
+    if (result.data && (message as any).conversation_id) {
       await supabase
         .from('conversations')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', message.conversation_id);
+        .update({ updated_at: new Date().toISOString() } as any)
+        .eq('id', (message as any).conversation_id);
     }
 
     return result;
   },
 
   async markAsRead(messageIds: string[]) {
-    return handleQuery(supabase.from('messages').update({ is_read: true }).in('id', messageIds));
+    const query = supabase.from('messages').update({ is_read: true }).in('id', messageIds);
+    return handleQuery(query);
   },
 
   async getUnreadCount(userId: string) {
@@ -70,18 +70,18 @@ export const messageRepository = {
 
     const conversationIds = conversations.map((c) => c.id);
 
-    return handleQuery(
-      supabase
-        .from('messages')
-        .select('id', { count: 'exact', head: true })
-        .in('conversation_id', conversationIds)
-        .neq('sender_id', userId)
-        .eq('is_read', false)
-    );
+    const query = supabase
+      .from('messages')
+      .select('id', { count: 'exact', head: true })
+      .in('conversation_id', conversationIds as any)
+      .neq('sender_id', userId)
+      .eq('is_read', false);
+    return handleQuery(query);
   },
 
   async deleteMessage(messageId: string) {
-    return handleQuery(supabase.from('messages').delete().eq('id', messageId));
+    const query = supabase.from('messages').delete().eq('id', messageId);
+    return handleQuery(query);
   },
 
   async subscribeToConversation(conversationId: string, callback: (message: Message) => void) {

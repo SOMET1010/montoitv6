@@ -7,33 +7,30 @@ type ApplicationUpdate = Database['public']['Tables']['applications']['Update'];
 
 export const applicationRepository = {
   async getById(id: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*), profiles!applicant_id(*)')
-        .eq('id', id)
-        .maybeSingle()
-    );
+    const query = supabase
+      .from('applications')
+      .select('*, properties(*), profiles!applicant_id(*)')
+      .eq('id', id)
+      .maybeSingle();
+    return handleQuery(query);
   },
 
   async getByApplicantId(applicantId: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*)')
-        .eq('applicant_id', applicantId)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('applications')
+      .select('*, properties(*)')
+      .eq('applicant_id', applicantId)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async getByPropertyId(propertyId: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, profiles!applicant_id(*)')
-        .eq('property_id', propertyId)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('applications')
+      .select('*, profiles!applicant_id(*)')
+      .eq('property_id', propertyId)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async getByOwnerId(ownerId: string) {
@@ -45,43 +42,45 @@ export const applicationRepository = {
 
     const propertyIds = properties.map((p) => p.id);
 
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*), profiles!applicant_id(*)')
-        .in('property_id', propertyIds)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('applications')
+      .select('*, properties(*), profiles!applicant_id(*)')
+      .in('property_id', propertyIds)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async create(application: ApplicationInsert) {
-    return handleQuery(supabase.from('applications').insert(application).select().single());
+    const query = supabase.from('applications').insert(application).select().single();
+    return handleQuery(query);
   },
 
   async update(id: string, updates: ApplicationUpdate) {
-    return handleQuery(supabase.from('applications').update(updates).eq('id', id).select().single());
+    const query = supabase.from('applications').update(updates).eq('id', id).select().single();
+    return handleQuery(query);
   },
 
   async updateStatus(id: string, status: string, reviewNotes?: string) {
-    const updates: ApplicationUpdate = { status };
+    const updates: any = { status };
     if (reviewNotes) {
       updates.review_notes = reviewNotes;
     }
-    return handleQuery(supabase.from('applications').update(updates).eq('id', id).select().single());
+    const query = supabase.from('applications').update(updates).eq('id', id).select().single();
+    return handleQuery(query);
   },
 
   async delete(id: string) {
-    return handleQuery(supabase.from('applications').delete().eq('id', id));
+    const query = supabase.from('applications').delete().eq('id', id);
+    return handleQuery(query);
   },
 
   async getByStatus(status: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*, properties(*), profiles!applicant_id(*)')
-        .eq('status', status)
-        .order('created_at', { ascending: false })
-    );
+    const query = supabase
+      .from('applications')
+      .select('*, properties(*), profiles!applicant_id(*)')
+      .eq('status', status)
+      .order('created_at', { ascending: false });
+    return handleQuery(query);
   },
 
   async getPendingCount(ownerId: string) {
@@ -93,23 +92,21 @@ export const applicationRepository = {
 
     const propertyIds = properties.map((p) => p.id);
 
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('id', { count: 'exact', head: true })
-        .in('property_id', propertyIds)
-        .eq('status', 'en_attente')
-    );
+    const query = supabase
+      .from('applications')
+      .select('id', { count: 'exact', head: true })
+      .in('property_id', propertyIds)
+      .eq('status', 'en_attente');
+    return handleQuery(query);
   },
 
   async checkExistingApplication(applicantId: string, propertyId: string) {
-    return handleQuery(
-      supabase
-        .from('applications')
-        .select('*')
-        .eq('applicant_id', applicantId)
-        .eq('property_id', propertyId)
-        .maybeSingle()
-    );
+    const query = supabase
+      .from('applications')
+      .select('*')
+      .eq('applicant_id', applicantId)
+      .eq('property_id', propertyId)
+      .maybeSingle();
+    return handleQuery(query);
   },
 };

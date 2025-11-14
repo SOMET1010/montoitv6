@@ -25,6 +25,8 @@ export interface Database {
           avatar_url: string | null;
           bio: string | null;
           city: string | null;
+          address: string | null;
+          is_verified: boolean;
           profile_setup_completed: boolean;
           created_at: string;
           updated_at: string;
@@ -40,6 +42,8 @@ export interface Database {
           avatar_url?: string | null;
           bio?: string | null;
           city?: string | null;
+          address?: string | null;
+          is_verified?: boolean;
           profile_setup_completed?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -55,6 +59,8 @@ export interface Database {
           avatar_url?: string | null;
           bio?: string | null;
           city?: string | null;
+          address?: string | null;
+          is_verified?: boolean;
           profile_setup_completed?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -158,6 +164,136 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+        Insert: {
+          id?: string;
+          property_id: string;
+          applicant_id: string;
+          status?: ApplicationStatus;
+          cover_letter?: string | null;
+          application_score?: number;
+          documents?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          applicant_id?: string;
+          status?: ApplicationStatus;
+          cover_letter?: string | null;
+          application_score?: number;
+          documents?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      applications: {
+        Row: {
+          id: string;
+          property_id: string;
+          applicant_id: string;
+          status: ApplicationStatus;
+          cover_letter: string | null;
+          application_score: number;
+          documents: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          applicant_id: string;
+          status?: ApplicationStatus;
+          cover_letter?: string | null;
+          application_score?: number;
+          documents?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          applicant_id?: string;
+          status?: ApplicationStatus;
+          cover_letter?: string | null;
+          application_score?: number;
+          documents?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      leases: {
+        Row: {
+          id: string;
+          property_id: string;
+          tenant_id: string;
+          landlord_id: string;
+          start_date: string;
+          end_date: string;
+          monthly_rent: number;
+          deposit_amount: number;
+          status: LeaseStatus;
+          lease_type: LeaseType;
+          terms: string | null;
+          signed_date: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          tenant_id: string;
+          landlord_id: string;
+          start_date: string;
+          end_date: string;
+          monthly_rent: number;
+          deposit_amount: number;
+          status?: LeaseStatus;
+          lease_type: LeaseType;
+          terms?: string | null;
+          signed_date?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          tenant_id?: string;
+          landlord_id?: string;
+          start_date?: string;
+          end_date?: string;
+          monthly_rent?: number;
+          deposit_amount?: number;
+          status?: LeaseStatus;
+          lease_type?: LeaseType;
+          terms?: string | null;
+          signed_date?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      conversations: {
+        Row: {
+          id: string;
+          user1_id: string;
+          user2_id: string;
+          last_message_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user1_id: string;
+          user2_id: string;
+          last_message_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user1_id?: string;
+          user2_id?: string;
+          last_message_at?: string | null;
+          created_at?: string;
+        };
       };
       messages: {
         Row: {
@@ -168,6 +304,65 @@ export interface Database {
           content: string;
           is_read: boolean;
           created_at: string;
+        };
+        Insert: {
+          id?: string;
+          sender_id: string;
+          receiver_id: string;
+          application_id?: string | null;
+          content: string;
+          is_read?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          sender_id?: string;
+          receiver_id?: string;
+          application_id?: string | null;
+          content?: string;
+          is_read?: boolean;
+          created_at?: string;
+        };
+      };
+      maintenance_requests: {
+        Row: {
+          id: string;
+          property_id: string;
+          tenant_id: string;
+          landlord_id: string;
+          title: string;
+          description: string;
+          status: string;
+          priority: string;
+          images: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          property_id: string;
+          tenant_id: string;
+          landlord_id: string;
+          title: string;
+          description: string;
+          status?: string;
+          priority?: string;
+          images?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          property_id?: string;
+          tenant_id?: string;
+          landlord_id?: string;
+          title?: string;
+          description?: string;
+          status?: string;
+          priority?: string;
+          images?: string[];
+          created_at?: string;
+          updated_at?: string;
         };
       };
       user_verifications: {
@@ -246,6 +441,88 @@ export interface Database {
           achievement_description: string | null;
           icon: string;
           achieved_at: string;
+        };
+      };
+      payments: {
+        Row: {
+          id: string;
+          lease_id: string;
+          payer_id: string;
+          amount: number;
+          payment_type: PaymentType;
+          payment_method: PaymentMethod;
+          status: PaymentStatus;
+          transaction_id: string | null;
+          payment_date: string | null;
+          due_date: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          lease_id: string;
+          payer_id: string;
+          amount: number;
+          payment_type: PaymentType;
+          payment_method: PaymentMethod;
+          status?: PaymentStatus;
+          transaction_id?: string | null;
+          payment_date?: string | null;
+          due_date: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          lease_id?: string;
+          payer_id?: string;
+          amount?: number;
+          payment_type?: PaymentType;
+          payment_method?: PaymentMethod;
+          status?: PaymentStatus;
+          transaction_id?: string | null;
+          payment_date?: string | null;
+          due_date?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      mobile_money_transactions: {
+        Row: {
+          id: string;
+          payment_id: string;
+          provider: string;
+          phone_number: string;
+          amount: number;
+          fees: number;
+          status: string;
+          transaction_reference: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          payment_id: string;
+          provider: string;
+          phone_number: string;
+          amount: number;
+          fees?: number;
+          status?: string;
+          transaction_reference: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          payment_id?: string;
+          provider?: string;
+          phone_number?: string;
+          amount?: number;
+          fees?: number;
+          status?: string;
+          transaction_reference?: string;
+          created_at?: string;
+          updated_at?: string;
         };
       };
     };

@@ -18,10 +18,10 @@ export class PaymentRepository {
         throw new Error('User not authenticated');
       }
 
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/intouch-payment`;
+      const apiUrl = `${import.meta.env['VITE_SUPABASE_URL']}/functions/v1/intouch-payment`;
 
       const headers = {
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        Authorization: `Bearer ${import.meta.env['VITE_SUPABASE_ANON_KEY']}`,
         'Content-Type': 'application/json',
       };
 

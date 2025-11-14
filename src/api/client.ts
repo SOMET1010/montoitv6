@@ -21,7 +21,7 @@ export interface PaginatedResponse<T> {
  * Helper to handle Supabase query responses with consistent error handling
  */
 export async function handleQuery<T>(
-  queryPromise: Promise<{ data: T | null; error: PostgrestError | null }>
+  queryPromise: PromiseLike<{ data: T | null; error: PostgrestError | null }>
 ): Promise<ApiResponse<T>> {
   try {
     const { data, error } = await queryPromise;
@@ -38,7 +38,7 @@ export async function handleQuery<T>(
       data: null,
       error: {
         message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error,
+        details: error as any,
         hint: '',
         code: 'UNKNOWN_ERROR',
       },
@@ -73,10 +73,10 @@ export async function handlePaginatedQuery<T>(
       count: null,
       error: {
         message: error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error,
+        details: error as any,
         hint: '',
         code: 'UNKNOWN_ERROR',
-      },
+      } as PostgrestError,
     };
   }
 }
@@ -145,13 +145,13 @@ export async function deleteFile(
 /**
  * Helper to call Edge Functions
  */
-export async function callEdgeFunction<TRequest = unknown, TResponse = unknown>(
+export async function callEdgeFunction<TRequest = any, TResponse = unknown>(
   functionName: string,
   body: TRequest
 ): Promise<{ data: TResponse | null; error: Error | null }> {
   try {
     const { data, error } = await supabase.functions.invoke<TResponse>(functionName, {
-      body,
+      body: body as any,
     });
 
     if (error) {
